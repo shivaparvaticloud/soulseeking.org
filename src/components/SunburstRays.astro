@@ -1,0 +1,51 @@
+---
+// Radiating dawn-ray fan emanating from a horizon point.
+// Used as section dividers and the "shooting-star underline" motif.
+interface Props {
+  width?: number;
+  height?: number;
+  rays?: number;
+  tone?: 'gold' | 'ochre' | 'cream';
+  class?: string;
+}
+const {
+  width = 1200,
+  height = 220,
+  rays = 60,
+  tone = 'gold',
+  class: className = '',
+} = Astro.props;
+
+const colors = { gold: '#E7C68B', ochre: '#CC914E', cream: '#EEEDE3' };
+const stroke = colors[tone];
+
+const cx = width / 2;
+const cy = height; // horizon at the bottom
+const lines: { x2: number; y2: number; o: number }[] = [];
+for (let i = 0; i < rays; i++) {
+  const t = rays === 1 ? 0.5 : i / (rays - 1);
+  const angle = (-86 + t * 172) * (Math.PI / 180); // fan upward
+  const len = height * (0.78 + 0.22 * Math.cos(angle));
+  lines.push({
+    x2: cx + len * Math.sin(angle),
+    y2: cy - len * Math.cos(angle),
+    o: 0.12 + 0.5 * Math.cos(angle) * Math.cos(angle),
+  });
+}
+---
+
+<svg
+  viewBox={`0 0 ${width} ${height}`}
+  width="100%"
+  height="100%"
+  preserveAspectRatio="xMidYMax slice"
+  fill="none"
+  role="presentation"
+  aria-hidden="true"
+  class={className}
+>
+  <g stroke={stroke} stroke-width="1">
+    {lines.map((l) => <line x1={cx} y1={cy} x2={l.x2} y2={l.y2} opacity={l.o} />)}
+  </g>
+  <circle cx={cx} cy={cy} r="5" fill={stroke} opacity="0.9" />
+</svg>

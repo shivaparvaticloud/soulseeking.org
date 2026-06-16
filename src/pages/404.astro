@@ -1,0 +1,24 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SoaringBird from '../components/SoaringBird.astro';
+---
+
+<Layout title="Lost the Path — Soul Seeking" description="This page could not be found.">
+  <section class="relative flex min-h-[70vh] items-center justify-center overflow-hidden bg-cosmos text-cream">
+    <div class="mx-auto max-w-xl px-6 text-center">
+      <div class="flex justify-center">
+        <SoaringBird size={200} class="opacity-90" />
+      </div>
+      <p class="mt-phi-1 accent text-gold">404</p>
+      <h1 class="mt-2 text-4xl tracking-ultra sm:text-5xl">The Path Forks Here</h1>
+      <p class="mx-auto mt-phi-1 max-w-md leading-relaxed text-cream/80">
+        What you sought is not at this turning. But the seeker who keeps looking always finds
+        the way &mdash; for what you seek, you will attract.
+      </p>
+      <div class="mt-phi-2 flex flex-wrap justify-center gap-4">
+        <a href="/" class="btn-soul">Return Home</a>
+        <a href="/knowledge" class="btn-soul-dark">Knowledge Hub</a>
+      </div>
+    </div>
+  </section>
+</Layout>

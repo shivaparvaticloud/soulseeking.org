@@ -1,0 +1,182 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Blocks from '../../components/Blocks.astro';
+import Glossary from '../../components/Glossary.astro';
+import Quiz from '../../components/Quiz.astro';
+import JourneyPath from '../../components/JourneyPath.astro';
+import ProgressFooter from '../../components/ProgressFooter.astro';
+import SoaringBird from '../../components/SoaringBird.astro';
+import SunburstRays from '../../components/SunburstRays.astro';
+import { getCourses } from '../../lib/content';
+
+export function getStaticPaths() {
+  return getCourses().map((c) => ({ params: { slug: c.slug }, props: { course: c } }));
+}
+
+const { course } = Astro.props;
+const levelName = ['', 'Foundation', 'Seeker', 'Adept', 'Deepening', 'Mastery'];
+const stations = course.modules.map((m) => m.title);
+const markerModules = course.modules.map((m) => ({ number: m.number, title: m.title }));
+const romans = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+---
+
+<Layout title={`${course.title} — Soul Seeking`} description={course.description} hasSearch={true}>
+  <article data-pagefind-body>
+    <!-- Title page -->
+    <header class="relative flex min-h-[80vh] items-center overflow-hidden bg-cosmos text-cream">
+      <div class="mx-auto max-w-3xl px-6 py-phi-4 text-center">
+        <div class="flex justify-center">
+          <SoaringBird size={200} class="opacity-90" />
+        </div>
+        <p class="mt-phi-1 accent text-gold">
+          {levelName[course.level] || `Level ${course.level}`} &middot; A Course in {course.modules.length} Modules
+        </p>
+        <h1 class="mt-3 text-balance text-4xl leading-tight tracking-wider sm:text-6xl">
+          {course.title}
+        </h1>
+        {course.tagline && <p class="mt-phi-1 text-xl italic text-cream/80">{course.tagline}</p>}
+        <p class="mt-phi-2 text-[0.65rem] uppercase tracking-ultra text-cream/50">
+          {course.readingMinutes} min &middot; Read at your own pace
+        </p>
+        <div class="mt-phi-2">
+          <a href="#brief" class="btn-soul">Begin the Course</a>
+        </div>
+      </div>
+      <div class="absolute inset-x-0 bottom-0 h-8">
+        <SunburstRays width={1200} height={100} rays={72} tone="gold" />
+      </div>
+    </header>
+
+    <!-- Brief & outcomes -->
+    <section id="brief" class="scroll-mt-24 bg-cream bg-stucco">
+      <div class="mx-auto max-w-reading px-6 py-phi-4">
+        {
+          course.brief.length > 0 && (
+            <div class="prose-soul">
+              <Blocks blocks={course.brief} tone="light" />
+            </div>
+          )
+        }
+        {
+          course.outcomes.length > 0 && (
+            <div class="mt-phi-2 rounded-sm border border-gold/40 bg-parchment/40 p-phi-2">
+              <p class="accent text-ochre">What You Will Uncover</p>
+              <ul class="mt-phi-1 space-y-2 pl-6 marker:text-ochre" style="list-style-type: disc">
+                {course.outcomes.map((o) => (
+                  <li class="text-earth/90" set:html={o} />
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </div>
+    </section>
+
+    <!-- Course map / journey -->
+    {
+      stations.length > 1 && (
+        <section class="bg-parchment/30">
+          <div class="mx-auto max-w-4xl px-6 py-phi-4">
+            <p class="accent text-center text-ochre">The Journey</p>
+            <h2 class="mt-2 text-center text-3xl tracking-extreme text-earth">Course Map</h2>
+            <div class="mx-auto mt-phi-2 max-w-2xl">
+              <JourneyPath stations={stations} />
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    <!-- Modules as chapters -->
+    {
+      course.modules.map((m) => (
+        <section
+          id={`module-${m.number}`}
+          class="scroll-mt-24 border-t border-gold/20 bg-cream"
+          data-module-marker
+          data-module-number={m.number}
+          data-module-title={m.title}
+        >
+          <div class="mx-auto max-w-reading px-6 py-phi-4">
+            <div class="text-center">
+              <p class="accent text-ochre">Module {romans[m.number - 1] || m.number}</p>
+              <h2 class="mt-2 text-balance text-3xl tracking-wide text-oxblood sm:text-4xl">
+                {m.title}
+              </h2>
+              <div class="mx-auto mt-3 h-10 w-full max-w-xs">
+                <SunburstRays width={400} height={70} rays={36} tone="ochre" />
+              </div>
+            </div>
+
+            {m.intro.length > 0 && (
+              <div class="prose-soul mt-phi-2">
+                <Blocks blocks={m.intro} tone="light" />
+              </div>
+            )}
+
+            {m.body.length > 0 && (
+              <div class="prose-soul mt-phi-1">
+                <Blocks blocks={m.body} tone="light" />
+              </div>
+            )}
+
+            {m.glossary.length > 0 && (
+              <div class="mt-phi-2">
+                <Glossary items={m.glossary} tone="light" />
+              </div>
+            )}
+
+            {m.summary.length > 0 && (
+              <div class="mt-phi-2 rounded-sm border-l-2 border-ochre/60 bg-parchment/30 py-phi-1 pl-phi-1 pr-4">
+                <p class="accent text-ochre">In Essence</p>
+                <div class="mt-2">
+                  <Blocks blocks={m.summary} tone="light" />
+                </div>
+              </div>
+            )}
+
+            {m.quiz.length > 0 && (
+              <Quiz
+                questions={m.quiz}
+                kicker={`Module ${romans[m.number - 1] || m.number} Quiz`}
+                title="Check Your Understanding"
+              />
+            )}
+          </div>
+        </section>
+      ))
+    }
+
+    <!-- Course summary -->
+    {
+      course.summary.length > 0 && (
+        <section class="border-t border-gold/20 bg-cosmos text-cream">
+          <div class="mx-auto max-w-reading px-6 py-phi-4">
+            <p class="accent text-center text-gold">In Closing</p>
+            <h2 class="mt-2 text-center text-3xl tracking-extreme">Course Summary</h2>
+            <div class="prose-soul mt-phi-2">
+              <Blocks blocks={course.summary} tone="dark" />
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    <!-- Final course quiz -->
+    {
+      course.finalQuiz.length > 0 && (
+        <section class="bg-cream">
+          <div class="mx-auto max-w-reading px-6 py-phi-4">
+            <Quiz questions={course.finalQuiz} kicker="Course Quiz" title="The Whole Path" />
+          </div>
+        </section>
+      )
+    }
+
+    <div class="bg-cream pb-phi-4 text-center">
+      <a href="/courses" class="btn-soul-dark">All Courses</a>
+    </div>
+  </article>
+
+  <ProgressFooter modules={markerModules} />
+</Layout>

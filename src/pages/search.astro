@@ -1,0 +1,50 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SunburstRays from '../components/SunburstRays.astro';
+---
+
+<Layout
+  title="Search — Soul Seeking"
+  description="Search the writings and courses of Soul Seeking."
+  hasSearch={true}
+>
+  <header class="relative overflow-hidden bg-cosmos text-cream">
+    <div class="mx-auto max-w-3xl px-6 py-phi-3 text-center">
+      <p class="accent text-gold">Find Your Thread</p>
+      <h1 class="mt-2 text-4xl tracking-ultra sm:text-5xl">Search</h1>
+      <p class="mx-auto mt-phi-1 max-w-xl text-cream/80">
+        Search across every writing and course. What you seek, you will attract.
+      </p>
+    </div>
+    <div class="h-8">
+      <SunburstRays width={1200} height={90} rays={60} tone="gold" />
+    </div>
+  </header>
+
+  <div class="mx-auto max-w-3xl px-6 py-phi-3">
+    <div id="search" class="soul-search"></div>
+    <noscript>
+      <p class="text-center text-earth/70">Search requires JavaScript to be enabled.</p>
+    </noscript>
+  </div>
+</Layout>
+
+<script is:inline src="/pagefind/pagefind-ui.js"></script>
+<script is:inline>
+  window.addEventListener('DOMContentLoaded', () => {
+    if (typeof window.PagefindUI === 'function') {
+      new window.PagefindUI({
+        element: '#search',
+        showSubResults: true,
+        showImages: false,
+        resetStyles: false,
+      });
+    } else {
+      const el = document.getElementById('search');
+      if (el) {
+        el.innerHTML =
+          '<p class="text-center text-earth/70">Search is available on the built site. Run a production build to generate the index.</p>';
+      }
+    }
+  });
+</script>
