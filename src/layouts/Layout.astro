@@ -1,4 +1,22 @@
 ---
+// Inside the frontmatter (the code fence at the top)
+const canonicalURL = new URL(Astro.url.pathname, 'https://soulseeking.org');
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Other head tags like charset, viewport, title, etc. -->
+    
+    <!-- Your Canonical Tag -->
+    <link rel="canonical" href={canonicalURL} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
+
+---
 import '@fontsource/eb-garamond/latin-400.css';
 import '@fontsource/eb-garamond/latin-500.css';
 import '@fontsource/eb-garamond/latin-600.css';
