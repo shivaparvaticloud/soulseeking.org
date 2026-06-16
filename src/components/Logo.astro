@@ -1,0 +1,74 @@
+---
+// Soul Seeking logo — a soaring bird formed from a radiating sunburst.
+// Fully generated geometry; no raster assets.
+interface Props {
+  size?: number;
+  withWordmark?: boolean;
+  tone?: 'gold' | 'earth';
+  class?: string;
+}
+const {
+  size = 44,
+  withWordmark = false,
+  tone = 'gold',
+  class: className = '',
+} = Astro.props;
+
+const stroke = tone === 'gold' ? '#E7C68B' : '#604C44';
+const disc = tone === 'gold' ? '#CC914E' : '#692828';
+
+// Radiating rays fanning upward from a low origin (the dawn / sunburst).
+const cx = 50;
+const cy = 60;
+const rays: { x2: number; y2: number; len: number }[] = [];
+const rayCount: number = 13;
+for (let i = 0; i < rayCount; i++) {
+  // spread across the upper half (-78deg .. +78deg from vertical)
+  const t = rayCount === 1 ? 0 : i / (rayCount - 1);
+  const angle = (-78 + t * 156) * (Math.PI / 180);
+  // longer rays toward the centre, shorter toward the wings -> wing silhouette
+  const len = 22 + 16 * Math.cos(angle);
+  const x2 = cx + len * Math.sin(angle);
+  const y2 = cy - len * Math.cos(angle);
+  rays.push({ x2, y2, len });
+}
+---
+
+<span class={`inline-flex items-center gap-3 ${className}`}>
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 100 100"
+    fill="none"
+    role="img"
+    aria-label="Soul Seeking"
+    class="shrink-0"
+  >
+    <g stroke={stroke} stroke-width="1.3" stroke-linecap="round">
+      {rays.map((r) => <line x1={cx} y1={cy} x2={r.x2} y2={r.y2} />)}
+    </g>
+    <!-- bird body suggested by two sweeping wing arcs over the rays -->
+    <path
+      d="M14 58 Q38 40 50 47 Q62 40 86 58"
+      stroke={stroke}
+      stroke-width="2"
+      fill="none"
+      stroke-linecap="round"
+    />
+    <!-- the rising sun disc -->
+    <circle cx={cx} cy={cy} r="6.5" fill={disc} />
+    <circle cx={cx} cy={cy} r="6.5" fill="none" stroke={stroke} stroke-width="1.2" />
+  </svg>
+  {
+    withWordmark && (
+      <span class="flex flex-col leading-none">
+        <span class="text-base tracking-extreme uppercase" style={`color:${tone === 'gold' ? '#EEEDE3' : '#604C44'}`}>
+          Soul Seeking
+        </span>
+        <span class="mt-1 text-[0.55rem] tracking-ultra uppercase" style={`color:${tone === 'gold' ? '#E7C68B' : '#CC914E'}`}>
+          Higher answers for deeper questions
+        </span>
+      </span>
+    )
+  }
+</span>

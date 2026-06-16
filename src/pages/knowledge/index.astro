@@ -1,0 +1,92 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import SunburstRays from '../../components/SunburstRays.astro';
+import { getArticles, getCategories } from '../../lib/content';
+
+const articles = getArticles();
+const categories = getCategories();
+---
+
+<Layout
+  title="Knowledge Hub — Soul Seeking"
+  description="Reflections and resources on life, Spirit and the soul — read slowly, one writing at a time."
+  hasSearch={true}
+>
+  <header class="relative overflow-hidden bg-cosmos text-cream">
+    <div class="mx-auto max-w-4xl px-6 py-phi-4 text-center">
+      <p class="accent text-gold">Reflections &amp; Resources</p>
+      <h1 class="mt-2 text-4xl tracking-ultra sm:text-5xl">Knowledge Hub</h1>
+      <p class="mx-auto mt-phi-1 max-w-xl text-lg leading-relaxed text-cream/80">
+        Wisdom on life, Spirit and the soul. Read slowly; let a single line work on you
+        for a day.
+      </p>
+    </div>
+    <div class="h-10">
+      <SunburstRays width={1200} height={110} rays={72} tone="gold" />
+    </div>
+  </header>
+
+  <div class="mx-auto max-w-6xl px-6 py-phi-3">
+    {
+      categories.length > 1 && (
+        <nav class="mb-phi-2 flex flex-wrap justify-center gap-x-6 gap-y-2" aria-label="Categories">
+          {categories.map((c) => (
+            <a
+              href={`#${c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+              class="text-[0.7rem] uppercase tracking-extreme text-ochre hover:text-oxblood"
+            >
+              {c.name} <span class="text-earth/40">({c.count})</span>
+            </a>
+          ))}
+        </nav>
+      )
+    }
+
+    {
+      categories.map((cat) => {
+        const items = articles.filter((a) => a.category === cat.name);
+        return (
+          <section
+            id={cat.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}
+            class="scroll-mt-28 py-phi-1"
+          >
+            <div class="mb-phi-1 flex items-baseline gap-4">
+              <h2 class="text-2xl tracking-extreme uppercase text-earth">{cat.name}</h2>
+              <div class="rule-gold flex-1 opacity-60" />
+            </div>
+            <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {items.map((a) => (
+                <a
+                  href={`/knowledge/${a.slug}`}
+                  class="reveal group flex flex-col rounded-sm border border-gold/40 bg-parchment/30 p-phi-2 transition-phi hover:border-ochre hover:bg-parchment/60"
+                >
+                  <h3 class="text-xl leading-snug tracking-wide text-oxblood">{a.title}</h3>
+                  <p class="mt-2 flex-1 text-sm leading-relaxed text-earth/80">
+                    {a.description}
+                  </p>
+                  <div class="mt-phi-1 flex items-center justify-between">
+                    <span class="accent text-ochre transition-phi group-hover:tracking-ultra">
+                      Read &rarr;
+                    </span>
+                    <span class="text-[0.65rem] uppercase tracking-extreme text-earth/40">
+                      {a.readingMinutes} min
+                    </span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        );
+      })
+    }
+
+    {
+      articles.length === 0 && (
+        <p class="py-phi-3 text-center text-earth/70">
+          No writings yet. Drop a <code>.txt</code> file into <code>content/knowledge/</code>{' '}
+          and it will appear here, fully formatted.
+        </p>
+      )
+    }
+  </div>
+</Layout>

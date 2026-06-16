@@ -1,0 +1,46 @@
+---
+// Fibonacci / golden-angle phyllotaxis arrangement of gilded dots (PDF p.19).
+interface Props {
+  size?: number;
+  points?: number;
+  tone?: 'gold' | 'ochre';
+  class?: string;
+}
+const {
+  size = 360,
+  points = 700,
+  tone = 'gold',
+  class: className = '',
+} = Astro.props;
+
+const fill = tone === 'gold' ? '#E7C68B' : '#CC914E';
+const golden = Math.PI * (3 - Math.sqrt(5)); // ~2.39996 rad
+const R = 50;
+const dots: { x: number; y: number; r: number; o: number }[] = [];
+for (let i = 0; i < points; i++) {
+  const radius = R * Math.sqrt(i / points);
+  const theta = i * golden;
+  const x = 50 + radius * Math.cos(theta);
+  const y = 50 + radius * Math.sin(theta);
+  const norm = i / points;
+  dots.push({
+    x,
+    y,
+    r: 0.4 + 1.5 * norm,
+    o: 0.35 + 0.6 * norm,
+  });
+}
+---
+
+<svg
+  viewBox="0 0 100 100"
+  width={size}
+  height={size}
+  role="img"
+  aria-label="Golden-angle phyllotaxis spiral"
+  class={className}
+>
+  <g fill={fill}>
+    {dots.map((d) => <circle cx={d.x} cy={d.y} r={d.r} opacity={d.o} />)}
+  </g>
+</svg>

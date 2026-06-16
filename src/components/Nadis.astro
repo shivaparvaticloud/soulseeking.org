@@ -1,0 +1,48 @@
+---
+// Fingerprint / nadi concentric swirls (PDF p.10): the subtle channels.
+// Generated as a set of slightly-eccentric concentric loops.
+interface Props {
+  size?: number;
+  rings?: number;
+  tone?: 'gold' | 'ochre' | 'earth';
+  class?: string;
+}
+const {
+  size = 320,
+  rings = 22,
+  tone = 'ochre',
+  class: className = '',
+} = Astro.props;
+
+const colors = { gold: '#E7C68B', ochre: '#CC914E', earth: '#604C44' };
+const stroke = colors[tone];
+
+const cx = 50;
+const cy = 50;
+const loops: string[] = [];
+for (let i = 1; i <= rings; i++) {
+  const rr = (i / rings) * 46;
+  // drift the centre to mimic a fingerprint core
+  const dx = 6 * Math.sin(i * 0.55);
+  const dy = 4 * Math.cos(i * 0.4);
+  const rx = rr * (0.82 + 0.14 * Math.sin(i * 0.7));
+  const ry = rr;
+  loops.push(
+    `M ${cx + dx - rx} ${cy + dy} a ${rx} ${ry} 0 1 0 ${rx * 2} 0 a ${rx} ${ry} 0 1 0 ${-rx * 2} 0`
+  );
+}
+---
+
+<svg
+  viewBox="0 0 100 100"
+  width={size}
+  height={size}
+  fill="none"
+  role="img"
+  aria-label="Concentric nadi channels"
+  class={className}
+>
+  <g stroke={stroke} stroke-width="0.4">
+    {loops.map((d, i) => <path d={d} opacity={0.25 + 0.5 * (i / rings)} />)}
+  </g>
+</svg>

@@ -1,0 +1,63 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SunburstRays from '../components/SunburstRays.astro';
+import Phyllotaxis from '../components/Phyllotaxis.astro';
+
+const steps = [
+  'Help three people, freely and without expectation.',
+  'Ask each of them to help three others in turn.',
+  'Tell no one to thank you — let the giving travel onward.',
+];
+---
+
+<Layout
+  title="Give Onward — Soul Seeking"
+  description="There is no fee and no donation button. Instead, help three people and ask them to help three others."
+>
+  <header class="relative overflow-hidden bg-cosmos text-cream">
+    <div class="mx-auto max-w-3xl px-6 py-phi-4 text-center">
+      <div class="flex justify-center">
+        <Phyllotaxis size={150} points={520} tone="gold" class="opacity-85" />
+      </div>
+      <h1 class="mt-phi-1 text-4xl tracking-ultra sm:text-5xl">Give Onward</h1>
+      <p class="mx-auto mt-phi-1 max-w-xl text-lg leading-relaxed text-cream/80">
+        This work is offered freely. There is nothing to buy and no button to press.
+      </p>
+    </div>
+    <div class="h-10">
+      <SunburstRays width={1200} height={110} rays={72} tone="gold" />
+    </div>
+  </header>
+
+  <section class="bg-cream bg-stucco">
+    <div class="mx-auto max-w-reading px-6 py-phi-4 text-center">
+      <blockquote class="text-balance text-2xl italic leading-loose text-oxblood sm:text-3xl">
+        &ldquo;Instead of thanking us, help three people &mdash; and tell them to help three
+        others.&rdquo;
+      </blockquote>
+
+      <ol class="mx-auto mt-phi-3 max-w-md space-y-phi-1 text-left">
+        {
+          steps.map((s, i) => (
+            <li class="reveal flex items-start gap-4">
+              <span class="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ochre text-ochre">
+                {i + 1}
+              </span>
+              <span class="text-lg leading-relaxed text-earth/90">{s}</span>
+            </li>
+          ))
+        }
+      </ol>
+
+      <p class="mx-auto mt-phi-3 max-w-lg leading-loose text-earth/80">
+        This is the only donation we ask: a quiet chain of kindness with no end and no ledger.
+        What you seek, you will attract; what you give, you set free. The path continues
+        onward, independently.
+      </p>
+
+      <div class="mt-phi-2">
+        <a href="/knowledge" class="btn-soul">Return to the Search</a>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,71 @@
+---
+import type { Block } from '../lib/parser';
+interface Props {
+  blocks: Block[];
+  tone?: 'light' | 'dark';
+}
+const { blocks, tone = 'light' } = Astro.props;
+const head = tone === 'dark' ? 'text-gold' : 'text-earth';
+const body = tone === 'dark' ? 'text-cream/85' : 'text-earth/90';
+const marker = tone === 'dark' ? 'marker:text-gold' : 'marker:text-ochre';
+const quoteBorder = tone === 'dark' ? 'border-gold/60' : 'border-ochre/70';
+---
+
+<div class="space-y-phi-1 leading-relaxed">
+  {
+    blocks.map((b) => {
+      if (b.kind === 'heading') {
+        const Tag = `h${b.level}` as 'h2' | 'h3' | 'h4';
+        const size =
+          b.level === 2 ? 'text-2xl' : b.level === 3 ? 'text-xl' : 'text-lg';
+        return (
+          <Tag id={b.id} class={`scroll-mt-28 ${size} tracking-extreme uppercase ${head} pt-phi-1`}>
+            {b.text}
+          </Tag>
+        );
+      }
+      if (b.kind === 'lead') {
+        return (
+          <p class={`lead text-lg sm:text-xl leading-loose ${body}`} set:html={b.html} />
+        );
+      }
+      if (b.kind === 'para') {
+        return <p class={`text-base sm:text-lg ${body}`} set:html={b.html} />;
+      }
+      if (b.kind === 'ul') {
+        return (
+          <ul class={`list-disc space-y-2 pl-6 ${marker} ${body}`}>
+            {b.items.map((it) => (
+              <li set:html={it} />
+            ))}
+          </ul>
+        );
+      }
+      if (b.kind === 'ol') {
+        return (
+          <ol class={`list-decimal space-y-2 pl-6 ${marker} ${body}`}>
+            {b.items.map((it) => (
+              <li set:html={it} />
+            ))}
+          </ol>
+        );
+      }
+      if (b.kind === 'quote') {
+        return (
+          <blockquote class={`border-l-2 ${quoteBorder} pl-5 italic text-lg ${body}`}>
+            <span set:html={b.html} />
+            {b.cite && (
+              <cite class="mt-2 block not-italic text-sm uppercase tracking-extreme text-ochre">
+                — {b.cite}
+              </cite>
+            )}
+          </blockquote>
+        );
+      }
+      if (b.kind === 'rule') {
+        return <div class="rule-gold mx-auto my-phi-1 w-32" />;
+      }
+      return null;
+    })
+  }
+</div>

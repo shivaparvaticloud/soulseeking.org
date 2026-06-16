@@ -1,0 +1,206 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    background-color: theme('colors.cream');
+    color: theme('colors.earth');
+    font-family: theme('fontFamily.serif');
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    background-color: theme('colors.cream');
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-weight: 400;
+    color: theme('colors.earth');
+  }
+
+  a {
+    color: theme('colors.oxblood');
+    text-decoration: none;
+    transition: color 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      letter-spacing 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  a:hover {
+    opacity: 0.78;
+  }
+
+  ::selection {
+    background: theme('colors.gold');
+    color: theme('colors.earth');
+  }
+
+  :focus-visible {
+    outline: 2px solid theme('colors.ochre');
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  /* Capitalised, widely-tracked display heading */
+  .display {
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-weight: 400;
+  }
+
+  .accent {
+    text-transform: uppercase;
+    letter-spacing: 0.34em;
+    font-weight: 600;
+    font-size: 0.72rem;
+  }
+
+  .rule-gold {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      theme('colors.gold'),
+      transparent
+    );
+  }
+
+  /* Editorial drop-cap on the opening paragraph of an article/brief */
+  .lead::first-letter {
+    float: left;
+    font-size: 3.4rem;
+    line-height: 0.82;
+    padding-right: 0.6rem;
+    padding-top: 0.3rem;
+    color: theme('colors.ochre');
+    font-weight: 500;
+  }
+
+  /* Primary call-to-action, drawn entirely in CSS */
+  .btn-soul {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 2.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.75rem;
+    color: theme('colors.gold');
+    border: 1px solid theme('colors.gold' / 50%);
+    background: transparent;
+    transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .btn-soul:hover {
+    letter-spacing: 0.28em;
+    border-color: theme('colors.gold');
+    background: theme('colors.gold' / 8%);
+    opacity: 1;
+  }
+
+  .btn-soul-dark {
+    color: theme('colors.oxblood');
+    border-color: theme('colors.ochre' / 60%);
+  }
+
+  .btn-soul-dark:hover {
+    border-color: theme('colors.ochre');
+    background: theme('colors.ochre' / 8%);
+  }
+}
+
+@layer utilities {
+  /* ---- Generative paper / stucco texture (SVG fractal noise, no image file) ---- */
+  .bg-stucco {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  }
+
+  /* Fine sacred-geometry weave for light backgrounds */
+  .bg-geometry {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23CC914E' stroke-width='0.5' opacity='0.16'%3E%3Ccircle cx='60' cy='60' r='20'/%3E%3Ccircle cx='60' cy='60' r='40'/%3E%3Ccircle cx='60' cy='60' r='58'/%3E%3Cline x1='60' y1='0' x2='60' y2='120'/%3E%3Cline x1='0' y1='60' x2='120' y2='60'/%3E%3Cline x1='17.6' y1='17.6' x2='102.4' y2='102.4'/%3E%3Cline x1='102.4' y1='17.6' x2='17.6' y2='102.4'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 120px 120px;
+  }
+
+  .bg-geometry-gold {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 L100 50 L50 100 L0 50 Z' fill='none' stroke='%23CC914E' stroke-width='0.4' opacity='0.14'/%3E%3Ccircle cx='50' cy='50' r='35' fill='none' stroke='%23CC914E' stroke-width='0.3' opacity='0.1'/%3E%3C/svg%3E");
+    background-size: 100px 100px;
+  }
+
+  /* Concentric weave on dark cosmos panels */
+  .bg-weave-dark {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='none' stroke='%23E7C68B' stroke-width='0.5' opacity='0.08'%3E%3Ccircle cx='80' cy='80' r='28'/%3E%3Ccircle cx='80' cy='80' r='52'/%3E%3Ccircle cx='80' cy='80' r='76'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 160px 160px;
+  }
+
+  /* ---- Entrance + scroll-reveal animations ---- */
+  .fade-in {
+    animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+  }
+  .fade-in-1 { animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards; opacity: 0; }
+  .fade-in-2 { animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards; opacity: 0; }
+  .fade-in-3 { animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.75s forwards; opacity: 0; }
+  .fade-in-4 { animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 1s forwards; opacity: 0; }
+
+  .reveal {
+    animation: reveal 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-timeline: view();
+    animation-range: entry 5% cover 26%;
+  }
+  .reveal-delay {
+    animation: reveal 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+    animation-timeline: view();
+    animation-range: entry 5% cover 30%;
+  }
+
+  .transition-phi {
+    transition: all 0.618s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(16px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Graceful fallback where scroll-timeline is unsupported */
+@supports not (animation-timeline: view()) {
+  .reveal,
+  .reveal-delay {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in, .fade-in-1, .fade-in-2, .fade-in-3, .fade-in-4,
+  .reveal, .reveal-delay {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

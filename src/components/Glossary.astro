@@ -1,0 +1,30 @@
+---
+import type { GlossaryItem } from '../lib/parser';
+interface Props {
+  items: GlossaryItem[];
+  tone?: 'light' | 'dark';
+  title?: string;
+}
+const { items, tone = 'light', title = 'Glossary of Sanskrit Terms' } = Astro.props;
+if (!items.length) return null;
+const wrap =
+  tone === 'dark'
+    ? 'border-gold/30 bg-cosmos-soft/60'
+    : 'border-ochre/30 bg-parchment/50';
+const termColor = tone === 'dark' ? 'text-gold' : 'text-oxblood';
+const meaningColor = tone === 'dark' ? 'text-cream/80' : 'text-earth/85';
+---
+
+<aside class={`rounded-sm border ${wrap} p-phi-1`} aria-label={title}>
+  <p class="accent mb-phi-1 text-ochre">{title}</p>
+  <dl class="space-y-3">
+    {
+      items.map((g) => (
+        <div class="grid grid-cols-1 gap-1 sm:grid-cols-[10rem_1fr] sm:gap-4">
+          <dt class={`font-semibold italic ${termColor}`}>{g.term}</dt>
+          <dd class={`text-sm leading-relaxed ${meaningColor}`}>{g.meaning}</dd>
+        </div>
+      ))
+    }
+  </dl>
+</aside>

@@ -1,0 +1,76 @@
+---
+// Sticky course-progress bar (PDF p.25). Highlights the reader's current
+// position as they scroll through the module chapters.
+interface Props {
+  modules: { number: number; title: string }[];
+}
+const { modules } = Astro.props;
+if (!modules.length) return null;
+---
+
+<div
+  id="courseProgress"
+  class="pointer-events-none fixed inset-x-0 bottom-0 z-30 translate-y-full opacity-0 transition-all duration-500"
+  aria-hidden="true"
+>
+  <div class="pointer-events-auto mx-auto max-w-6xl px-3 pb-3">
+    <div class="rounded-sm border border-gold/40 bg-cosmos/95 px-4 py-2.5 text-cream shadow-lg backdrop-blur">
+      <div class="flex items-center justify-between gap-4">
+        <span class="accent text-gold" id="cpLabel">Module 1</span>
+        <span class="hidden truncate text-sm text-cream/80 sm:block" id="cpTitle">{modules[0].title}</span>
+        <span class="accent text-cream/60" id="cpCount">1 / {modules.length}</span>
+      </div>
+      <div class="mt-2 h-[3px] w-full overflow-hidden rounded-full bg-cream/15">
+        <div id="cpBar" class="h-full w-0 bg-gradient-to-r from-ochre to-gold transition-all duration-500"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const wrap = document.getElementById('courseProgress');
+  const markers = Array.from(document.querySelectorAll<HTMLElement>('[data-module-marker]'));
+  if (wrap && markers.length) {
+    const total = markers.length;
+    const label = document.getElementById('cpLabel');
+    const titleEl = document.getElementById('cpTitle');
+    const countEl = document.getElementById('cpCount');
+    const bar = document.getElementById('cpBar');
+    let active = -1;
+
+    const setActive = (i: number) => {
+      if (i === active) return;
+      active = i;
+      const m = markers[i];
+      const num = m.dataset.moduleNumber || String(i + 1);
+      const title = m.dataset.moduleTitle || '';
+      if (label) label.textContent = `Module ${num}`;
+      if (titleEl) titleEl.textContent = title;
+      if (countEl) countEl.textContent = `${i + 1} / ${total}`;
+      if (bar) bar.style.width = `${Math.round(((i + 1) / total) * 100)}%`;
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        // show the bar once the course body is in view
+        for (const e of entries) {
+          const idx = markers.indexOf(e.target as HTMLElement);
+          if (e.isIntersecting && idx >= 0) setActive(idx);
+        }
+      },
+      { rootMargin: '-38% 0px -57% 0px', threshold: 0 }
+    );
+    markers.forEach((m) => io.observe(m));
+
+    // reveal the progress bar after scrolling past the title page
+    const onScroll = () => {
+      const show = window.scrollY > window.innerHeight * 0.6;
+      wrap.classList.toggle('translate-y-full', !show);
+      wrap.classList.toggle('opacity-0', !show);
+      wrap.setAttribute('aria-hidden', String(!show));
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    if (active === -1) setActive(0);
+  }
+</script>

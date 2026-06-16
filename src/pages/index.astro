@@ -1,0 +1,124 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Starfield from '../components/Starfield.astro';
+import SoaringBird from '../components/SoaringBird.astro';
+import SunburstRays from '../components/SunburstRays.astro';
+import Phyllotaxis from '../components/Phyllotaxis.astro';
+import { getCourses, getArticles } from '../lib/content';
+
+const courses = getCourses();
+const articles = getArticles();
+---
+
+<Layout
+  title="Soul Seeking — Higher Answers for Deeper Questions"
+  description="Welcome to your quiet quest within. Explore life\u2019s bigger mysteries, spirituality and the inner Self."
+>
+  <!-- SECTION 1 — Cosmos -->
+  <section class="relative flex min-h-[88vh] items-center justify-center overflow-hidden bg-cosmos text-cream">
+    <Starfield class="absolute inset-0 h-full w-full" density={1.2} />
+    <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-cosmos/10 via-cosmos/0 to-cosmos"></div>
+    <div class="relative z-10 mx-auto max-w-3xl px-6 text-center">
+      <div class="fade-in flex justify-center">
+        <SoaringBird size={300} class="opacity-95" />
+      </div>
+      <h1 class="fade-in-1 mt-phi-1 text-5xl tracking-ultra text-cream sm:text-6xl md:text-7xl">
+        Soul Seeking
+      </h1>
+      <p class="fade-in-2 mx-auto mt-phi-1 max-w-xl text-lg leading-relaxed text-cream/80">
+        Welcome to your quiet quest within. Explore life&rsquo;s bigger mysteries,
+        spirituality and the inner Self.
+      </p>
+      <div class="fade-in-3 mt-phi-2 flex flex-col items-center gap-5">
+        <a href="/knowledge" class="btn-soul">Begin the Search</a>
+        <span class="text-[0.6rem] uppercase tracking-ultra text-cream/40">Scroll to descend inward</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2 — Your Inward Guide, on ancient stucco -->
+  <section class="relative overflow-hidden bg-cream bg-stucco">
+    <div class="mx-auto max-w-reading px-6 py-phi-4 text-center">
+      <p class="reveal text-balance text-xl italic leading-loose text-oxblood sm:text-2xl">
+        &ldquo;The desire to know the Soul is the desire that will end all others.&rdquo;
+      </p>
+
+      <div class="reveal-delay mx-auto mt-phi-2 flex flex-col items-center">
+        <h2 class="text-3xl tracking-extreme text-earth sm:text-4xl">Your Inward Guide</h2>
+        <div class="mt-3 h-16 w-full max-w-md">
+          <SunburstRays width={600} height={90} rays={48} tone="ochre" class="reveal" />
+        </div>
+      </div>
+
+      <div class="reveal mt-phi-1 space-y-phi-1 text-left text-lg leading-loose text-earth/90">
+        <p>
+          Walk the ancient path to life&rsquo;s highest truths and deepest secrets. Here you
+          will find wisdom, courses, reflections and resources that enlighten us on life,
+          Spirit and the soul.
+        </p>
+        <blockquote class="border-l-2 border-ochre/70 pl-5 italic text-earth/80">
+          What is the purpose of life? How did I get here? Who am I? What is this entire
+          cosmos and creation? What is the best way to spend my time? How should I truly
+          live my life?
+        </blockquote>
+        <p>
+          Endless questions from an inquisitive, earnest soul. It has been said that for the
+          earnest seeker there will always be success &mdash; for what you seek, you will
+          attract. Let us now find a quiet place and begin your inward search.
+        </p>
+      </div>
+
+      <div class="reveal mt-phi-2">
+        <a href="/knowledge" class="btn-soul">Explore</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3 — The eternal soul (Gītā 2.23) -->
+  <section class="relative overflow-hidden bg-cosmos text-cream">
+    <div class="mx-auto flex max-w-4xl flex-col items-center px-6 py-phi-4 text-center">
+      <Phyllotaxis size={120} points={420} tone="gold" class="reveal opacity-80" />
+      <blockquote class="reveal-delay mt-phi-2 text-balance text-2xl italic leading-loose text-cream sm:text-3xl">
+        &ldquo;Weapons do not cut it, fire does not burn it, water does not wet it, and the
+        wind does not dry it. For the soul is eternal, all-pervading, unchanging, immovable,
+        and primeval.&rdquo;
+      </blockquote>
+      <p class="reveal mt-phi-1 accent text-gold">Bhagavad Gītā 2.23</p>
+    </div>
+  </section>
+
+  <!-- Where to begin — gentle wayfinding into the hubs -->
+  <section class="bg-cream">
+    <div class="mx-auto max-w-6xl px-6 py-phi-4">
+      <p class="accent text-center text-ochre">Where to Begin</p>
+      <div class="mx-auto mt-phi-2 grid max-w-4xl gap-6 md:grid-cols-2">
+        <a
+          href="/knowledge"
+          class="reveal group relative overflow-hidden rounded-sm border border-gold/40 bg-parchment/40 p-phi-2 transition-phi hover:border-ochre"
+        >
+          <h3 class="text-2xl tracking-extreme text-earth">Knowledge Hub</h3>
+          <p class="mt-3 leading-relaxed text-earth/80">
+            Reflections and resources on life, Spirit and the soul. {articles.length} writings
+            to read slowly.
+          </p>
+          <span class="mt-phi-1 inline-block accent text-oxblood transition-phi group-hover:tracking-ultra"
+            >Enter &rarr;</span
+          >
+        </a>
+        <a
+          href="/courses"
+          class="reveal-delay group relative overflow-hidden rounded-sm border border-gold/40 bg-parchment/40 p-phi-2 transition-phi hover:border-ochre"
+        >
+          <h3 class="text-2xl tracking-extreme text-earth">Courses</h3>
+          <p class="mt-3 leading-relaxed text-earth/80">
+            Guided journeys, structured as books with chapters, glossaries and quizzes.
+            {courses.length} courses to walk.
+          </p>
+          <span class="mt-phi-1 inline-block accent text-oxblood transition-phi group-hover:tracking-ultra"
+            >Enter &rarr;</span
+          >
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>
