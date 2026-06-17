@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none" role="img" aria-label="Soul Seeking — Higher answers for deeper questions">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#2a2118"/>
+      <stop offset="55%" stop-color="#120f0c"/>
+      <stop offset="100%" stop-color="#08080a"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F6E2B4"/>
+      <stop offset="100%" stop-color="#CC914E"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- faint concentric-square brand motif -->
+  <g fill="none" stroke="#E7C68B" stroke-width="1.4" stroke-dasharray="1 7" opacity="0.10">
+    <rect x="470" y="40" width="260" height="260" rx="40"/>
+    <rect x="510" y="80" width="180" height="180" rx="28"/>
+    <rect x="550" y="120" width="100" height="100" rx="16"/>
+  </g>
+
+  <!-- soaring eagle emblem -->
+  <g transform="translate(600,210)" fill="url(#gold)" stroke="#8a5a28" stroke-width="0.6">
+    <!-- left wing -->
+    <path d="M-8,8 Q-70,-34 -150,-44 Q-120,-20 -64,-8 Q-110,-6 -150,6 Q-96,16 -44,8 Q-78,22 -120,38 Q-64,34 -14,18 Z"/>
+    <!-- right wing -->
+    <path d="M8,8 Q70,-34 150,-44 Q120,-20 64,-8 Q110,-6 150,6 Q96,16 44,8 Q78,22 120,38 Q64,34 14,18 Z"/>
+    <!-- body -->
+    <path d="M-7,4 Q0,-6 7,4 L5,46 Q0,54 -5,46 Z"/>
+    <!-- head + beak -->
+    <path d="M-5,-2 Q-9,-7 -4,-6 Q1,-5 1,0 Q-2,2 -5,-2 Z"/>
+    <path d="M-6,-4 L-12,-3 L-6,-1 Z"/>
+    <!-- tail -->
+    <path d="M0,44 L-16,84 L-8,80 L0,90 L8,80 L16,84 Z"/>
+  </g>
+
+  <text x="600" y="430" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="92" letter-spacing="14" fill="#EEEDE3">SOUL SEEKING</text>
+  <text x="600" y="486" text-anchor="middle" font-family="Georgia, serif" font-size="30" letter-spacing="10" fill="#E7C68B">HIGHER ANSWERS FOR DEEPER QUESTIONS</text>
+  <text x="600" y="560" text-anchor="middle" font-family="Georgia, serif" font-size="24" fill="#EEEDE3" opacity="0.6">soulseeking.org</text>
+</svg>

@@ -9,6 +9,7 @@ import '../styles/global.css';
 import { ViewTransitions } from 'astro:transitions';
 import Logo from '../components/Logo.astro';
 import SiteFX from '../components/SiteFX.astro';
+import BrandDivider from '../components/BrandDivider.astro';
 
 interface Props {
   title?: string;
@@ -16,13 +17,58 @@ interface Props {
   hasSearch?: boolean;
   theme?: 'light' | 'dark';
   fxPage?: string;
+  ogType?: string;
+  image?: string;
+  jsonld?: Record<string, unknown> | Record<string, unknown>[];
+  noindex?: boolean;
+  keywords?: string;
 }
 
 const {
   title = 'Soul Seeking — Higher Answers for Deeper Questions',
   description = 'Timeless answers to life’s deepest questions — on meaning, the mind, and the Self within. A calm, modern path drawn from the world’s oldest wisdom, through courses and reflections.',
   fxPage = 'default',
+  ogType = 'website',
+  image = '/og.svg',
+  jsonld,
+  noindex = false,
+  keywords = 'soul, spirituality, self-inquiry, Vedanta, Upanishads, Bhagavad Gita, meditation, consciousness, the Self, atman, kosha, meaning of life, inner peace, wisdom',
 } = Astro.props;
+
+const site = Astro.site ?? new URL('https://soulseeking.org');
+const canonical = new URL(Astro.url.pathname, site).toString();
+const ogImage = new URL(image, site).toString();
+
+// ---- Structured data: Organization + WebSite (always), plus any page schema ----
+const org = {
+  '@type': 'Organization',
+  '@id': new URL('/#org', site).toString(),
+  name: 'Soul Seeking',
+  url: site.toString(),
+  logo: new URL('/favicon.svg', site).toString(),
+  description:
+    'Soul Seeking is a contemplative library on spirituality, the soul and life’s deepest questions, drawn from the Bhagavad-gītā, the Upaniṣads and the world’s wisdom traditions.',
+  slogan: 'Higher answers for deeper questions',
+};
+const website = {
+  '@type': 'WebSite',
+  '@id': new URL('/#website', site).toString(),
+  name: 'Soul Seeking',
+  url: site.toString(),
+  description,
+  publisher: { '@id': new URL('/#org', site).toString() },
+  inLanguage: 'en',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: new URL('/search?q={search_term_string}', site).toString(),
+    },
+    'query-input': 'required name=search_term_string',
+  },
+};
+const graph = [org, website, ...(Array.isArray(jsonld) ? jsonld : jsonld ? [jsonld] : [])];
+const ldjson = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
 
 const nav = [
   { href: '/', label: 'Home' },
@@ -69,12 +115,32 @@ const year = new Date().getFullYear();
     <meta name="theme-color" content="#08080A" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
-    <meta property="og:type" content="website" />
+    <meta name="keywords" content={keywords} />
+    <meta name="author" content="Soul Seeking" />
+    <meta
+      name="robots"
+      content={noindex
+        ? 'noindex, nofollow'
+        : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}
+    />
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Soul Seeking" href="/rss.xml" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:site_name" content="Soul Seeking" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Soul Seeking — a soaring eagle over a quiet cosmos" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <script type="application/ld+json" is:inline set:html={ldjson} />
     <ViewTransitions />
   </head>
   <body class="min-h-screen flex flex-col bg-void text-mist" data-fx-page={fxPage}>
@@ -169,7 +235,9 @@ const year = new Date().getFullYear();
       <slot />
     </main>
 
-    <footer class="relative z-10 mt-phi-3 overflow-hidden border-t border-white/10 bg-abyss text-mist">
+    <BrandDivider class="relative z-10 mt-phi-3" />
+
+    <footer class="relative z-10 overflow-hidden border-t border-white/10 bg-abyss text-mist">
       <div class="pointer-events-none absolute inset-0 aurora opacity-50"></div>
       <div class="bg-brand-contour pointer-events-none absolute inset-0 opacity-[0.06]"></div>
       <div class="relative z-10 mx-auto max-w-6xl px-5 py-phi-3">
@@ -212,42 +280,53 @@ const year = new Date().getFullYear();
     </footer>
 
     <script>
-      const toggle = document.getElementById('navToggle');
-      const menu = document.getElementById('mobileNav');
-      if (toggle && menu) {
-        toggle.addEventListener('click', () => {
-          const open = menu.classList.toggle('hidden') === false;
-          toggle.setAttribute('aria-expanded', String(open));
-        });
+      // Re-bind chrome on every navigation — with View Transitions the header
+      // and footer are swapped, so once-bound listeners would otherwise be lost
+      // (the mobile menu only worked after a full reload).
+      function bindChrome() {
+        const toggle = document.getElementById('navToggle');
+        const menu = document.getElementById('mobileNav');
+        if (toggle && menu && toggle.dataset.bound !== '1') {
+          toggle.dataset.bound = '1';
+          toggle.addEventListener('click', () => {
+            const open = menu.classList.toggle('hidden') === false;
+            toggle.setAttribute('aria-expanded', String(open));
+          });
+        }
+
+        // Persistent Motion: on/off control.
+        const root = document.documentElement;
+        const motionBtn = document.getElementById('motionToggle');
+        if (motionBtn) {
+          const label = motionBtn.querySelector('[data-motion-label]');
+          const sync = () => {
+            const off = root.getAttribute('data-motion') === 'off';
+            motionBtn.setAttribute('aria-pressed', String(!off));
+            motionBtn.setAttribute(
+              'aria-label',
+              off ? 'Motion is off. Turn gentle motion on.' : 'Motion is on. Turn gentle motion off.'
+            );
+            if (label) label.textContent = off ? 'Motion: Off' : 'Motion: On';
+          };
+          sync();
+          if (motionBtn.dataset.bound !== '1') {
+            motionBtn.dataset.bound = '1';
+            motionBtn.addEventListener('click', () => {
+              const off = root.getAttribute('data-motion') === 'off';
+              if (off) root.removeAttribute('data-motion');
+              else root.setAttribute('data-motion', 'off');
+              try {
+                localStorage.setItem('ss-motion', off ? 'on' : 'off');
+              } catch (e) {}
+              sync();
+              window.dispatchEvent(new CustomEvent('ss-motion-change'));
+            });
+          }
+        }
       }
 
-      // Persistent Motion: on/off control. Flips data-motion on <html>, saves the
-      // choice, and announces a change so the 3D island can pause/resume.
-      const root = document.documentElement;
-      const motionBtn = document.getElementById('motionToggle');
-      if (motionBtn) {
-        const label = motionBtn.querySelector('[data-motion-label]');
-        const sync = () => {
-          const off = root.getAttribute('data-motion') === 'off';
-          motionBtn.setAttribute('aria-pressed', String(!off));
-          motionBtn.setAttribute(
-            'aria-label',
-            off ? 'Motion is off. Turn gentle motion on.' : 'Motion is on. Turn gentle motion off.'
-          );
-          if (label) label.textContent = off ? 'Motion: Off' : 'Motion: On';
-        };
-        sync();
-        motionBtn.addEventListener('click', () => {
-          const off = root.getAttribute('data-motion') === 'off';
-          if (off) root.removeAttribute('data-motion');
-          else root.setAttribute('data-motion', 'off');
-          try {
-            localStorage.setItem('ss-motion', off ? 'on' : 'off');
-          } catch (e) {}
-          sync();
-          window.dispatchEvent(new CustomEvent('ss-motion-change'));
-        });
-      }
+      bindChrome();
+      document.addEventListener('astro:page-load', bindChrome);
     </script>
   </body>
 </html>

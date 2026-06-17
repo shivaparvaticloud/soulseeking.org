@@ -17,9 +17,38 @@ const levelName = ['', 'Foundation', 'Seeker', 'Adept', 'Deepening', 'Mastery'];
 const stations = course.modules.map((m) => m.title);
 const markerModules = course.modules.map((m) => ({ number: m.number, title: m.title }));
 const romans = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+
+const site = Astro.site ?? new URL('https://soulseeking.org');
+const url = new URL(Astro.url.pathname, site).toString();
+const jsonld = [
+  {
+    '@type': 'Course',
+    name: course.title,
+    description: course.description,
+    inLanguage: 'en',
+    url,
+    provider: { '@type': 'Organization', name: 'Soul Seeking', '@id': new URL('/#org', site).toString() },
+    isAccessibleForFree: true,
+    timeRequired: `PT${course.readingMinutes}M`,
+    numberOfCredits: course.modules.length,
+    hasCourseInstance: {
+      '@type': 'CourseInstance',
+      courseMode: 'online',
+      courseWorkload: `PT${course.readingMinutes}M`,
+    },
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: site.toString() },
+      { '@type': 'ListItem', position: 2, name: 'Courses', item: new URL('/courses/', site).toString() },
+      { '@type': 'ListItem', position: 3, name: course.title, item: url },
+    ],
+  },
+];
 ---
 
-<Layout title={`${course.title} — Soul Seeking`} description={course.description} hasSearch={true} fxPage="courses">
+<Layout title={`${course.title} — Soul Seeking`} description={course.description} hasSearch={true} fxPage="courses" ogType="article" jsonld={jsonld}>
   <CourseChapterNav modules={markerModules} hasBrief={course.brief.length > 0} />
   <article data-pagefind-body>
     <!-- Title page -->
