@@ -7,6 +7,7 @@ import JourneyPath from '../../components/JourneyPath.astro';
 import ProgressFooter from '../../components/ProgressFooter.astro';
 import SoaringBird from '../../components/SoaringBird.astro';
 import SunburstRays from '../../components/SunburstRays.astro';
+import MeditationFigures from '../../components/MeditationFigures.astro';
 import { getCourses } from '../../lib/content';
 
 export function getStaticPaths() {
@@ -24,7 +25,12 @@ const romans = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI
   <article data-pagefind-body>
     <!-- Title page -->
     <header class="relative flex min-h-[80vh] items-center overflow-hidden bg-cosmos text-cream">
-      <div class="mx-auto max-w-3xl px-6 py-phi-4 text-center">
+      <MeditationFigures
+        class="absolute inset-x-0 bottom-0 h-[55%]"
+        tone="gold"
+        opacity={0.34}
+      />
+      <div class="relative z-10 mx-auto max-w-3xl px-6 py-phi-4 text-center">
         <div class="flex justify-center">
           <SoaringBird size={200} class="opacity-90" />
         </div>

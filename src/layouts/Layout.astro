@@ -7,6 +7,7 @@ import '@fontsource/eb-garamond/latin-400-italic.css';
 import '@fontsource/eb-garamond/latin-500-italic.css';
 import '../styles/global.css';
 import Logo from '../components/Logo.astro';
+import MeditationFigures from '../components/MeditationFigures.astro';
 
 interface Props {
   title?: string;
@@ -151,8 +152,9 @@ const year = new Date().getFullYear();
       <slot />
     </main>
 
-    <footer class="mt-phi-3 border-t border-gold/30 bg-cosmos text-cream">
-      <div class="mx-auto max-w-6xl px-5 py-phi-3">
+    <footer class="relative mt-phi-3 overflow-hidden border-t border-gold/30 bg-cosmos text-cream">
+      <MeditationFigures class="absolute inset-0 h-full w-full" tone="gold" opacity={0.22} />
+      <div class="relative z-10 mx-auto max-w-6xl px-5 py-phi-3">
         <div class="flex flex-col items-center gap-5 text-center">
           <Logo size={42} tone="gold" />
           <p class="accent text-gold">

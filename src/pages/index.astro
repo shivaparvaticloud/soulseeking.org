@@ -4,6 +4,7 @@ import Starfield from '../components/Starfield.astro';
 import SoaringBird from '../components/SoaringBird.astro';
 import SunburstRays from '../components/SunburstRays.astro';
 import Phyllotaxis from '../components/Phyllotaxis.astro';
+import MeditationFigures from '../components/MeditationFigures.astro';
 import { getCourses, getArticles } from '../lib/content';
 
 const courses = getCourses();
@@ -17,6 +18,11 @@ const articles = getArticles();
   <!-- SECTION 1 — Cosmos -->
   <section class="relative flex min-h-[88vh] items-center justify-center overflow-hidden bg-cosmos text-cream">
     <Starfield class="absolute inset-0 h-full w-full" density={1.2} />
+    <MeditationFigures
+      class="absolute inset-x-0 bottom-0 h-[58%]"
+      tone="gold"
+      opacity={0.42}
+    />
     <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-cosmos/10 via-cosmos/0 to-cosmos"></div>
     <div class="relative z-10 mx-auto max-w-3xl px-6 text-center">
       <div class="fade-in flex justify-center">
@@ -76,7 +82,8 @@ const articles = getArticles();
 
   <!-- SECTION 3 — The eternal soul (Gītā 2.23) -->
   <section class="relative overflow-hidden bg-cosmos text-cream">
-    <div class="mx-auto flex max-w-4xl flex-col items-center px-6 py-phi-4 text-center">
+    <MeditationFigures class="absolute inset-0 h-full w-full" tone="gold" opacity={0.22} />
+    <div class="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-6 py-phi-4 text-center">
       <Phyllotaxis size={120} points={420} tone="gold" class="reveal opacity-80" />
       <blockquote class="reveal-delay mt-phi-2 text-balance text-2xl italic leading-loose text-cream sm:text-3xl">
         &ldquo;Weapons do not cut it, fire does not burn it, water does not wet it, and the
