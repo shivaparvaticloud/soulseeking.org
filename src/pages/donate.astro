@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import SunburstRays from '../components/SunburstRays.astro';
 import Phyllotaxis from '../components/Phyllotaxis.astro';
+import MeditationFigures from '../components/MeditationFigures.astro';
 
 const steps = [
   'Help three people, freely and without expectation.',
@@ -15,7 +16,8 @@ const steps = [
   description="There is no fee and no donation button. Instead, help three people and ask them to help three others."
 >
   <header class="relative overflow-hidden bg-cosmos text-cream">
-    <div class="mx-auto max-w-3xl px-6 py-phi-4 text-center">
+    <MeditationFigures class="absolute inset-0 h-full w-full" tone="gold" opacity={0.3} />
+    <div class="relative z-10 mx-auto max-w-3xl px-6 py-phi-4 text-center">
       <div class="flex justify-center">
         <Phyllotaxis size={150} points={520} tone="gold" class="opacity-85" />
       </div>

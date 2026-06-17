@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import SunburstRays from '../../components/SunburstRays.astro';
 import Phyllotaxis from '../../components/Phyllotaxis.astro';
+import MeditationFigures from '../../components/MeditationFigures.astro';
 import { getCourses } from '../../lib/content';
 
 const courses = getCourses();
@@ -14,7 +15,8 @@ const levelName = ['', 'Foundation', 'Seeker', 'Adept', 'Deepening', 'Mastery'];
   hasSearch={true}
 >
   <header class="relative overflow-hidden bg-cosmos text-cream">
-    <div class="mx-auto max-w-4xl px-6 py-phi-4 text-center">
+    <MeditationFigures class="absolute inset-0 h-full w-full" tone="gold" opacity={0.3} />
+    <div class="relative z-10 mx-auto max-w-4xl px-6 py-phi-4 text-center">
       <p class="accent text-gold">Guided Journeys</p>
       <h1 class="mt-2 text-4xl tracking-ultra sm:text-5xl">Courses</h1>
       <p class="mx-auto mt-phi-1 max-w-xl text-lg leading-relaxed text-cream/80">

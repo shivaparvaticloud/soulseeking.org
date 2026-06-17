@@ -94,36 +94,65 @@
     font-weight: 500;
   }
 
-  /* Primary call-to-action, drawn entirely in CSS */
-  .btn-soul {
+  /* ---- Unified button system — one high-contrast style, used everywhere ----
+     .btn-soul        = primary  (solid ochre, reads on both dark + light)
+     .btn-soul-dark   = secondary (outlined, same shape and rhythm)
+     Both share size, focus ring and motion for a consistent, distinct feel. */
+  .btn-soul,
+  .btn-soul-dark {
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
-    padding: 0.85rem 2.2rem;
+    justify-content: center;
+    gap: 0.55rem;
+    padding: 0.9rem 2.4rem;
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    font-size: 0.75rem;
-    color: theme('colors.gold');
-    border: 1px solid theme('colors.gold' / 50%);
-    background: transparent;
-    transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Primary — solid, the clearest call to action on any background */
+  .btn-soul {
+    color: theme('colors.cream');
+    background: theme('colors.ochre');
+    border: 1px solid theme('colors.gold');
+    box-shadow: 0 2px 10px theme('colors.cosmos' / 18%);
   }
 
   .btn-soul:hover {
-    letter-spacing: 0.28em;
+    color: theme('colors.gold');
+    background: theme('colors.oxblood');
     border-color: theme('colors.gold');
-    background: theme('colors.gold' / 8%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px theme('colors.cosmos' / 30%);
     opacity: 1;
   }
 
+  /* Secondary — outlined, lower emphasis, same footprint.
+     Ochre text is the one brand tone legible on both cream and cosmos. */
   .btn-soul-dark {
-    color: theme('colors.oxblood');
-    border-color: theme('colors.ochre' / 60%);
+    color: theme('colors.ochre');
+    background: transparent;
+    border: 2px solid theme('colors.ochre');
   }
 
   .btn-soul-dark:hover {
+    color: theme('colors.cream');
+    background: theme('colors.ochre');
     border-color: theme('colors.ochre');
-    background: theme('colors.ochre' / 8%);
+    transform: translateY(-2px);
+    opacity: 1;
+  }
+
+  /* Clear, visible keyboard focus for every button */
+  .btn-soul:focus-visible,
+  .btn-soul-dark:focus-visible {
+    outline: 2px solid theme('colors.gold');
+    outline-offset: 3px;
   }
 }
 

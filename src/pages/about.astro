@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import SunburstRays from '../components/SunburstRays.astro';
 import Nadis from '../components/Nadis.astro';
 import SoaringBird from '../components/SoaringBird.astro';
+import MeditationFigures from '../components/MeditationFigures.astro';
 
 const personality = [
   {
@@ -28,7 +29,8 @@ const values = [
 
 <Layout title="About — Soul Seeking" description="Who we are, what we value, and why this quiet quest exists.">
   <header class="relative overflow-hidden bg-cosmos text-cream">
-    <div class="mx-auto flex max-w-4xl flex-col items-center px-6 py-phi-4 text-center">
+    <MeditationFigures class="absolute inset-0 h-full w-full" tone="gold" opacity={0.3} />
+    <div class="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-6 py-phi-4 text-center">
       <SoaringBird size={220} />
       <h1 class="mt-phi-1 text-4xl tracking-ultra sm:text-5xl">About Soul Seeking</h1>
       <p class="mt-phi-1 max-w-xl text-lg leading-relaxed text-cream/80">
