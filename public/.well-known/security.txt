@@ -1,0 +1,8 @@
+Contact: mailto:security@soulseeking.org
+Expires: 2027-06-18T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://soulseeking.org/.well-known/security.txt
+
+# Soul Seeking is a static, privacy-first site (no accounts, no cookies,
+# no trackers, no third-party requests). Please report any security concern
+# to the contact above.
