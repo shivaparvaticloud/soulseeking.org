@@ -3,10 +3,20 @@ import Layout from '../layouts/Layout.astro';
 import HomeAtmosphere from '../components/HomeAtmosphere.astro';
 import Phyllotaxis from '../components/Phyllotaxis.astro';
 import KosaScene from '../components/KosaScene.astro';
+import ArtPlate from '../components/ArtPlate.astro';
 import { getCourses, getArticles } from '../lib/content';
 
 const courses = getCourses();
 const articles = getArticles();
+
+const atelierPlates = [
+  { variant: 'yantra', title: 'Yantra' },
+  { variant: 'mandala', title: 'Mandala' },
+  { variant: 'sahasrara', title: 'Sahasrāra' },
+  { variant: 'origins', title: 'Origins' },
+  { variant: 'stardust', title: 'Stardust' },
+  { variant: 'weave', title: 'Weave' },
+];
 ---
 
 <Layout
@@ -96,6 +106,36 @@ const articles = getArticles();
   <div class="border-t border-white/10">
     <KosaScene />
   </div>
+
+  <!-- ░░ CODED ARTWORKS — The Atelier ░░ -->
+  <section class="relative border-t border-white/10">
+    <div class="mx-auto max-w-6xl px-6 py-phi-4">
+      <p class="kicker">Coded Artworks</p>
+      <h2 class="mt-2 display-lg text-mist">The Atelier</h2>
+      <p class="mt-4 font-serif text-lg text-mist/70">
+        Every piece is hand-drawn in pure code — no photographs, no AI images.
+      </p>
+
+      <div class="mt-phi-2 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          atelierPlates.map((p) => (
+            <figure class="card-soul overflow-hidden">
+              <div class="aspect-[3/4] w-full overflow-hidden rounded">
+                <ArtPlate variant={p.variant} />
+              </div>
+              <figcaption class="mt-4 font-sans text-[0.66rem] uppercase tracking-[0.22em] text-mist/70">
+                {p.title}
+              </figcaption>
+            </figure>
+          ))
+        }
+      </div>
+
+      <div class="mt-phi-2">
+        <a href="/gallery" class="btn-soul-dark">View all ten</a>
+      </div>
+    </div>
+  </section>
 
   <!-- ░░ WHERE TO BEGIN ░░ -->
   <section class="relative border-t border-white/10">

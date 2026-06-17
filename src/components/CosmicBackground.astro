@@ -201,7 +201,15 @@ function spiralArm(armIndex: number) {
     0%,100% { transform: translate3d(0,0,0) scale(1.12); }
     50% { transform: translate3d(-3%,2.5%,0) scale(1.0); }
   }
-  .hd-stars { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hd-stars {
+    position: absolute; inset: -7%; width: 114%; height: 114%;
+    will-change: transform;
+    animation: star-drift 150s ease-in-out infinite alternate;
+  }
+  @keyframes star-drift {
+    0% { transform: translate3d(-1.6%, -1.1%, 0) scale(1.02); }
+    100% { transform: translate3d(1.6%, 1.3%, 0) scale(1.05); }
+  }
   .deep-grain {
     position: absolute; inset: 0; opacity: 0.04;
     background-size: 200px 200px;
@@ -471,7 +479,7 @@ function spiralArm(armIndex: number) {
     .stars, .bh-ring, .galaxy, .neb, .wh-ring, .sn-core, .sn-rays, .sn-shell,
     .au, .comet, .ec-corona, .ec-glint, .sf-slow, .sf-mid, .sf-fast,
     .pl-core, .pl-beams, .pl-pulse,
-    .deep-gas-1, .deep-gas-2, .deep-gas-3 {
+    .deep-gas-1, .deep-gas-2, .deep-gas-3, .hd-stars {
       animation: none !important;
     }
     .comet, .wh-ring, .sn-shell, .pl-pulse { opacity: .6; }

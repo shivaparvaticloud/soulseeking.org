@@ -3,7 +3,10 @@ import Layout from '../../layouts/Layout.astro';
 import Blocks from '../../components/Blocks.astro';
 import Glossary from '../../components/Glossary.astro';
 import ThreeModes from '../../components/ThreeModes.astro';
+import ArtPlate from '../../components/ArtPlate.astro';
 import { getArticles } from '../../lib/content';
+
+const ARTS = ['yantra','mandala','kolam','jali','sahasrara','origins','songline','tablet','stardust','weave'];
 
 export function getStaticPaths() {
   return getArticles().map((a) => ({ params: { slug: a.slug }, props: { article: a } }));
@@ -14,6 +17,7 @@ const all = getArticles();
 const idx = all.findIndex((a) => a.slug === article.slug);
 const prev = idx > 0 ? all[idx - 1] : null;
 const next = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
+const artVariant = ARTS[((idx >= 0 ? idx : 0) % ARTS.length + ARTS.length) % ARTS.length];
 
 const toc = article.blocks.filter(
   (b): b is Extract<typeof b, { kind: 'heading' }> => b.kind === 'heading' && b.level <= 3
@@ -59,6 +63,11 @@ const jsonld = [
         <h1 data-reveal-lines class="mt-5 display-xl text-balance text-mist">
           {article.title}
         </h1>
+        <figure class="card-soul mx-auto mt-phi-2 max-w-[16rem] overflow-hidden">
+          <div class="aspect-[3/4] w-full overflow-hidden rounded">
+            <ArtPlate variant={artVariant} />
+          </div>
+        </figure>
         {
           article.quote && (
             <blockquote class="pull mx-auto mt-phi-2 max-w-xl text-balance text-3xl leading-relaxed text-mist">
