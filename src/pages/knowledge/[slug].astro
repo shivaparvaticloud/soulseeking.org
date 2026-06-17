@@ -23,13 +23,13 @@ const toc = article.blocks.filter(
 const showThreeModes = /three-modes|gunas|guna/i.test(article.slug);
 ---
 
-<Layout title={`${article.title} — Soul Seeking`} description={article.description} hasSearch={true}>
+<Layout title={`${article.title} — Soul Seeking`} description={article.description} hasSearch={true} fxPage="knowledge">
   <article data-pagefind-body>
     <!-- Title page -->
     <header class="relative">
       <div class="mx-auto max-w-reading px-6 py-phi-4 text-center">
         <p class="kicker" data-pagefind-meta="category">{article.category}</p>
-        <h1 class="mt-5 display-xl text-balance text-mist">
+        <h1 data-reveal-lines class="mt-5 display-xl text-balance text-mist">
           {article.title}
         </h1>
         {

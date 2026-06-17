@@ -1,16 +1,17 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import TurningPages from '../../components/TurningPages.astro';
+import CourseTabs from '../../components/CourseTabs.astro';
 import { getCourses } from '../../lib/content';
 
 const courses = getCourses();
-const levelName = ['', 'Foundation', 'Seeker', 'Adept', 'Deepening', 'Mastery'];
 ---
 
 <Layout
   title="Courses — Soul Seeking"
   description="Guided journeys inward, each structured as a book with chapters, glossaries and quizzes."
   hasSearch={true}
+  fxPage="courses"
 >
   <header class="border-b border-white/10">
     <div class="mx-auto max-w-4xl px-6 py-phi-4 text-center">
@@ -27,46 +28,14 @@ const levelName = ['', 'Foundation', 'Seeker', 'Adept', 'Deepening', 'Mastery'];
     </div>
   </header>
 
-  <div class="mx-auto max-w-5xl px-6 py-phi-3">
-    <div class="grid gap-6 md:grid-cols-2">
-      {
-        courses.map((c) => (
-          <a
-            href={`/courses/${c.slug}`}
-            class="card-soul reveal group flex flex-col p-phi-2"
-          >
-            <div class="flex flex-wrap items-center gap-3">
-              <span class="font-sans text-[0.6rem] uppercase tracking-[0.3em] text-gold/70">
-                {levelName[c.level] || `Level ${c.level}`}
-              </span>
-              <span class="text-mist/30">&middot;</span>
-              <span class="font-sans text-[0.6rem] uppercase tracking-[0.3em] text-mist/50">
-                {c.modules.length} modules &middot; {c.readingMinutes} min
-              </span>
-            </div>
-            <h2 class="mt-3 display-lg text-2xl text-mist sm:text-3xl">{c.title}</h2>
-            {c.tagline && (
-              <p class="mt-2 font-serif text-lg italic text-mist/65">{c.tagline}</p>
-            )}
-            <p class="mt-phi-1 flex-1 font-serif leading-loose text-mist/65">{c.description}</p>
-            <span class="mt-6 inline-flex items-center gap-2 font-sans text-[0.66rem] uppercase tracking-[0.22em] text-mist transition-phi group-hover:text-gold">
-              Open the Book{' '}
-              <span aria-hidden="true" class="transition-phi group-hover:translate-x-1">
-                &rarr;
-              </span>
-            </span>
-          </a>
-        ))
-      }
-    </div>
-
-    {
-      courses.length === 0 && (
-        <p class="py-phi-3 text-center font-serif text-mist/70">
-          No courses yet. Drop a <code>.txt</code> file into <code>content/courses/</code> and
-          it will be bound into a book here.
-        </p>
-      )
-    }
-  </div>
+  {
+    courses.length === 0 ? (
+      <p class="py-phi-3 text-center font-serif text-mist/70">
+        No courses yet. Drop a <code>.txt</code> file into <code>content/courses/</code> and
+        it will be bound into a book here.
+      </p>
+    ) : (
+      <CourseTabs courses={courses} />
+    )
+  }
 </Layout>

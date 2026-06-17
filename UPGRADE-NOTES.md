@@ -8,6 +8,48 @@ show off?_
 
 ---
 
+## Experience layer — WebGL + scroll choreography
+
+An award-tier motion layer bent toward meditation (slow easing, light from
+darkness, incense motes), built as lazy Astro islands. **All content is
+server-rendered HTML; the WebGL is decoration layered on top — never the only
+source of text or links.**
+
+- **`src/lib/fx/`** — the whole layer, code-split and loaded only when motion is
+  allowed:
+  - `background.ts` — a persistent **Three.js** (reused, no new WebGL dep) GLSL
+    light/dust field + additive motes. Scroll progress _descends inward_: the
+    central light grows and the noise layers part. Capped pixel-ratio, lighter
+    on mobile, pauses when the tab is hidden, WebGL feature-detected.
+  - `scroll.ts` — **Lenis** smooth scroll + **GSAP/ScrollTrigger**: block
+    reveals (`[data-reveal]`), line-by-line heading/quote reveals
+    (`[data-reveal-lines]`), and scroll-drawn SVG paths (`[data-draw]` +
+    `[data-draw-path]`).
+  - `cursor.ts` — a soft gold custom cursor; pointer-fine devices only.
+  - `boot.ts` / `env.ts` — orchestration + motion/touch/reduced-motion guards.
+- **`SiteFX.astro`** renders the one persistent `#fx-canvas` + cursor, kept alive
+  across **Astro View Transitions** (slow warm cross-dissolve). The FX rebinds
+  per page on `astro:page-load`; each page sets a warm tint via `fxPage` →
+  `data-fx-page`.
+- **Degradation:** `prefers-reduced-motion` and the footer **Motion** toggle
+  ship _none_ of the heavy JS (verified by network interception) and keep every
+  page fully readable. No-WebGL falls back to a warm CSS poster.
+- **Dependencies added:** `lenis` (~5 KB gz) and `gsap` + `ScrollTrigger`
+  (~46 KB gz) — self-hosted, lazy, zero third-party requests. CSP unchanged.
+
+## Courses — tabbed browser
+
+`src/components/CourseTabs.astro` replaces the course-card list with a
+data-driven ARIA `tablist` (one tab per course, scales as `.txt` courses are
+added). Each panel surfaces the course's structure — chapters, glossary/quiz
+counts, read time, outcomes — and an **Open the Book** CTA to the existing
+`/courses/[slug]` reader. Deep-linkable via `?c=slug` (push/pop state,
+back-button friendly), keyboard-operable (arrow/Home/End, roving tabindex,
+focus management), and **all panels are server-rendered** (SEO-safe; only
+visibility toggles client-side, so it works with no JS).
+
+---
+
 ## Design language — dark, cinematic, premium
 
 The site is **dark-first**, in the register of Lusion / Oryzo / Porsche Dream
