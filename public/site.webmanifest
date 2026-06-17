@@ -1,0 +1,14 @@
+{
+  "name": "Soul Seeking",
+  "short_name": "Soul Seeking",
+  "description": "Higher answers for deeper questions — a contemplative library on the soul, the mind and the meaning of life.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#08080A",
+  "theme_color": "#08080A",
+  "lang": "en",
+  "icons": [
+    { "src": "/favicon.svg", "type": "image/svg+xml", "sizes": "any", "purpose": "any" }
+  ]
+}
