@@ -6,18 +6,22 @@ import '@fontsource/eb-garamond/latin-600.css';
 import '@fontsource/eb-garamond/latin-400-italic.css';
 import '@fontsource/eb-garamond/latin-500-italic.css';
 import '../styles/global.css';
+import { ViewTransitions } from 'astro:transitions';
 import Logo from '../components/Logo.astro';
+import SiteFX from '../components/SiteFX.astro';
 
 interface Props {
   title?: string;
   description?: string;
   hasSearch?: boolean;
   theme?: 'light' | 'dark';
+  fxPage?: string;
 }
 
 const {
   title = 'Soul Seeking — Higher Answers for Deeper Questions',
   description = 'A quiet quest within. Explore life’s bigger mysteries, spirituality and the inner Self through authentic Vedic wisdom, courses and reflections.',
+  fxPage = 'default',
 } = Astro.props;
 
 const nav = [
@@ -71,8 +75,10 @@ const year = new Date().getFullYear();
     <meta property="og:description" content={description} />
     <meta property="og:site_name" content="Soul Seeking" />
     <meta name="twitter:card" content="summary" />
+    <ViewTransitions />
   </head>
-  <body class="min-h-screen flex flex-col bg-void text-mist">
+  <body class="min-h-screen flex flex-col bg-void text-mist" data-fx-page={fxPage}>
+    <SiteFX />
     <a
       href="#main"
       class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-mist focus:px-4 focus:py-2 focus:text-void"

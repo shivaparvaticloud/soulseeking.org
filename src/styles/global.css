@@ -401,6 +401,96 @@
   }
 }
 
+/* ============================================================
+   FX layer — persistent WebGL canvas + custom cursor
+   ============================================================ */
+
+/* The shared background canvas. Carries a warm CSS poster so that, without
+   WebGL (or under reduced motion), there is still light emerging from the dark. */
+#fx-root { contain: layout style; }
+#fx-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 50% at 50% 38%, rgba(231, 198, 139, 0.1), transparent 70%),
+    radial-gradient(70% 60% at 50% 120%, rgba(204, 91, 58, 0.08), transparent 70%),
+    var(--void);
+}
+
+/* Custom cursor — a soft gold dot with a trailing ring. */
+#fx-cursor-dot,
+#fx-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  border-radius: 999px;
+  opacity: 0;
+  will-change: transform;
+  transform: translate(-100px, -100px);
+  margin-left: -3px;
+  margin-top: -3px;
+}
+#fx-cursor-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+}
+#fx-cursor-ring {
+  width: 34px;
+  height: 34px;
+  margin-left: -17px;
+  margin-top: -17px;
+  border: 1px solid rgba(231, 198, 139, 0.55);
+  transition: width 0.3s var(--ease-soul), height 0.3s var(--ease-soul),
+    margin 0.3s var(--ease-soul), background-color 0.3s var(--ease-soul),
+    border-color 0.3s var(--ease-soul);
+}
+#fx-cursor-ring.is-hover {
+  width: 54px;
+  height: 54px;
+  margin-left: -27px;
+  margin-top: -27px;
+  background: rgba(231, 198, 139, 0.08);
+  border-color: var(--gold);
+}
+#fx-cursor-ring.is-down { background: rgba(231, 198, 139, 0.18); }
+
+html.has-custom-cursor,
+html.has-custom-cursor a,
+html.has-custom-cursor button,
+html.has-custom-cursor [role='tab'] { cursor: none; }
+html.has-custom-cursor #fx-cursor-dot,
+html.has-custom-cursor #fx-cursor-ring { opacity: 1; }
+
+/* GSAP line-reveal scaffolding: keep content visible if scripts never run. */
+[data-reveal-lines] { will-change: transform; }
+.fx-line { display: block; overflow: hidden; }
+
+/* ---- Page transitions (View Transitions API) — a slow, warm cross-dissolve.
+   The persistent canvas already carries continuity beneath. ---- */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.6s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #fx-cursor-dot,
+  #fx-cursor-ring { display: none; }
+  html.has-custom-cursor,
+  html.has-custom-cursor a,
+  html.has-custom-cursor button { cursor: auto; }
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none; }
+}
+
 /* ---- Global "Motion: off" gate ----
    The persistent toggle (and reduced-motion on first load) sets
    data-motion="off" on <html>; everything then falls still at once. */
@@ -412,3 +502,8 @@ html[data-motion='off'] *::after {
   transition-duration: 0.001ms !important;
   scroll-behavior: auto !important;
 }
+html[data-motion='off'] #fx-cursor-dot,
+html[data-motion='off'] #fx-cursor-ring { display: none; }
+html[data-motion='off'].has-custom-cursor,
+html[data-motion='off'].has-custom-cursor a,
+html[data-motion='off'].has-custom-cursor button { cursor: auto; }
