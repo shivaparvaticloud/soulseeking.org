@@ -1,0 +1,556 @@
+---
+// ArtPlate: one of 10 ORIGINAL, hand-coded "paintings" selected by `variant`.
+// Pure inline SVG + CSS — no raster images, no external requests, no JS.
+// Each plate is a framed, textured art piece: a feTurbulence paper/stone ground,
+// a dense layer of generative geometry (Vedic heritage blended with earth texture),
+// an inner vignette and a thin frame border. Portrait viewBox "0 0 600 800".
+//
+// Output is deterministic: a local seeded LCG (seeded per-variant) keeps every
+// build pixel-stable, and a per-instance `uid` keeps SVG ids unique.
+interface Props {
+  variant?: string;
+  class?: string;
+  title?: string;
+}
+const { variant = 'yantra', class: className = '', title } = Astro.props;
+
+// Per-instance unique id suffix so filter/gradient ids never collide.
+const uid = Math.random().toString(36).slice(2, 8);
+
+// ---- palette -------------------------------------------------------------
+const GROUND_DARK = '#0c0a09';
+const GROUND_2 = '#14100c';
+const GROUND_3 = '#1c140e';
+const CREAM = '#EDE4CC';
+const IVORY = '#F3E6C8';
+const GOLD = '#E7C68B';
+const OCHRE = '#CC914E';
+const OXBLOOD = '#7A2F2F';
+const BROWN = '#3a281a';
+
+// ---- deterministic RNG (seeded PER VARIANT so each plate is stable & distinct) ----
+const SEEDS: Record<string, number> = {
+  yantra: 10133, mandala: 22271, kolam: 33391, jali: 44497, sahasrara: 55579,
+  origins: 66601, songline: 77713, tablet: 88817, stardust: 99923, weave: 12107,
+};
+let seed = SEEDS[variant] ?? 10133;
+const rnd = () => {
+  seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+  return seed / 0x7fffffff;
+};
+const rr = (a: number, b: number) => a + rnd() * (b - a);
+const pick = <T,>(arr: T[]) => arr[Math.floor(rnd() * arr.length)];
+const f = (n: number) => +n.toFixed(1);
+
+const W = 600;
+const H = 800;
+const CX = W / 2;
+const CY = H / 2;
+
+// Each variant: a ground (dark or parchment), a tint for the turbulence texture,
+// an aria-label, and a base octave/frequency for the grain.
+type Plate = {
+  ground: string;
+  ground2: string;
+  ink: string;
+  // texture color-matrix RGB (0..1) and alpha shaping
+  texR: number; texG: number; texB: number;
+  texFreq: string; texOct: number; texAlpha: number; texSeed: number;
+  label: string;
+};
+const PLATES: Record<string, Plate> = {
+  yantra: {
+    ground: GROUND_DARK, ground2: '#06050a', ink: GOLD,
+    texR: 0.18, texG: 0.13, texB: 0.07, texFreq: '0.9', texOct: 2, texAlpha: 0.5, texSeed: 7,
+    label: 'Śrī Yantra — nine interlocking triangles within concentric lotus rings and a square bhūpura, gold geometry on deep ground.',
+  },
+  mandala: {
+    ground: '#161310', ground2: '#0c0a09', ink: IVORY,
+    texR: 0.34, texG: 0.28, texB: 0.2, texFreq: '0.55', texOct: 4, texAlpha: 0.7, texSeed: 14,
+    label: 'Maṇḍala — concentric carved rings of petals, dots and fine arcs on a stone-textured ground.',
+  },
+  kolam: {
+    ground: '#0c0a09', ground2: '#100c08', ink: CREAM,
+    texR: 0.1, texG: 0.08, texB: 0.06, texFreq: '0.85', texOct: 2, texAlpha: 0.45, texSeed: 21,
+    label: 'Kolam — a dot lattice woven by continuous looping curved lines, cream ink on dark.',
+  },
+  jali: {
+    ground: '#14100c', ground2: '#0c0a09', ink: GOLD,
+    texR: 0.2, texG: 0.16, texB: 0.1, texFreq: '0.7', texOct: 3, texAlpha: 0.55, texSeed: 28,
+    label: 'Jālī — a tessellated lattice screen of eight-point stars and crosses, fine gold tracery.',
+  },
+  sahasrara: {
+    ground: '#0a0608', ground2: '#05030a', ink: GOLD,
+    texR: 0.16, texG: 0.11, texB: 0.08, texFreq: '0.9', texOct: 2, texAlpha: 0.5, texSeed: 35,
+    label: 'Sahasrāra — a many-petalled lotus radiating in concentric layers from a luminous centre.',
+  },
+  origins: {
+    ground: '#100b08', ground2: '#0a0706', ink: OCHRE,
+    texR: 0.28, texG: 0.2, texB: 0.12, texFreq: '0.65', texOct: 3, texAlpha: 0.6, texSeed: 42,
+    label: 'Origins — a dense field of concentric-circle clusters in warm cream and ochre on dark earth.',
+  },
+  songline: {
+    ground: '#e8dcc0', ground2: '#d8c8a4', ink: '#3a281a',
+    texR: 0.86, texG: 0.78, texB: 0.62, texFreq: '0.5', texOct: 4, texAlpha: 0.45, texSeed: 49,
+    label: 'Songlines — flowing topographic contour lines etching a hidden landscape, sepia on parchment.',
+  },
+  tablet: {
+    ground: '#2a221a', ground2: '#15100b', ink: '#c8b48c',
+    texR: 0.42, texG: 0.36, texB: 0.28, texFreq: '0.4', texOct: 5, texAlpha: 0.85, texSeed: 56,
+    label: 'The Tablet — a grunge stone slab with a faint embossed ghost mandala carved into its surface.',
+  },
+  stardust: {
+    ground: '#06050a', ground2: '#020104', ink: GOLD,
+    texR: 0.1, texG: 0.08, texB: 0.05, texFreq: '0.95', texOct: 2, texAlpha: 0.4, texSeed: 63,
+    label: 'Stardust — a dense gold stipple flow-field, hundreds of tiny dots streaming along curved lines.',
+  },
+  weave: {
+    ground: '#f0e6cc', ground2: '#e2d2ac', ink: '#3a281a',
+    texR: 0.9, texG: 0.82, texB: 0.66, texFreq: '0.45', texOct: 4, texAlpha: 0.42, texSeed: 70,
+    label: 'The Weave — a dense woven grid of nested concentric squares and diamonds in cream and ochre.',
+  },
+};
+const P = PLATES[variant] ?? PLATES.yantra;
+const ariaLabel = title ? `${title}. ${P.label}` : P.label;
+
+// =====================================================================
+// Geometry builders (only the active variant is computed each render)
+// =====================================================================
+
+// ---- helpers ----
+function polyPts(cx: number, cy: number, r: number, n: number, rot = 0, squash = 1) {
+  const pts: string[] = [];
+  for (let i = 0; i < n; i++) {
+    const a = rot + (i / n) * Math.PI * 2;
+    pts.push(`${f(cx + Math.cos(a) * r)},${f(cy + Math.sin(a) * r * squash)}`);
+  }
+  return pts.join(' ');
+}
+function petalRing(cx: number, cy: number, rIn: number, rOut: number, n: number, rot = 0) {
+  const paths: string[] = [];
+  for (let i = 0; i < n; i++) {
+    const a = rot + (i / n) * Math.PI * 2;
+    const wspread = (Math.PI * 2) / n / 2;
+    const tipx = cx + Math.cos(a) * rOut;
+    const tipy = cy + Math.sin(a) * rOut;
+    const bx1 = cx + Math.cos(a - wspread) * rIn;
+    const by1 = cy + Math.sin(a - wspread) * rIn;
+    const bx2 = cx + Math.cos(a + wspread) * rIn;
+    const by2 = cy + Math.sin(a + wspread) * rIn;
+    const cox = cx + Math.cos(a) * (rIn + (rOut - rIn) * 0.5);
+    const coy = cy + Math.sin(a) * (rIn + (rOut - rIn) * 0.5);
+    paths.push(
+      `M ${f(bx1)} ${f(by1)} Q ${f(cox + Math.cos(a - wspread) * 8)} ${f(coy + Math.sin(a - wspread) * 8)} ${f(tipx)} ${f(tipy)} Q ${f(cox + Math.cos(a + wspread) * 8)} ${f(coy + Math.sin(a + wspread) * 8)} ${f(bx2)} ${f(by2)} Z`
+    );
+  }
+  return paths;
+}
+
+// ---- 1. YANTRA ----
+const yTriangles: { pts: string; up: boolean }[] = [];
+if (variant === 'yantra') {
+  // Stylised set of interlocking up/down triangles (4 up, 5 down).
+  const ups = [200, 150, 120, 80];
+  const dns = [210, 170, 130, 95, 55];
+  for (const r of ups) {
+    const top = `${CX},${f(CY - r)}`;
+    const bl = `${f(CX - r * 0.92)},${f(CY + r * 0.55)}`;
+    const br = `${f(CX + r * 0.92)},${f(CY + r * 0.55)}`;
+    yTriangles.push({ pts: `${top} ${bl} ${br}`, up: true });
+  }
+  for (const r of dns) {
+    const bot = `${CX},${f(CY + r)}`;
+    const tl = `${f(CX - r * 0.92)},${f(CY - r * 0.55)}`;
+    const tr = `${f(CX + r * 0.92)},${f(CY - r * 0.55)}`;
+    yTriangles.push({ pts: `${bot} ${tl} ${tr}`, up: false });
+  }
+}
+const yPetals8 = variant === 'yantra' ? petalRing(CX, CY, 200, 240, 8, -Math.PI / 2) : [];
+const yPetals16 = variant === 'yantra' ? petalRing(CX, CY, 244, 278, 16, 0) : [];
+
+// ---- 2. MANDALA ----
+type Ring = { r: number; kind: 'petal' | 'dot' | 'arc'; n: number; col: string };
+const mRings: Ring[] = [];
+const mDots: { cx: number; cy: number; r: number; col: string }[] = [];
+const mPetals: { d: string; col: string }[] = [];
+const mArcs: { d: string; col: string }[] = [];
+if (variant === 'mandala') {
+  const cols = [GOLD, OCHRE, IVORY, OXBLOOD];
+  let r = 38;
+  let layer = 0;
+  while (r < 300) {
+    const kind = (['petal', 'dot', 'arc'] as const)[layer % 3];
+    const col = cols[layer % cols.length];
+    const n = 8 + layer * 4;
+    if (kind === 'petal') {
+      petalRing(CX, CY, r, r + 26, Math.min(n, 36)).forEach((d) => mPetals.push({ d, col }));
+      r += 34;
+    } else if (kind === 'dot') {
+      const count = Math.min(n + 6, 60);
+      for (let i = 0; i < count; i++) {
+        const a = (i / count) * Math.PI * 2;
+        mDots.push({ cx: CX + Math.cos(a) * r, cy: CY + Math.sin(a) * r, r: rr(1.6, 3.2), col });
+      }
+      r += 18;
+    } else {
+      const count = Math.min(n, 28);
+      for (let i = 0; i < count; i++) {
+        const a0 = (i / count) * Math.PI * 2;
+        const a1 = a0 + (Math.PI * 2) / count * 0.7;
+        const x0 = CX + Math.cos(a0) * r, y0 = CY + Math.sin(a0) * r;
+        const x1 = CX + Math.cos(a1) * r, y1 = CY + Math.sin(a1) * r;
+        mArcs.push({ d: `M ${f(x0)} ${f(y0)} A ${f(r)} ${f(r)} 0 0 1 ${f(x1)} ${f(y1)}`, col });
+      }
+      r += 22;
+    }
+    layer++;
+  }
+}
+
+// ---- 3. KOLAM ----
+const kDots: { cx: number; cy: number }[] = [];
+const kLoops: string[] = [];
+if (variant === 'kolam') {
+  const cols = 7, rows = 9, gap = 70, ox = (W - (cols - 1) * gap) / 2, oy = (H - (rows - 1) * gap) / 2;
+  for (let gy = 0; gy < rows; gy++)
+    for (let gx = 0; gx < cols; gx++)
+      kDots.push({ cx: ox + gx * gap, cy: oy + gy * gap });
+  // Loops weaving around each interior cell (rounded diamonds offset between dots).
+  for (let gy = 0; gy < rows - 1; gy++) {
+    for (let gx = 0; gx < cols - 1; gx++) {
+      const cx = ox + (gx + 0.5) * gap, cy = oy + (gy + 0.5) * gap;
+      const rd = gap * 0.46;
+      kLoops.push(
+        `M ${f(cx)} ${f(cy - rd)} Q ${f(cx + rd)} ${f(cy - rd)} ${f(cx + rd)} ${f(cy)} Q ${f(cx + rd)} ${f(cy + rd)} ${f(cx)} ${f(cy + rd)} Q ${f(cx - rd)} ${f(cy + rd)} ${f(cx - rd)} ${f(cy)} Q ${f(cx - rd)} ${f(cy - rd)} ${f(cx)} ${f(cy - rd)} Z`
+      );
+    }
+  }
+  // Continuous outer looping border lacing around the dot field.
+  let dd = '';
+  const pad = 34;
+  for (let gx = 0; gx < cols; gx++) {
+    const x = ox + gx * gap;
+    dd += gx === 0 ? `M ${f(x)} ${f(oy - pad)}` : ` Q ${f(x - gap / 2)} ${f(oy - pad - 22)} ${f(x)} ${f(oy - pad)}`;
+  }
+  kLoops.push(dd);
+  let db = '';
+  for (let gx = 0; gx < cols; gx++) {
+    const x = ox + gx * gap;
+    const y = oy + (rows - 1) * gap + pad;
+    db += gx === 0 ? `M ${f(x)} ${f(y)}` : ` Q ${f(x - gap / 2)} ${f(y + 22)} ${f(x)} ${f(y)}`;
+  }
+  kLoops.push(db);
+}
+
+// ---- 4. JALI ----
+const jStars: { d: string; o: number }[] = [];
+const jLines: { x1: number; y1: number; x2: number; y2: number }[] = [];
+if (variant === 'jali') {
+  const step = 66, ox = -10, oy = -10;
+  for (let gy = 0; gy * step + oy < H + step; gy++) {
+    for (let gx = 0; gx * step + ox < W + step; gx++) {
+      const cx = ox + gx * step, cy = oy + gy * step;
+      // 8-point star = two squares (axis + diagonal) at this node.
+      const r = step * 0.42;
+      const sq = (rot: number) => `M ${polyPts(cx, cy, r, 4, rot).split(' ').join(' L ')} Z`;
+      jStars.push({ d: sq(0), o: rr(0.5, 0.85) });
+      jStars.push({ d: sq(Math.PI / 4), o: rr(0.4, 0.7) });
+      // small cross between nodes
+      const mx = cx + step / 2, my = cy + step / 2;
+      jLines.push({ x1: mx - 6, y1: my, x2: mx + 6, y2: my });
+      jLines.push({ x1: mx, y1: my - 6, x2: mx, y2: my + 6 });
+    }
+  }
+}
+
+// ---- 5. SAHASRARA ----
+const sLayers: { d: string; col: string }[] = [];
+if (variant === 'sahasrara') {
+  const cols = [OXBLOOD, OCHRE, GOLD, IVORY];
+  const layers = [
+    { rIn: 250, rOut: 320, n: 32 },
+    { rIn: 195, rOut: 270, n: 24 },
+    { rIn: 140, rOut: 210, n: 18 },
+    { rIn: 90, rOut: 155, n: 12 },
+    { rIn: 44, rOut: 100, n: 8 },
+  ];
+  layers.forEach((L, li) => {
+    const rot = (li % 2) * (Math.PI / L.n);
+    petalRing(CX, CY, L.rIn, L.rOut, L.n, rot).forEach((d) => sLayers.push({ d, col: cols[li % cols.length] }));
+  });
+}
+
+// ---- 6. ORIGINS ----
+type ORing = { cx: number; cy: number; r: number; col: string; fill: boolean };
+const oItems: ORing[] = [];
+if (variant === 'origins') {
+  const cols = [GOLD, OCHRE, IVORY, CREAM, OXBLOOD];
+  const clusters: { cx: number; cy: number; base: number }[] = [];
+  for (let i = 0; i < 30; i++) clusters.push({ cx: rr(40, W - 40), cy: rr(40, H - 40), base: rr(14, 52) });
+  for (const c of clusters) {
+    const rings = 2 + Math.floor(rnd() * 4);
+    const col = pick(cols);
+    for (let k = 0; k < rings; k++) {
+      const r = c.base - k * (c.base / (rings + 0.6));
+      oItems.push({ cx: c.cx, cy: c.cy, r, col, fill: false });
+    }
+    oItems.push({ cx: c.cx, cy: c.cy, r: rr(2, 4), col: pick(cols), fill: true });
+  }
+}
+
+// ---- 7. SONGLINE ----
+const slPaths: { d: string; w: number; o: number }[] = [];
+if (variant === 'songline') {
+  const forms = [
+    { cx: 200, cy: 240, r: 150 },
+    { cx: 400, cy: 540, r: 180 },
+    { cx: 320, cy: 380, r: 90 },
+  ];
+  for (let i = 0; i < 90; i++) {
+    const y = i * 9 - 6;
+    let d = `M -12 ${f(y)}`;
+    for (let x = 0; x <= W + 12; x += 12) {
+      let yy = y;
+      for (const fm of forms) {
+        const dx = x - fm.cx;
+        const dist = Math.abs(yy - fm.cy) + Math.abs(dx) * 0.35;
+        if (dist < fm.r) {
+          const bend = (1 - dist / fm.r) * 26 * Math.sign(yy - fm.cy || 1);
+          yy += bend * (1 - Math.abs(dx) / (fm.r + 60));
+        }
+      }
+      d += ` L ${x} ${f(yy)}`;
+    }
+    slPaths.push({ d, w: i % 6 === 0 ? 1.4 : 0.8, o: i % 6 === 0 ? 0.7 : 0.45 });
+  }
+}
+
+// ---- 8. TABLET ----
+const tGlyph: { d: string; col: string }[] = [];
+if (variant === 'tablet') {
+  // a faint embossed ghost mandala carved into the slab
+  petalRing(CX, CY, 150, 215, 16).forEach((d) => tGlyph.push({ d, col: '#000' }));
+  petalRing(CX, CY, 90, 145, 12).forEach((d) => tGlyph.push({ d, col: '#000' }));
+  for (let k = 0; k < 4; k++) tGlyph.push({ d: '', col: '' }); // placeholder rings drawn directly
+}
+
+// ---- 9. STARDUST ----
+const dDots: { cx: number; cy: number; r: number; o: number }[] = [];
+if (variant === 'stardust') {
+  for (let line = 0; line < 34; line++) {
+    const baseY = line * 24 + rr(-8, 8);
+    const amp = rr(14, 40);
+    const ph = rr(0, 6.28);
+    const freq = rr(45, 75);
+    for (let x = -12; x <= W + 12; x += rr(5, 9)) {
+      const y = baseY + Math.sin(x / freq + ph) * amp;
+      dDots.push({ cx: x + rr(-2, 2), cy: y + rr(-2, 2), r: rr(0.5, 1.6), o: rr(0.3, 0.9) });
+    }
+  }
+}
+
+// ---- 10. WEAVE ----
+const wSquares: { x: number; y: number; s: number; col: string; rot: number; cx: number; cy: number }[] = [];
+if (variant === 'weave') {
+  const cols = [OCHRE, BROWN, OXBLOOD, '#5a3d22'];
+  const step = 96;
+  for (let gy = 0; gy * step < H + step; gy++) {
+    for (let gx = 0; gx * step < W + step; gx++) {
+      const cx = gx * step + (gy % 2 ? step / 2 : 0);
+      const cy = gy * step;
+      const big = step * 0.46;
+      const col = pick(cols);
+      const diamond = (gx + gy) % 2 === 0;
+      const steps = 4;
+      for (let k = 0; k < steps; k++) {
+        const s = big - k * (big / (steps + 0.4));
+        wSquares.push({ x: cx - s, y: cy - s, s: s * 2, col, rot: diamond ? 45 : 0, cx, cy });
+      }
+    }
+  }
+}
+---
+
+<svg
+  viewBox={`0 0 ${W} ${H}`}
+  preserveAspectRatio="xMidYMid slice"
+  role="img"
+  aria-label={ariaLabel}
+  class={className}
+  width="100%"
+  height="100%"
+>
+  <defs>
+    <!-- Textured ground: fractalNoise tinted to the plate (paper/stone grain). -->
+    <filter id={`tex-${uid}`} x="0" y="0" width="100%" height="100%">
+      <feTurbulence
+        type="fractalNoise"
+        baseFrequency={P.texFreq}
+        numOctaves={P.texOct}
+        seed={P.texSeed}
+        stitchTiles="stitch"
+        result="noise"
+      />
+      <feColorMatrix
+        in="noise"
+        type="matrix"
+        values={`0 0 0 0 ${P.texR}  0 0 0 0 ${P.texG}  0 0 0 0 ${P.texB}  0 0 0 ${P.texAlpha} 0`}
+      />
+    </filter>
+
+    <!-- Soft inner vignette so each reads as a framed plate. -->
+    <radialGradient id={`vig-${uid}`} cx="50%" cy="46%" r="72%">
+      <stop offset="55%" stop-color="#000" stop-opacity="0" />
+      <stop offset="100%" stop-color="#000" stop-opacity={P.ground === '#e8dcc0' || P.ground.startsWith('#f') ? '0.35' : '0.72'} />
+    </radialGradient>
+
+    <radialGradient id={`glow-${uid}`} cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color={IVORY} stop-opacity="0.9" />
+      <stop offset="40%" stop-color={GOLD} stop-opacity="0.4" />
+      <stop offset="100%" stop-color={GOLD} stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- base ground gradient -->
+  <rect width={W} height={H} fill={P.ground} />
+  <rect width={W} height={H} fill={`url(#vig-${uid})`} opacity="0.0" />
+  <!-- textured grain layer -->
+  <rect width={W} height={H} filter={`url(#tex-${uid})`} opacity="0.9" />
+  <!-- darken/tone toward ground2 in corners via second vignette -->
+  <rect width={W} height={H} fill={P.ground2} opacity="0.18" />
+
+  {/* ============ 1. YANTRA ============ */}
+  {variant === 'yantra' && (
+    <g>
+      {yPetals16.map((d) => <path d={d} fill={OCHRE} fill-opacity="0.32" stroke={GOLD} stroke-width="0.8" stroke-opacity="0.6" />)}
+      {yPetals8.map((d) => <path d={d} fill={OXBLOOD} fill-opacity="0.4" stroke={GOLD} stroke-width="1" stroke-opacity="0.75" />)}
+      <circle cx={CX} cy={CY} r="205" fill="none" stroke={GOLD} stroke-width="1.4" stroke-opacity="0.7" />
+      <circle cx={CX} cy={CY} r="198" fill="#0c0a09" fill-opacity="0.55" stroke={IVORY} stroke-width="0.6" stroke-opacity="0.4" />
+      {yTriangles.map((t) => (
+        <polygon points={t.pts} fill={t.up ? GOLD : OXBLOOD} fill-opacity={t.up ? 0.12 : 0.16} stroke={t.up ? GOLD : IVORY} stroke-width="1.1" stroke-opacity="0.8" />
+      ))}
+      <circle cx={CX} cy={CY} r="22" fill={`url(#glow-${uid})`} />
+      <circle cx={CX} cy={CY} r="5" fill={IVORY} />
+      {/* bhūpura square frame with T-gates */}
+      <rect x="78" y="278" width="444" height="444" fill="none" stroke={GOLD} stroke-width="2" stroke-opacity="0.8" />
+      <rect x="64" y="264" width="472" height="472" fill="none" stroke={OCHRE} stroke-width="1" stroke-opacity="0.6" />
+      {[
+        [CX, 264, CX, 244], [CX, 736, CX, 756], [64, CY, 44, CY], [536, CY, 556, CY],
+      ].map(([x1, y1, x2, y2]) => (
+        <g stroke={GOLD} stroke-width="1.4" stroke-opacity="0.75" fill="none">
+          <line x1={x1} y1={y1} x2={x2} y2={y2} />
+          <line x1={x2 - (x1 === x2 ? 14 : 0)} y1={y2 - (y1 === y2 ? 14 : 0)} x2={x2 + (x1 === x2 ? 14 : 0)} y2={y2 + (y1 === y2 ? 14 : 0)} />
+        </g>
+      ))}
+    </g>
+  )}
+
+  {/* ============ 2. MANDALA ============ */}
+  {variant === 'mandala' && (
+    <g>
+      {mPetals.map((p) => <path d={p.d} fill={p.col} fill-opacity="0.22" stroke={p.col} stroke-width="0.7" stroke-opacity="0.7" />)}
+      {mArcs.map((a) => <path d={a.d} fill="none" stroke={a.col} stroke-width="1.3" stroke-opacity="0.7" />)}
+      {mDots.map((d) => <circle cx={d.cx} cy={d.cy} r={d.r} fill={d.col} fill-opacity="0.85" />)}
+      <circle cx={CX} cy={CY} r="34" fill="none" stroke={GOLD} stroke-width="1.2" stroke-opacity="0.8" />
+      <circle cx={CX} cy={CY} r="20" fill={`url(#glow-${uid})`} />
+      <circle cx={CX} cy={CY} r="6" fill={OXBLOOD} />
+    </g>
+  )}
+
+  {/* ============ 3. KOLAM ============ */}
+  {variant === 'kolam' && (
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      {kLoops.map((d) => <path d={d} stroke={CREAM} stroke-width="2" stroke-opacity="0.82" />)}
+      {kDots.map((p) => <circle cx={p.cx} cy={p.cy} r="2.6" fill={IVORY} stroke="none" fill-opacity="0.95" />)}
+    </g>
+  )}
+
+  {/* ============ 4. JALI ============ */}
+  {variant === 'jali' && (
+    <g fill="none">
+      {jStars.map((s) => <path d={s.d} stroke={GOLD} stroke-width="1" stroke-opacity={s.o} fill={OCHRE} fill-opacity="0.08" />)}
+      {jLines.map((l) => <line x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} stroke={IVORY} stroke-width="1" stroke-opacity="0.55" />)}
+    </g>
+  )}
+
+  {/* ============ 5. SAHASRARA ============ */}
+  {variant === 'sahasrara' && (
+    <g>
+      {sLayers.map((p) => <path d={p.d} fill={p.col} fill-opacity="0.2" stroke={p.col} stroke-width="0.8" stroke-opacity="0.7" />)}
+      <circle cx={CX} cy={CY} r="40" fill={`url(#glow-${uid})`} />
+      <circle cx={CX} cy={CY} r="10" fill={IVORY} />
+      <circle cx={CX} cy={CY} r="20" fill="none" stroke={GOLD} stroke-width="1" stroke-opacity="0.7" />
+    </g>
+  )}
+
+  {/* ============ 6. ORIGINS ============ */}
+  {variant === 'origins' && (
+    <g>
+      {oItems.map((o) =>
+        o.fill ? (
+          <circle cx={o.cx} cy={o.cy} r={o.r} fill={o.col} fill-opacity="0.85" />
+        ) : (
+          <circle cx={o.cx} cy={o.cy} r={o.r} fill="none" stroke={o.col} stroke-width="1.4" stroke-opacity="0.65" />
+        )
+      )}
+    </g>
+  )}
+
+  {/* ============ 7. SONGLINE ============ */}
+  {variant === 'songline' && (
+    <g fill="none" stroke-linecap="round">
+      {slPaths.map((p) => <path d={p.d} stroke={P.ink} stroke-width={p.w} stroke-opacity={p.o} />)}
+    </g>
+  )}
+
+  {/* ============ 8. TABLET ============ */}
+  {variant === 'tablet' && (
+    <g>
+      <g opacity="0.5">
+        {tGlyph.filter((g) => g.d).map((g) => (
+          <path d={g.d} fill="none" stroke="#000" stroke-width="2.4" stroke-opacity="0.45" transform="translate(1.5,1.5)" />
+        ))}
+        {tGlyph.filter((g) => g.d).map((g) => (
+          <path d={g.d} fill="none" stroke="#d8c8a4" stroke-width="1" stroke-opacity="0.3" transform="translate(-1,-1)" />
+        ))}
+      </g>
+      <circle cx={CX} cy={CY} r="220" fill="none" stroke="#000" stroke-width="3" stroke-opacity="0.3" />
+      <circle cx={CX} cy={CY} r="60" fill="none" stroke="#000" stroke-width="3" stroke-opacity="0.35" transform="translate(1.5,1.5)" />
+      <circle cx={CX} cy={CY} r="60" fill="none" stroke="#d8c8a4" stroke-width="1" stroke-opacity="0.25" transform="translate(-1,-1)" />
+      <circle cx={CX} cy={CY} r="8" fill="#000" fill-opacity="0.4" />
+      {/* cracks */}
+      <path d="M 90 120 L 180 300 L 150 460 L 240 640" fill="none" stroke="#000" stroke-width="1.6" stroke-opacity="0.3" />
+      <path d="M 520 90 L 430 260 L 500 470 L 410 700" fill="none" stroke="#000" stroke-width="1.4" stroke-opacity="0.28" />
+    </g>
+  )}
+
+  {/* ============ 9. STARDUST ============ */}
+  {variant === 'stardust' && (
+    <g fill={GOLD}>
+      {dDots.map((d) => <circle cx={d.cx} cy={d.cy} r={d.r} fill-opacity={d.o} />)}
+    </g>
+  )}
+
+  {/* ============ 10. WEAVE ============ */}
+  {variant === 'weave' && (
+    <g fill="none">
+      {wSquares.map((s) => (
+        <rect
+          x={s.x}
+          y={s.y}
+          width={s.s}
+          height={s.s}
+          stroke={s.col}
+          stroke-width="1.6"
+          stroke-opacity="0.75"
+          transform={s.rot ? `rotate(${s.rot} ${s.cx} ${s.cy})` : undefined}
+        />
+      ))}
+    </g>
+  )}
+
+  <!-- inner vignette + thin framed border -->
+  <rect width={W} height={H} fill={`url(#vig-${uid})`} />
+  <rect x="3" y="3" width={W - 6} height={H - 6} fill="none" stroke={P.ink} stroke-width="1.5" stroke-opacity="0.45" />
+  <rect x="8" y="8" width={W - 16} height={H - 16} fill="none" stroke={P.ink} stroke-width="0.7" stroke-opacity="0.25" />
+</svg>
