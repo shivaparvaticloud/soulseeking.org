@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Starfield from '../components/Starfield.astro';
+import HomeAtmosphere from '../components/HomeAtmosphere.astro';
 import Phyllotaxis from '../components/Phyllotaxis.astro';
 import KosaScene from '../components/KosaScene.astro';
 import { getCourses, getArticles } from '../lib/content';
@@ -11,24 +11,23 @@ const articles = getArticles();
 
 <Layout
   title="Soul Seeking — Higher Answers for Deeper Questions"
-  description="Welcome to your quiet quest within. Explore life’s bigger mysteries, spirituality and the inner Self."
+  description="Timeless answers to the questions that matter most — on meaning, the mind, and the Self within. A calm, modern path drawn from the world’s oldest wisdom."
   fxPage="home"
 >
+  <HomeAtmosphere />
+
   <!-- ░░ HERO — the cosmos ░░ -->
   <section class="relative flex min-h-[92vh] items-center justify-center overflow-hidden">
-    <Starfield class="absolute inset-0 h-full w-full edge-fade" density={1.3} />
-    <div class="pointer-events-none absolute inset-0 aurora"></div>
-    <div class="pointer-events-none absolute inset-0 bg-grid opacity-[0.35] edge-fade"></div>
-    <div class="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-b from-transparent to-void"></div>
+    <div class="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-b from-transparent to-void/80"></div>
 
     <div class="relative z-10 mx-auto max-w-4xl px-6 text-center">
       <p class="fade-in kicker kicker--center justify-center">A quiet quest within</p>
       <h1 class="fade-in-1 mt-7 display-xl text-mist">
         Soul Seeking
       </h1>
-      <p class="fade-in-2 mx-auto mt-7 max-w-xl font-serif text-lg leading-relaxed text-mist/70 sm:text-xl">
-        Higher answers for deeper questions. Explore life’s bigger mysteries,
-        spirituality and the inner Self &mdash; through authentic Vedic wisdom.
+      <p class="fade-in-2 mx-auto mt-7 max-w-xl font-serif text-lg leading-relaxed text-mist/75 sm:text-xl">
+        Timeless answers to the questions that matter most — on meaning, the mind,
+        and the Self within. A calm, modern path drawn from the world’s oldest wisdom.
       </p>
       <div class="fade-in-3 mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
         <a href="/knowledge" class="btn-soul">Begin the Search</a>
@@ -38,7 +37,7 @@ const articles = getArticles();
 
     <div class="fade-in-4 absolute bottom-7 left-1/2 z-10 -translate-x-1/2">
       <span class="flex flex-col items-center gap-2 font-sans text-[0.55rem] uppercase tracking-[0.3em] text-mist/40">
-        Scroll to descend inward
+        Scroll to begin
         <svg width="14" height="22" viewBox="0 0 14 22" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
           <rect x="1" y="1" width="12" height="20" rx="6"></rect>
           <line x1="7" y1="6" x2="7" y2="10" stroke-linecap="round"></line>
@@ -81,8 +80,7 @@ const articles = getArticles();
   </section>
 
   <!-- ░░ THE ETERNAL SOUL — Gītā 2.23 ░░ -->
-  <section class="relative overflow-hidden border-t border-white/10 bg-abyss">
-    <div class="pointer-events-none absolute inset-0 bg-weave-dark opacity-70"></div>
+  <section class="relative overflow-hidden border-t border-white/10">
     <div class="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-6 py-phi-4 text-center">
       <Phyllotaxis size={120} points={420} tone="gold" class="reveal opacity-80" />
       <blockquote data-reveal-lines class="mt-phi-2 pull text-2xl leading-relaxed text-mist sm:text-3xl">

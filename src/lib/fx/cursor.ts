@@ -1,7 +1,7 @@
 // A quiet custom cursor: a soft gold dot with a trailing ring that widens over
 // interactive elements. Pointer-fine devices only; never shown on touch or when
 // motion is calmed. Falls back silently to the native cursor.
-import { isTouch, lerp } from './env';
+import { isTouch, lerp, prefersReducedMotion } from './env';
 
 export interface Cursor {
   enable(): void;
@@ -12,6 +12,7 @@ export interface Cursor {
 export function createCursor(dot: HTMLElement, ring: HTMLElement): Cursor {
   let raf = 0;
   let active = false;
+  let smooth = 0.18;
   const m = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
   const r = { x: m.x, y: m.y };
 
@@ -34,8 +35,8 @@ export function createCursor(dot: HTMLElement, ring: HTMLElement): Cursor {
   const onUp = () => ring.classList.remove('is-down');
 
   function tick() {
-    r.x = lerp(r.x, m.x, 0.18);
-    r.y = lerp(r.y, m.y, 0.18);
+    r.x = lerp(r.x, m.x, smooth);
+    r.y = lerp(r.y, m.y, smooth);
     ring.style.transform = `translate(${r.x}px, ${r.y}px)`;
     if (active) raf = requestAnimationFrame(tick);
   }
@@ -44,6 +45,8 @@ export function createCursor(dot: HTMLElement, ring: HTMLElement): Cursor {
     enable() {
       if (active || isTouch()) return;
       active = true;
+      // Under reduced motion the ring snaps rather than trails — still visible.
+      smooth = prefersReducedMotion() ? 1 : 0.18;
       document.documentElement.classList.add('has-custom-cursor');
       window.addEventListener('pointermove', onMove, { passive: true });
       window.addEventListener('pointerover', onOver, { passive: true });
