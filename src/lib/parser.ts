@@ -178,6 +178,18 @@ function isBulletItem(line: string): string | null {
   return m ? m[1].trim() : null;
 }
 
+// A short opening line that reads like a title (even if lowercase): not a list,
+// quote, rule or full sentence. Used to title "rough" notes with no meta header.
+function looksLikeTitle(line: string): boolean {
+  const s = line.trim();
+  if (!s || s.length > 72) return false;
+  if (/[.?!:;,]$/.test(s)) return false;
+  if (/^\s*>/.test(s)) return false;
+  if (/^\s*(?:---+|\*\*\*+|___+)\s*$/.test(s)) return false;
+  if (isBulletItem(s) !== null || isOrderedItem(s) !== null) return false;
+  return s.split(/\s+/).length <= 12;
+}
+
 function isOrderedItem(line: string): string | null {
   const m = line.match(/^\s*\d+[.)]\s+(.*)$/);
   return m ? m[1].trim() : null;
@@ -388,11 +400,19 @@ export function parseArticle(path: string, content: string): Article {
   let title = meta.title || '';
   let lines = bodyLines;
   if (!title) {
-    // use a leading standalone heading if present, else the filename
+    // Forgiving title detection for "rough" files:
+    //   1. a leading heading (# …, == … ==, or an ALL-CAPS line)
+    //   2. else a short title-like first line (even lowercase), e.g. a note
+    //      whose opening line is its title
+    //   3. else the filename, prettified
     const firstNonBlank = bodyLines.findIndex((l) => l.trim() !== '');
-    const h = firstNonBlank >= 0 ? isHeading(bodyLines[firstNonBlank]) : null;
+    const firstLine = firstNonBlank >= 0 ? bodyLines[firstNonBlank] : '';
+    const h = firstNonBlank >= 0 ? isHeading(firstLine) : null;
     if (h) {
       title = h.text;
+      lines = bodyLines.slice(firstNonBlank + 1);
+    } else if (looksLikeTitle(firstLine)) {
+      title = firstLine.trim().replace(/\b\w/g, (c) => c.toUpperCase());
       lines = bodyLines.slice(firstNonBlank + 1);
     } else {
       title = prettifyFilename(path);
@@ -404,7 +424,7 @@ export function parseArticle(path: string, content: string): Article {
   const order = meta.order ? parseInt(meta.order, 10) : leadingOrderFromName(path) ?? 0;
 
   return {
-    slug: slugify(meta.title ? meta.title : prettifyFilename(path)),
+    slug: slugify(meta.title || title || prettifyFilename(path)),
     title,
     description: meta.description || plainExcerpt(blocks),
     category: meta.category || 'Reflections',

@@ -1,0 +1,114 @@
+---
+// Quick chapter navigation for an opened course "book". A fixed vertical rail on
+// large screens and a sticky dropdown on small ones; both jump to the module
+// sections and highlight the one you're reading. Pure anchors, so it works with
+// no JS; the scroll-spy is progressive enhancement.
+interface Props {
+  modules: { number: number; title: string }[];
+  hasBrief?: boolean;
+}
+const { modules, hasBrief = true } = Astro.props;
+const romans = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+const items = [
+  ...(hasBrief ? [{ id: 'brief', label: 'Brief', n: '·' }] : []),
+  ...modules.map((m) => ({ id: `module-${m.number}`, label: m.title, n: romans[m.number - 1] || String(m.number) })),
+];
+---
+
+{
+  items.length > 1 && (
+    <nav data-chapter-nav aria-label="Chapters">
+      {/* Desktop: fixed vertical rail */}
+      <div class="chapter-rail pointer-events-none fixed right-5 top-1/2 z-30 hidden -translate-y-1/2 xl:block">
+        <ul class="flex flex-col gap-1.5">
+          {items.map((it) => (
+            <li>
+              <a
+                href={`#${it.id}`}
+                data-chip={it.id}
+                class="chapter-chip group pointer-events-auto flex items-center justify-end gap-3"
+              >
+                <span class="max-w-0 overflow-hidden whitespace-nowrap text-right font-sans text-[0.62rem] uppercase tracking-[0.16em] text-mist/0 transition-all duration-500 group-hover:max-w-[14rem] group-hover:text-mist/80 group-focus-visible:max-w-[14rem] group-focus-visible:text-mist/80">
+                  {it.label}
+                </span>
+                <span class="chapter-dot grid h-7 w-7 shrink-0 place-items-center rounded-full border border-white/15 font-sans text-[0.6rem] text-mist/55 transition-phi">
+                  {it.n}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Mobile / tablet: sticky dropdown */}
+      <details class="chapter-menu group sticky top-[4.25rem] z-30 mx-auto -mb-2 w-[calc(100%-2.5rem)] max-w-reading xl:hidden">
+        <summary class="glass flex cursor-pointer list-none items-center justify-between rounded-full px-5 py-3">
+          <span class="font-sans text-[0.62rem] uppercase tracking-[0.22em] text-gold">Chapters</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-mist/60 transition-transform group-open:rotate-180" aria-hidden="true">
+            <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </summary>
+        <ul class="glass mt-2 max-h-[60vh] overflow-y-auto rounded-2xl p-2">
+          {items.map((it) => (
+            <li>
+              <a
+                href={`#${it.id}`}
+                data-chip={it.id}
+                class="chapter-row flex items-baseline gap-3 rounded-lg px-3 py-2.5 transition-phi hover:bg-white/5"
+              >
+                <span class="w-6 shrink-0 font-sans text-[0.62rem] uppercase tracking-[0.1em] text-gold/70">{it.n}</span>
+                <span class="font-serif text-mist/80">{it.label}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
+    </nav>
+  )
+}
+
+<script>
+  function initChapterNav() {
+    const nav = document.querySelector<HTMLElement>('[data-chapter-nav]');
+    if (!nav || nav.dataset.bound === 'yes') return;
+    nav.dataset.bound = 'yes';
+
+    const chips = Array.from(document.querySelectorAll<HTMLElement>('[data-chip]'));
+    const targets = chips
+      .map((c) => document.getElementById(c.dataset.chip || ''))
+      .filter((el): el is HTMLElement => !!el);
+    if (!targets.length) return;
+
+    const setActive = (id: string) => {
+      chips.forEach((c) => {
+        const on = c.dataset.chip === id;
+        c.toggleAttribute('data-active', on);
+        if (on) c.setAttribute('aria-current', 'true');
+        else c.removeAttribute('aria-current');
+      });
+    };
+
+    let active = '';
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting && e.target.id !== active) {
+            active = e.target.id;
+            setActive(active);
+          }
+        }
+      },
+      { rootMargin: '-30% 0px -55% 0px', threshold: 0 }
+    );
+    targets.forEach((t) => io.observe(t));
+
+    // Close the mobile dropdown after a jump.
+    const details = nav.querySelector<HTMLDetailsElement>('details');
+    nav.querySelectorAll('a[href^="#"]').forEach((a) =>
+      a.addEventListener('click', () => { if (details) details.open = false; })
+    );
+  }
+
+  initChapterNav();
+  document.addEventListener('astro:page-load', initChapterNav);
+</script>

@@ -334,6 +334,21 @@
   }
   .course-panel:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 6px; }
 
+  /* ---- Course chapter quick-nav ---- */
+  .chapter-chip:hover .chapter-dot,
+  .chapter-chip:focus-visible .chapter-dot { border-color: var(--gold); color: var(--gold); }
+  .chapter-chip[data-active] .chapter-dot {
+    border-color: var(--gold);
+    background: rgba(231, 198, 139, 0.12);
+    color: var(--gold);
+  }
+  .chapter-chip:focus-visible { outline: none; }
+  .chapter-row[data-active] {
+    background: rgba(231, 198, 139, 0.08);
+  }
+  .chapter-row[data-active] .font-serif { color: var(--text); }
+  .chapter-menu summary::-webkit-details-marker { display: none; }
+
   /* Hairline-framed link/feature card */
   .card-soul {
     position: relative;
@@ -515,11 +530,7 @@ html.has-custom-cursor #fx-cursor-ring { opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #fx-cursor-dot,
-  #fx-cursor-ring { display: none; }
-  html.has-custom-cursor,
-  html.has-custom-cursor a,
-  html.has-custom-cursor button { cursor: auto; }
+  /* Cursor stays visible — it snaps instead of trailing (handled in JS). */
   ::view-transition-old(root),
   ::view-transition-new(root) { animation: none; }
 }
@@ -535,8 +546,3 @@ html[data-motion='off'] *::after {
   transition-duration: 0.001ms !important;
   scroll-behavior: auto !important;
 }
-html[data-motion='off'] #fx-cursor-dot,
-html[data-motion='off'] #fx-cursor-ring { display: none; }
-html[data-motion='off'].has-custom-cursor,
-html[data-motion='off'].has-custom-cursor a,
-html[data-motion='off'].has-custom-cursor button { cursor: auto; }
