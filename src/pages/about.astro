@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Nadis from '../components/Nadis.astro';
+import ArtPlate from '../components/ArtPlate.astro';
 
 const personality = [
   {
@@ -36,18 +37,28 @@ const values = [
   </header>
 
   <section class="border-t border-white/10">
-    <div class="mx-auto max-w-reading px-6 py-phi-4">
-      <p class="pull text-3xl leading-relaxed text-mist">
-        Soul Seeking is an outreach for inward travellers: a self-contained library of
-        wisdom, courses and reflections on the Self, the cosmos and the way to live. It asks
-        nothing of you but sincerity. There is no membership, no fee, and no contact to make —
-        only a path that continues onward, independently.
-      </p>
-      <p class="mt-phi-2 font-serif text-lg leading-loose text-mist/70">
-        The teachings gathered here are old; the manner of gathering them is plain. We hold
-        that for the earnest seeker there will always be success, for what you seek, you will
-        attract. Our task is simply to keep the lamp lit and the path clear.
-      </p>
+    <div class="mx-auto grid max-w-5xl items-center gap-phi-2 px-6 py-phi-4 md:grid-cols-[1fr_auto]">
+      <div>
+        <p class="pull text-3xl leading-relaxed text-mist">
+          Soul Seeking is an outreach for inward travellers: a self-contained library of
+          wisdom, courses and reflections on the Self, the cosmos and the way to live. It asks
+          nothing of you but sincerity. There is no membership, no fee, and no contact to make —
+          only a path that continues onward, independently.
+        </p>
+        <p class="mt-phi-2 font-serif text-lg leading-loose text-mist/70">
+          The teachings gathered here are old; the manner of gathering them is plain. We hold
+          that for the earnest seeker there will always be success, for what you seek, you will
+          attract. Our task is simply to keep the lamp lit and the path clear.
+        </p>
+      </div>
+      <figure class="card-soul overflow-hidden md:w-64">
+        <div class="aspect-[3/4] w-full overflow-hidden rounded">
+          <ArtPlate variant="mandala" />
+        </div>
+        <figcaption class="mt-4 font-sans text-[0.66rem] uppercase tracking-[0.22em] text-mist/70">
+          Mandala — drawn in code
+        </figcaption>
+      </figure>
     </div>
   </section>
 

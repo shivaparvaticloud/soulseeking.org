@@ -94,6 +94,7 @@ const nav = [
   { href: '/about', label: 'About' },
   { href: '/knowledge', label: 'Knowledge Hub' },
   { href: '/courses', label: 'Courses' },
+  { href: '/gallery', label: 'Gallery' },
   { href: '/donate', label: 'Donate' },
 ];
 
@@ -274,7 +275,7 @@ const year = new Date().getFullYear();
           <div class="rule-gold w-40"></div>
           <nav class="flex flex-wrap items-center justify-center gap-x-7 gap-y-2" aria-label="Footer">
             {
-              nav.concat({ href: '/gallery', label: 'Gallery' }, { href: '/search', label: 'Search' }).map((item) => (
+              nav.concat({ href: '/search', label: 'Search' }).map((item) => (
                 <a href={item.href} class="font-sans text-[0.62rem] uppercase tracking-[0.22em] text-mist/55 transition-phi hover:text-gold">
                   {item.label}
                 </a>

@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import TurningPages from '../../components/TurningPages.astro';
 import CourseTabs from '../../components/CourseTabs.astro';
+import ArtPlate from '../../components/ArtPlate.astro';
 import { getCourses } from '../../lib/content';
 
 const courses = getCourses();
@@ -24,6 +25,14 @@ const courses = getCourses();
         Each course is a small book — chapters, glossaries and quizzes — to be walked at
         your own pace, step by step.
       </p>
+      <figure class="card-soul mx-auto mt-phi-2 max-w-xs overflow-hidden">
+        <div class="aspect-[3/4] w-full overflow-hidden rounded">
+          <ArtPlate variant="jali" />
+        </div>
+        <figcaption class="mt-4 font-sans text-[0.66rem] uppercase tracking-[0.22em] text-mist/70">
+          Jālī — drawn in code
+        </figcaption>
+      </figure>
       <div class="rule-gold mx-auto mt-phi-2 w-40"></div>
     </div>
   </header>
