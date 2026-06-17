@@ -12,6 +12,7 @@ const articles = getArticles();
 <Layout
   title="Soul Seeking — Higher Answers for Deeper Questions"
   description="Welcome to your quiet quest within. Explore life’s bigger mysteries, spirituality and the inner Self."
+  fxPage="home"
 >
   <!-- ░░ HERO — the cosmos ░░ -->
   <section class="relative flex min-h-[92vh] items-center justify-center overflow-hidden">
@@ -50,7 +51,7 @@ const articles = getArticles();
   <section class="relative overflow-hidden border-t border-white/10">
     <div class="mx-auto max-w-5xl px-6 py-phi-4">
       <p class="reveal kicker">01 — The Invitation</p>
-      <blockquote class="reveal mt-8 pull text-3xl leading-tight text-mist sm:text-4xl md:text-5xl">
+      <blockquote data-reveal-lines class="mt-8 pull text-3xl leading-tight text-mist sm:text-4xl md:text-5xl">
         “The desire to know the Soul is the desire that will end all others.”
       </blockquote>
 
@@ -84,7 +85,7 @@ const articles = getArticles();
     <div class="pointer-events-none absolute inset-0 bg-weave-dark opacity-70"></div>
     <div class="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-6 py-phi-4 text-center">
       <Phyllotaxis size={120} points={420} tone="gold" class="reveal opacity-80" />
-      <blockquote class="reveal-delay mt-phi-2 pull text-balance text-2xl leading-relaxed text-mist sm:text-3xl">
+      <blockquote data-reveal-lines class="mt-phi-2 pull text-2xl leading-relaxed text-mist sm:text-3xl">
         “Weapons do not cut it, fire does not burn it, water does not wet it, and the
         wind does not dry it. For the soul is eternal, all-pervading, unchanging,
         immovable, and primeval.”

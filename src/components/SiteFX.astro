@@ -1,0 +1,15 @@
+---
+// Persistent FX surface — one WebGL canvas + the custom cursor, kept alive
+// across View-Transition navigations. Purely decorative (aria-hidden); all real
+// content lives in server-rendered HTML behind it.
+---
+<div id="fx-root" aria-hidden="true" transition:persist>
+  <canvas id="fx-canvas"></canvas>
+  <div id="fx-cursor-ring"></div>
+  <div id="fx-cursor-dot"></div>
+</div>
+
+<script>
+  import { boot } from '../lib/fx/boot';
+  boot();
+</script>
