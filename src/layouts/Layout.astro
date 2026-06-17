@@ -10,6 +10,8 @@ import { ViewTransitions } from 'astro:transitions';
 import Logo from '../components/Logo.astro';
 import SiteFX from '../components/SiteFX.astro';
 import BrandDivider from '../components/BrandDivider.astro';
+import CosmicBackground from '../components/CosmicBackground.astro';
+import BrandArt from '../components/BrandArt.astro';
 
 interface Props {
   title?: string;
@@ -22,6 +24,7 @@ interface Props {
   jsonld?: Record<string, unknown> | Record<string, unknown>[];
   noindex?: boolean;
   keywords?: string;
+  cosmos?: string;
 }
 
 const {
@@ -33,7 +36,33 @@ const {
   jsonld,
   noindex = false,
   keywords = 'soul, spirituality, self-inquiry, Vedanta, Upanishads, Bhagavad Gita, meditation, consciousness, the Self, atman, kosha, meaning of life, inner peace, wisdom',
+  cosmos,
 } = Astro.props;
+
+// Each page gets its own fixed, coded "universe" backdrop (text scrolls over it).
+// Home keeps its bespoke HomeAtmosphere (stars + light + five rotating orbs).
+const cosmosByPage: Record<string, string> = {
+  home: 'home',
+  about: 'nebula',
+  knowledge: 'galaxy',
+  courses: 'wormhole',
+  donate: 'supernova',
+  search: 'starfield',
+  default: 'aurora',
+};
+const cosmosVariant = cosmos ?? cosmosByPage[fxPage] ?? cosmosByPage.default;
+
+// A coded "human-touch" artwork per page (dot-painting / etched register).
+const artByPage: Record<string, string> = {
+  home: 'waterholes',
+  about: 'songlines',
+  knowledge: 'dotcircles',
+  courses: 'weave',
+  donate: 'radiance',
+  search: 'lacework',
+  default: 'terrain',
+};
+const artVariant = artByPage[fxPage] ?? artByPage.default;
 
 const site = Astro.site ?? new URL('https://soulseeking.org');
 const canonical = new URL(Astro.url.pathname, site).toString();
@@ -146,6 +175,13 @@ const year = new Date().getFullYear();
   <body class="min-h-screen flex flex-col bg-void text-mist" data-fx-page={fxPage}>
     <SiteFX />
     <div class="brand-veil" aria-hidden="true"></div>
+    {
+      cosmosVariant !== 'home' && (
+        <div class="pointer-events-none fixed inset-0 z-0">
+          <CosmicBackground variant={cosmosVariant} />
+        </div>
+      )
+    }
     <a
       href="#main"
       class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-mist focus:px-4 focus:py-2 focus:text-void"
@@ -239,7 +275,9 @@ const year = new Date().getFullYear();
 
     <footer class="relative z-10 overflow-hidden border-t border-white/10 bg-abyss text-mist">
       <div class="pointer-events-none absolute inset-0 aurora opacity-50"></div>
-      <div class="bg-brand-contour pointer-events-none absolute inset-0 opacity-[0.06]"></div>
+      <div class="pointer-events-none absolute inset-0 opacity-[0.08]">
+        <BrandArt variant={artVariant} class="h-full w-full" />
+      </div>
       <div class="relative z-10 mx-auto max-w-6xl px-5 py-phi-3">
         <div class="flex flex-col items-center gap-5 text-center">
           <Logo size={40} tone="gold" />
