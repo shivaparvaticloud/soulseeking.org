@@ -1,6 +1,7 @@
 ---
-// Soul Seeking logo — a soaring bird formed from a radiating sunburst.
-// Fully generated geometry; no raster assets.
+// Soul Seeking logo — a soaring eagle, drawn as fine gold linework with an
+// engraved/stamped texture (Victorian register). Fully coded geometry + SVG
+// filters; no raster assets. Same API as before (size / withWordmark / tone).
 interface Props {
   size?: number;
   withWordmark?: boolean;
@@ -14,24 +15,88 @@ const {
   class: className = '',
 } = Astro.props;
 
-const stroke = tone === 'gold' ? '#E7C68B' : '#604C44';
-const disc = tone === 'gold' ? '#CC914E' : '#692828';
-
-// Radiating rays fanning upward from a low origin (the dawn / sunburst).
+const uid = Math.random().toString(36).slice(2, 8);
 const cx = 50;
-const cy = 60;
-const rays: { x2: number; y2: number; len: number }[] = [];
-const rayCount: number = 13;
-for (let i = 0; i < rayCount; i++) {
-  // spread across the upper half (-78deg .. +78deg from vertical)
-  const t = rayCount === 1 ? 0 : i / (rayCount - 1);
-  const angle = (-78 + t * 156) * (Math.PI / 180);
-  // longer rays toward the centre, shorter toward the wings -> wing silhouette
-  const len = 22 + 16 * Math.cos(angle);
-  const x2 = cx + len * Math.sin(angle);
-  const y2 = cy - len * Math.cos(angle);
-  rays.push({ x2, y2, len });
+
+const round = (n: number) => n.toFixed(1);
+
+// A tapered feather (filled) from a base point to a tip.
+function feather(bx: number, by: number, tx: number, ty: number, w: number): string {
+  const a = Math.atan2(ty - by, tx - bx);
+  const px = Math.cos(a + Math.PI / 2);
+  const py = Math.sin(a + Math.PI / 2);
+  const mx = (bx + tx) / 2;
+  const my = (by + ty) / 2;
+  return (
+    `M ${round(bx + px * w)} ${round(by + py * w)} ` +
+    `Q ${round(mx + px * w * 0.7)} ${round(my + py * w * 0.7)} ${round(tx)} ${round(ty)} ` +
+    `Q ${round(mx - px * w * 0.7)} ${round(my - py * w * 0.7)} ${round(bx - px * w)} ${round(by - py * w)} Z`
+  );
 }
+
+// One raised, scallop-edged wing for side s (-1 left, +1 right), plus its
+// long primary "finger" feathers at the tip.
+function wing(s: number) {
+  const rootTop = { x: cx + s * 5, y: 37 };
+  const rootBot = { x: cx + s * 9, y: 53 };
+  const tip = { x: cx + s * 38, y: 21 };
+  let d = `M ${round(rootTop.x)} ${round(rootTop.y)} Q ${round(cx + s * 21)} 18 ${round(tip.x)} ${round(tip.y)}`;
+  const K = 6;
+  let prev = tip;
+  for (let i = 1; i <= K; i++) {
+    const t = i / K;
+    const px = prev.x + (rootBot.x - tip.x) / K;
+    const py = prev.y + (rootBot.y - tip.y) / K;
+    const mx = (prev.x + px) / 2 + s * 2.5 * (1 - t);
+    const my = (prev.y + py) / 2 + 4.2;
+    d += ` Q ${round(mx)} ${round(my)} ${round(px)} ${round(py)}`;
+    prev = { x: px, y: py };
+  }
+  d += ' Z';
+
+  const primaries: string[] = [];
+  const F = 5;
+  for (let i = 0; i < F; i++) {
+    const t = i / (F - 1);
+    const ang = (20 + t * 44) * (Math.PI / 180); // fan out + upward
+    const bx = cx + s * (28 + i * 1.8);
+    const by = 23 - i * 0.4;
+    const len = 12 + (1 - Math.abs(t - 0.5) * 2) * 7;
+    const tx = bx + s * Math.cos(ang) * len;
+    const ty = by - Math.sin(ang) * len;
+    primaries.push(feather(bx, by, tx, ty, 1.7 - t * 0.5));
+  }
+
+  // a couple of covert detail arcs (engraving) along the wing
+  const detail = `M ${round(rootTop.x + s * 4)} ${round(rootTop.y + 1)} Q ${round(cx + s * 18)} 24 ${round(tip.x - s * 4)} ${round(tip.y + 3)}`;
+  return { d, primaries, detail };
+}
+
+// Fanned tail feathers.
+const tail: string[] = [];
+const tailDetail: string[] = [];
+const TN = 7;
+for (let i = 0; i < TN; i++) {
+  const t = i / (TN - 1);
+  const ang = (-34 + t * 68) * (Math.PI / 180);
+  const len = 19 + (1 - Math.abs(t - 0.5) * 2) * 4;
+  const bx = cx;
+  const by = 55;
+  const tx = bx + Math.sin(ang) * len;
+  const ty = by + Math.cos(ang) * len;
+  tail.push(feather(bx, by, tx, ty, 2.0 - Math.abs(t - 0.5) * 1.4));
+  tailDetail.push(`M ${round(bx)} ${round(by)} L ${round(tx)} ${round(ty)}`);
+}
+
+const L = wing(-1);
+const R = wing(1);
+
+const grad = tone === 'gold'
+  ? ['#F6E2B4', '#E7C68B', '#CC914E']
+  : ['#9A7A57', '#6F584A', '#56433B'];
+const engrave = tone === 'gold' ? '#6e4824' : '#2f241e';
+const outline = tone === 'gold' ? '#8a5a28' : '#3a2c24';
+const eyeColor = tone === 'gold' ? '#1a130b' : '#2f241e';
 ---
 
 <span class={`inline-flex items-center gap-3 ${className}`}>
@@ -41,23 +106,57 @@ for (let i = 0; i < rayCount; i++) {
     viewBox="0 0 100 100"
     fill="none"
     role="img"
-    aria-label="Soul Seeking"
+    aria-label="Soul Seeking — a soaring eagle"
     class="shrink-0"
   >
-    <g stroke={stroke} stroke-width="1.3" stroke-linecap="round">
-      {rays.map((r) => <line x1={cx} y1={cy} x2={r.x2} y2={r.y2} />)}
+    <defs>
+      <linearGradient id={`g-${uid}`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color={grad[0]}></stop>
+        <stop offset="55%" stop-color={grad[1]}></stop>
+        <stop offset="100%" stop-color={grad[2]}></stop>
+      </linearGradient>
+      {/* engraved / stamped grain, confined to the bird's own shape */}
+      <filter id={`stamp-${uid}`} x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.7 0.55" numOctaves="2" seed="7" result="n"></feTurbulence>
+        <feColorMatrix in="n" type="matrix"
+          values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.1 0.62" result="grain"></feColorMatrix>
+        <feComposite in="grain" in2="SourceAlpha" operator="in" result="g"></feComposite>
+        <feMerge>
+          <feMergeNode in="SourceGraphic"></feMergeNode>
+          <feMergeNode in="g"></feMergeNode>
+        </feMerge>
+      </filter>
+    </defs>
+
+    {/* filled, textured body of the eagle */}
+    <g
+      fill={`url(#g-${uid})`}
+      stroke={outline}
+      stroke-width="0.5"
+      stroke-linejoin="round"
+      filter={`url(#stamp-${uid})`}
+    >
+      <path d={L.d}></path>
+      <path d={R.d}></path>
+      {L.primaries.map((d) => <path d={d}></path>)}
+      {R.primaries.map((d) => <path d={d}></path>)}
+      {tail.map((d) => <path d={d}></path>)}
+      {/* body */}
+      <path d={`M ${cx - 3.4} 38 Q ${cx} 33 ${cx + 3.4} 38 L ${cx + 2.8} 58 Q ${cx} 62 ${cx - 2.8} 58 Z`}></path>
+      {/* head turned left + hooked beak */}
+      <path d={`M ${cx - 2.6} 33 Q ${cx - 4.6} 29.5 ${cx - 2} 30.4 Q ${cx + 1.6} 31 ${cx + 1.4} 34.5 Q ${cx - 0.6} 35.4 ${cx - 2.6} 33 Z`}></path>
+      <path d={`M ${cx - 3.2} 31.6 L ${cx - 6.6} 32.2 L ${cx - 3.1} 33.4 Z`}></path>
     </g>
-    <!-- bird body suggested by two sweeping wing arcs over the rays -->
-    <path
-      d="M14 58 Q38 40 50 47 Q62 40 86 58"
-      stroke={stroke}
-      stroke-width="2"
-      fill="none"
-      stroke-linecap="round"
-    />
-    <!-- the rising sun disc -->
-    <circle cx={cx} cy={cy} r="6.5" fill={disc} />
-    <circle cx={cx} cy={cy} r="6.5" fill="none" stroke={stroke} stroke-width="1.2" />
+
+    {/* fine engraving — feather separations, crisp over the texture */}
+    <g stroke={engrave} stroke-width="0.45" fill="none" stroke-linecap="round" opacity="0.55">
+      <path d={L.detail}></path>
+      <path d={R.detail}></path>
+      {tailDetail.map((d) => <path d={d}></path>)}
+    </g>
+
+    {/* eye */}
+    <circle cx={cx - 1.4} cy="32" r="0.7" fill={eyeColor}></circle>
   </svg>
   {
     withWordmark && (

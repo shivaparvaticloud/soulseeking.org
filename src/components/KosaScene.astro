@@ -133,8 +133,16 @@ const self = { sanskrit: 'Ātman', name: 'The Self', line: 'The witness the five
   <script>
     type Sheath = { index: number; color: string; sanskrit: string; name: string; line: string; r: number };
 
-    const sectionEl = document.querySelector('[data-kosa]') as HTMLElement | null;
-    if (sectionEl) {
+    // Tears down a previous instance (so the scene re-lives after a
+    // View-Transition navigation instead of showing the static fallback).
+    let kosaTeardown: (() => void) | null = null;
+
+    function initKosa() {
+      const sectionEl = document.querySelector('[data-kosa]') as HTMLElement | null;
+      if (sectionEl && sectionEl.dataset.kosaBound === '1') return; // already live
+      if (kosaTeardown) { kosaTeardown(); kosaTeardown = null; }
+      if (!sectionEl) return;
+      sectionEl.dataset.kosaBound = '1';
       const canvas = sectionEl.querySelector('[data-kosa-canvas]') as HTMLCanvasElement;
       const fallback = sectionEl.querySelector('[data-kosa-fallback]') as HTMLElement;
       const caption = sectionEl.querySelector('[data-kosa-caption]') as HTMLElement;
@@ -222,7 +230,7 @@ const self = { sanskrit: 'Ātman', name: 'The Self', line: 'The witness the five
         io.observe(sectionEl);
 
         // If the visitor turns motion on later, honour it.
-        window.addEventListener('ss-motion-change', () => {
+        const onMotion = () => {
           if (!started) maybeStart();
           else if (api) {
             if (motionOff()) {
@@ -230,7 +238,15 @@ const self = { sanskrit: 'Ātman', name: 'The Self', line: 'The witness the five
               api.frame();
             } else if (inView && !document.hidden) api.play();
           }
-        });
+        };
+        window.addEventListener('ss-motion-change', onMotion);
+
+        // Base teardown — stop observing, drop the motion listener, halt the loop.
+        kosaTeardown = () => {
+          io.disconnect();
+          window.removeEventListener('ss-motion-change', onMotion);
+          if (api) api.pause();
+        };
 
         const init = async () => {
           const THREE = await import('three');
@@ -417,12 +433,24 @@ const self = { sanskrit: 'Ātman', name: 'The Self', line: 'The witness the five
           if (!motionOff()) play();
           else frame(); // a single still frame when motion is off
 
-          document.addEventListener('visibilitychange', () => {
+          const onVis = () => {
             if (document.hidden) pause();
             else if (!motionOff() && inView) play();
-          });
+          };
+          document.addEventListener('visibilitychange', onVis);
+
+          // Extend teardown to fully release the GL scene on navigation.
+          const base = kosaTeardown;
+          kosaTeardown = () => {
+            if (base) base();
+            document.removeEventListener('visibilitychange', onVis);
+            try { renderer.dispose(); } catch (e) {}
+          };
         };
       }
     }
+
+    initKosa();
+    document.addEventListener('astro:page-load', initKosa);
   </script>
 </section>
