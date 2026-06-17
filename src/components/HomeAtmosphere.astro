@@ -57,37 +57,38 @@ const seed = Array.from({ length: 6 }, (_, i) => {
 ---
 
 <div class="home-atmos pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden="true">
-  <Starfield class="absolute inset-0 h-full w-full" density={1.5} />
+  <Starfield class="absolute inset-0 h-full w-full" density={1} />
 
   <!-- emerging divine light -->
   <div class="home-light"></div>
 
-  <!-- rotating five-layer mandala -->
+  <!-- rotating five-layer mandala — each layer is its own SVG so it rotates as
+       a single GPU-composited transform (no per-frame raster). -->
   <div class="home-mandala">
-    <svg viewBox="0 0 1000 1000" width="100%" height="100%" fill="none" role="presentation">
-      <g class="m-layer m-cw" style="animation-duration:150s" stroke="#E7C68B">
+    <svg class="m-layer m-cw" style="animation-duration:150s" viewBox="0 0 1000 1000" fill="none" role="presentation">
+      <g stroke="#E7C68B">
         {ticks.map((t) => (
           <line x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2} stroke-width={t.big ? 1.6 : 0.8} opacity={t.big ? 0.6 : 0.32} />
         ))}
         <circle cx={C} cy={C} r="440" stroke-width="0.6" opacity="0.28" />
       </g>
-
-      <g class="m-layer m-ccw" style="animation-duration:115s" stroke="#E7C68B" stroke-width="1" opacity="0.4">
-        {petals.map((d) => <path d={d} />)}
-      </g>
-
-      <g class="m-layer m-cw" style="animation-duration:200s" stroke="#CC914E">
-        <polygon points={star} stroke-width="1" opacity="0.4" />
-        <circle cx={C} cy={C} r="260" stroke="#E7C68B" stroke-width="0.6" opacity="0.22" />
-      </g>
-
-      <g class="m-layer m-ccw" style="animation-duration:90s" stroke="#E7C68B" opacity="0.45">
+    </svg>
+    <svg class="m-layer m-ccw" style="animation-duration:115s" viewBox="0 0 1000 1000" fill="none" role="presentation">
+      <g stroke="#E7C68B" stroke-width="1" opacity="0.4">{petals.map((d) => <path d={d} />)}</g>
+    </svg>
+    <svg class="m-layer m-cw" style="animation-duration:200s" viewBox="0 0 1000 1000" fill="none" role="presentation">
+      <polygon points={star} stroke="#CC914E" stroke-width="1" opacity="0.4" />
+      <circle cx={C} cy={C} r="260" stroke="#E7C68B" stroke-width="0.6" opacity="0.22" />
+    </svg>
+    <svg class="m-layer m-ccw" style="animation-duration:90s" viewBox="0 0 1000 1000" fill="none" role="presentation">
+      <g stroke="#E7C68B" opacity="0.45">
         {spokes.map((s) => <line x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2} stroke-width="0.8" />)}
         <circle cx={C} cy={C} r="150" stroke-width="0.7" opacity="0.6" />
         <circle cx={C} cy={C} r="205" stroke-width="0.5" opacity="0.4" />
       </g>
-
-      <g class="m-layer m-cw" style="animation-duration:170s" stroke="#F3E6C8" stroke-width="0.8" opacity="0.5">
+    </svg>
+    <svg class="m-layer m-cw" style="animation-duration:170s" viewBox="0 0 1000 1000" fill="none" role="presentation">
+      <g stroke="#F3E6C8" stroke-width="0.8" opacity="0.5">
         <circle cx={C} cy={C} r="55" />
         {seed.map((s) => <circle cx={s.cx} cy={s.cy} r="55" />)}
       </g>
@@ -121,15 +122,21 @@ const seed = Array.from({ length: 6 }, (_, i) => {
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 128vmin;
-    height: 128vmin;
+    width: 126vmin;
+    height: 126vmin;
     transform: translate(-50%, -50%);
-    opacity: 0.92;
-    -webkit-mask-image: radial-gradient(circle at center, transparent 3%, #000 13%, #000 82%, transparent 100%);
-    mask-image: radial-gradient(circle at center, transparent 3%, #000 13%, #000 82%, transparent 100%);
+    opacity: 0.6;
   }
 
-  .m-layer { transform-box: view-box; transform-origin: center; }
+  /* each layer is a full-size SVG that rotates as one composited transform */
+  .m-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform-origin: center;
+    will-change: transform;
+  }
   .m-cw { animation: atmos-spin 1s linear infinite; }
   .m-ccw { animation: atmos-spin 1s linear infinite; animation-direction: reverse; }
 
