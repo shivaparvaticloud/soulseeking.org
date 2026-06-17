@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import SunburstRays from '../../components/SunburstRays.astro';
 import Phyllotaxis from '../../components/Phyllotaxis.astro';
 import MeditationFigures from '../../components/MeditationFigures.astro';
+import TurningPages from '../../components/TurningPages.astro';
 import { getCourses } from '../../lib/content';
 
 const courses = getCourses();
@@ -19,6 +20,9 @@ const levelName = ['', 'Foundation', 'Seeker', 'Adept', 'Deepening', 'Mastery'];
     <div class="relative z-10 mx-auto max-w-4xl px-6 py-phi-4 text-center">
       <p class="accent text-gold">Guided Journeys</p>
       <h1 class="mt-2 text-4xl tracking-ultra sm:text-5xl">Courses</h1>
+      <div class="mt-phi-1 flex justify-center">
+        <TurningPages size={180} />
+      </div>
       <p class="mx-auto mt-phi-1 max-w-xl text-lg leading-relaxed text-cream/80">
         Each course is a small book — chapters, glossaries and quizzes — to be walked at
         your own pace, step by step.

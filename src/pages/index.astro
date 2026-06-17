@@ -5,6 +5,8 @@ import SoaringBird from '../components/SoaringBird.astro';
 import SunburstRays from '../components/SunburstRays.astro';
 import Phyllotaxis from '../components/Phyllotaxis.astro';
 import MeditationFigures from '../components/MeditationFigures.astro';
+import LampKeeper from '../components/LampKeeper.astro';
+import KosaScene from '../components/KosaScene.astro';
 import { getCourses, getArticles } from '../lib/content';
 
 const courses = getCourses();
@@ -45,6 +47,9 @@ const articles = getArticles();
   <!-- SECTION 2 — Your Inward Guide, on ancient stucco -->
   <section class="relative overflow-hidden bg-cream bg-stucco">
     <div class="mx-auto max-w-reading px-6 py-phi-4 text-center">
+      <div class="reveal mb-phi-1 flex justify-center">
+        <LampKeeper size={210} tone="gold" />
+      </div>
       <p class="reveal text-balance text-xl italic leading-loose text-oxblood sm:text-2xl">
         &ldquo;The desire to know the Soul is the desire that will end all others.&rdquo;
       </p>
@@ -75,7 +80,7 @@ const articles = getArticles();
       </div>
 
       <div class="reveal mt-phi-2">
-        <a href="/knowledge" class="btn-soul">Explore</a>
+        <a href="/knowledge" class="btn-soul-dark">Explore</a>
       </div>
     </div>
   </section>
@@ -93,6 +98,9 @@ const articles = getArticles();
       <p class="reveal mt-phi-1 accent text-gold">Bhagavad Gītā 2.23</p>
     </div>
   </section>
+
+  <!-- FLAGSHIP — The Cosmos & the Sheaths (live 3D, lazy-loaded) -->
+  <KosaScene />
 
   <!-- Where to begin — gentle wayfinding into the hubs -->
   <section class="bg-cream">

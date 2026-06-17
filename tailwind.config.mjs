@@ -7,6 +7,7 @@ export default {
         // Brand palette — Soul Seeking Project Summary (pp. 3-6)
         gold: '#E7C68B',
         ochre: '#CC914E',
+        ember: '#CC5B3A',
         oxblood: '#692828',
         earth: '#604C44',
         cream: '#EEEDE3',

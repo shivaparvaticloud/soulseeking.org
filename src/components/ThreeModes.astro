@@ -1,0 +1,211 @@
+---
+// The Three Modes (the three guṇas — sattva, rajas, tamas) as a living illustration.
+// Three luminous flowing strands weave and braid along a horizontal band, suggesting
+// the three modes of nature intertwining. Pure SVG + scoped CSS, no JS, no images.
+// A continuous flowing-light effect (animated stroke-dashoffset) plus a faint opacity
+// shimmer, each strand out of phase. Honours prefers-reduced-motion (flow freezes to a
+// static woven ribbon). Decorative — aria-hidden.
+interface Props {
+  width?: number;
+  height?: number;
+  class?: string;
+}
+const { width = 600, height = 160, class: className = '' } = Astro.props;
+
+const uid = `mode-${Math.random().toString(36).slice(2, 9)}`;
+
+// Design viewBox. Strands weave across a horizontal band centred vertically.
+const VW = 600;
+const VH = 160;
+
+// Three smooth cubic-bezier strands spanning the full width. Their control points are
+// chosen so the curves cross one another a few times — sattva rides high then dips,
+// rajas is the most active mid-weaver, tamas runs low and heavy. Each is a continuous
+// path of chained cubic segments left → right.
+type Strand = {
+  key: 'sattva' | 'rajas' | 'tamas';
+  d: string;
+  from: string; // gradient start
+  to: string; // gradient end
+  width: number; // core stroke width
+  flow: number; // seconds — flowing-light loop
+  shimmer: number; // seconds — opacity shimmer loop
+  dash: string; // dasharray pattern
+  delay: number; // phase offset (negative => already running, out of phase)
+  baseOpacity: number;
+};
+
+const strands: Strand[] = [
+  {
+    // sattva — luminous gold/cream, calmest, slowest, brightest. Rides high, gentle.
+    key: 'sattva',
+    d: 'M -20 70 C 90 40, 130 40, 220 74 S 360 110, 450 78 S 560 46, 620 64',
+    from: '#E7C68B',
+    to: '#EEEDE3',
+    width: 3,
+    flow: 14,
+    shimmer: 11,
+    dash: '26 34',
+    delay: 0,
+    baseOpacity: 0.92,
+  },
+  {
+    // rajas — ember/ochre, active, medium tempo. The busiest mid-weaver.
+    key: 'rajas',
+    d: 'M -20 80 C 90 116, 150 112, 230 80 S 350 44, 440 82 S 560 120, 620 86',
+    from: '#CC5B3A',
+    to: '#CC914E',
+    width: 2.6,
+    flow: 8,
+    shimmer: 6.5,
+    dash: '20 30',
+    delay: -3.1,
+    baseOpacity: 0.8,
+  },
+  {
+    // tamas — deep oxblood/earth, slow, heavy, dimmer. Runs low along the band.
+    key: 'tamas',
+    d: 'M -20 92 C 90 70, 160 78, 250 96 S 370 116, 460 92 S 560 70, 620 96',
+    from: '#692828',
+    to: '#604C44',
+    width: 3.4,
+    flow: 12,
+    shimmer: 13,
+    dash: '18 40',
+    delay: -6.7,
+    baseOpacity: 0.62,
+  },
+];
+---
+
+<svg
+  viewBox={`0 0 ${VW} ${VH}`}
+  width="100%"
+  height="100%"
+  preserveAspectRatio="xMidYMid meet"
+  fill="none"
+  role="presentation"
+  aria-hidden="true"
+  class={`ss-three-modes ${className}`}
+  style={`--w:${width}px;--h:${height}px`}
+>
+  <defs>
+    <filter
+      id={`${uid}-soft`}
+      x="-20%"
+      y="-40%"
+      width="140%"
+      height="180%"
+    >
+      <feGaussianBlur stdDeviation="3.2"></feGaussianBlur>
+    </filter>
+    {
+      strands.map((s) => (
+        <linearGradient
+          id={`${uid}-${s.key}`}
+          x1="0%"
+          y1="0%"
+          x2="100%"
+          y2="0%"
+        >
+          <stop offset="0%" stop-color={s.from} />
+          <stop offset="50%" stop-color={s.to} />
+          <stop offset="100%" stop-color={s.from} />
+        </linearGradient>
+      ))
+    }
+  </defs>
+
+  {
+    strands.map((s) => (
+      <g
+        class={`ss-strand ss-${s.key}`}
+        style={`--flow:${s.flow}s;--shimmer:${s.shimmer}s;--delay:${s.delay}s;--base:${s.baseOpacity}`}
+      >
+        {/* faint wide glow underneath for a luminous, candle-lit look */}
+        <path
+          class="ss-glow"
+          d={s.d}
+          stroke={`url(#${uid}-${s.key})`}
+          stroke-width={s.width * 3.4}
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          filter={`url(#${uid}-soft)`}
+        />
+        {/* flowing core strand */}
+        <path
+          class="ss-core"
+          d={s.d}
+          stroke={`url(#${uid}-${s.key})`}
+          stroke-width={s.width}
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-dasharray={s.dash}
+        />
+      </g>
+    ))
+  }
+</svg>
+
+<style>
+  .ss-three-modes {
+    display: block;
+    width: var(--w);
+    height: var(--h);
+    max-width: 100%;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .ss-strand {
+    opacity: var(--base);
+    animation: ss-shimmer var(--shimmer) ease-in-out infinite;
+    animation-delay: var(--delay);
+    will-change: opacity;
+  }
+
+  .ss-glow {
+    opacity: 0.28;
+  }
+
+  .ss-core {
+    animation: ss-flow var(--flow) linear infinite;
+    animation-delay: var(--delay);
+    will-change: stroke-dashoffset;
+  }
+
+  /* continuous flowing light: drift the dash pattern along the strand */
+  @keyframes ss-flow {
+    from {
+      stroke-dashoffset: 0;
+    }
+    to {
+      stroke-dashoffset: -120;
+    }
+  }
+
+  /* gentle brightening and dimming, like breath over candlelight */
+  @keyframes ss-shimmer {
+    0%,
+    100% {
+      opacity: calc(var(--base) * 0.78);
+    }
+    50% {
+      opacity: var(--base);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ss-strand,
+    .ss-core {
+      animation: none;
+    }
+    .ss-strand {
+      opacity: var(--base);
+    }
+    /* show the strands as static, fully-drawn woven ribbons */
+    .ss-core {
+      stroke-dasharray: none;
+    }
+  }
+</style>
