@@ -9,7 +9,6 @@ import '../styles/global.css';
 import { ViewTransitions } from 'astro:transitions';
 import Logo from '../components/Logo.astro';
 import SiteFX from '../components/SiteFX.astro';
-import BrandDivider from '../components/BrandDivider.astro';
 import CosmicBackground from '../components/CosmicBackground.astro';
 import BrandArt from '../components/BrandArt.astro';
 
@@ -284,9 +283,7 @@ const year = new Date().getFullYear();
       <slot />
     </main>
 
-    <BrandDivider class="relative z-10 mt-phi-3" />
-
-    <footer class="relative z-10 overflow-hidden border-t border-white/10 bg-abyss text-mist">
+    <footer class="relative z-10 mt-phi-3 overflow-hidden border-t border-white/10 bg-abyss text-mist">
       <div class="pointer-events-none absolute inset-0 aurora opacity-50"></div>
       <div class="pointer-events-none absolute inset-0 opacity-[0.08]">
         <BrandArt variant={artVariant} class="h-full w-full" />
@@ -311,18 +308,33 @@ const year = new Date().getFullYear();
             No trackers. No cookies. No contact avenues. The path continues onward,
             independently — what you seek, you will attract.
           </p>
-          <button
-            id="motionToggle"
-            type="button"
-            aria-pressed="true"
-            class="inline-flex min-h-[2.75rem] items-center gap-2 rounded-full border border-white/15 px-4 py-2 font-sans text-[0.58rem] uppercase tracking-[0.22em] text-mist/65 transition-phi hover:border-gold hover:text-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-              <circle cx="12" cy="12" r="9"></circle>
-              <path d="M12 7v5l3 2" stroke-linecap="round" stroke-linejoin="round"></path>
-            </svg>
-            <span data-motion-label>Motion: On</span>
-          </button>
+          <div class="flex flex-wrap items-center justify-center gap-3">
+            <button
+              id="motionToggle"
+              type="button"
+              aria-pressed="true"
+              class="inline-flex min-h-[2.75rem] items-center gap-2 rounded-full border border-white/15 px-4 py-2 font-sans text-[0.58rem] uppercase tracking-[0.22em] text-mist/65 transition-phi hover:border-gold hover:text-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M12 7v5l3 2" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+              <span data-motion-label>Motion: On</span>
+            </button>
+            <button
+              id="soundToggle"
+              type="button"
+              aria-pressed="false"
+              aria-label="Play the 432 Hz ambient tone"
+              class="inline-flex min-h-[2.75rem] items-center gap-2 rounded-full border border-white/15 px-4 py-2 font-sans text-[0.58rem] uppercase tracking-[0.22em] text-mist/65 transition-phi hover:border-gold hover:text-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <path d="M4 9v6h4l5 4V5L8 9H4z" stroke-linejoin="round"></path>
+                <path data-sound-wave d="M16 9a4 4 0 0 1 0 6" stroke-linecap="round"></path>
+              </svg>
+              <span data-sound-label>432 Hz: Off</span>
+            </button>
+          </div>
           <p class="font-sans text-[0.58rem] uppercase tracking-[0.22em] text-mist/35">
             &copy; {year} Soul Seeking
           </p>
@@ -374,10 +386,57 @@ const year = new Date().getFullYear();
             });
           }
         }
+
+        // Persistent 432 Hz ambient tone (off by default; survives navigation).
+        const soundBtn = document.getElementById('soundToggle');
+        if (soundBtn) {
+          const label = soundBtn.querySelector('[data-sound-label]');
+          const sync = async () => {
+            const { soundIsOn } = await import('../lib/fx/sound');
+            const playing = soundIsOn();
+            soundBtn.setAttribute('aria-pressed', String(playing));
+            soundBtn.setAttribute(
+              'aria-label',
+              playing ? 'Turn the 432 Hz ambient tone off.' : 'Play the 432 Hz ambient tone.'
+            );
+            if (label) label.textContent = playing ? '432 Hz: On' : '432 Hz: Off';
+          };
+          sync();
+          if (soundBtn.dataset.bound !== '1') {
+            soundBtn.dataset.bound = '1';
+            soundBtn.addEventListener('click', async () => {
+              const { startSound, stopSound, soundIsOn } = await import('../lib/fx/sound');
+              if (soundIsOn()) {
+                stopSound();
+                try { localStorage.setItem('ss-sound', 'off'); } catch (e) {}
+              } else {
+                startSound();
+                try { localStorage.setItem('ss-sound', 'on'); } catch (e) {}
+              }
+              sync();
+            });
+          }
+        }
       }
 
       bindChrome();
       document.addEventListener('astro:page-load', bindChrome);
+
+      // Returning listeners who left the tone on: resume it on their first
+      // gesture (browsers block audio until a user interaction).
+      try {
+        if (localStorage.getItem('ss-sound') === 'on') {
+          const resume = async () => {
+            window.removeEventListener('pointerdown', resume);
+            window.removeEventListener('keydown', resume);
+            const { startSound } = await import('../lib/fx/sound');
+            startSound();
+            document.getElementById('soundToggle')?.dispatchEvent(new Event('ss-sync'));
+          };
+          window.addEventListener('pointerdown', resume, { once: true });
+          window.addEventListener('keydown', resume, { once: true });
+        }
+      } catch (e) {}
     </script>
   </body>
 </html>
