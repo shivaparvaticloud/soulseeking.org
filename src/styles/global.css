@@ -301,6 +301,39 @@
     pointer-events: none;
   }
 
+  /* ---- Course tabs ---- */
+  .course-tab {
+    cursor: pointer;
+    border: 1px solid var(--line);
+  }
+  .course-tab:hover { border-color: rgba(231, 198, 139, 0.4); }
+  .course-tab[aria-selected='true'] {
+    background: linear-gradient(180deg, rgba(231, 198, 139, 0.08), rgba(255, 255, 255, 0));
+  }
+  .course-tab:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+  @media (min-width: 768px) {
+    .course-tab { border: 0; border-left: 2px solid transparent; background: none; }
+    .course-tab:hover { border-left-color: rgba(231, 198, 139, 0.4); }
+    .course-tab[aria-selected='true'] {
+      border-left-color: var(--gold);
+      background: linear-gradient(90deg, rgba(231, 198, 139, 0.07), rgba(255, 255, 255, 0));
+    }
+  }
+  /* group-aria-selected helper (Tailwind plugin not assumed) */
+  .course-tab[aria-selected='true'] .text-mist\/70 { color: var(--text); }
+
+  /* Visible by default (works with no JS / for crawlers); the switch fade is
+     an enhancement applied by removing .fx-enter. */
+  .course-panel {
+    transition: opacity 0.7s var(--ease-soul), transform 0.7s var(--ease-soul);
+  }
+  .course-panel.fx-enter {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: none;
+  }
+  .course-panel:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 6px; }
+
   /* Hairline-framed link/feature card */
   .card-soul {
     position: relative;

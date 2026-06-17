@@ -1,0 +1,225 @@
+---
+// Data-driven, deep-linkable course browser. One ARIA tab per course; each
+// panel surfaces the course's structure (chapters, glossary, quizzes, read
+// time, outcomes) and an "Open the Book" CTA to the full reader route.
+// All panels are server-rendered (SEO-safe); only visibility toggles client-side.
+import type { Course } from '../lib/content';
+
+interface Props {
+  courses: Course[];
+}
+const { courses } = Astro.props;
+const levelName = ['', 'Foundation', 'Seeker', 'Adept', 'Deepening', 'Mastery'];
+
+function stats(c: Course) {
+  const glossary = c.modules.reduce((n, m) => n + m.glossary.length, 0);
+  const quizzes =
+    c.modules.reduce((n, m) => n + (m.quiz.length ? 1 : 0), 0) +
+    (c.finalQuiz.length ? 1 : 0);
+  return { glossary, quizzes };
+}
+---
+
+<section data-course-tabs class="mx-auto max-w-6xl px-6 py-phi-3">
+  <div class="grid gap-8 md:grid-cols-[17rem_1fr] md:gap-12">
+    <!-- Tab bar: horizontal scroll on mobile, vertical rail on desktop -->
+    <div
+      role="tablist"
+      aria-label="Courses"
+      aria-orientation="vertical"
+      class="-mx-6 flex gap-2 overflow-x-auto px-6 pb-2 md:mx-0 md:flex-col md:gap-1 md:overflow-visible md:px-0 md:pb-0 md:border-l md:border-white/10"
+    >
+      {
+        courses.map((c, i) => (
+          <button
+            role="tab"
+            id={`tab-${c.slug}`}
+            data-tab={c.slug}
+            aria-controls={`panel-${c.slug}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+            class="course-tab group shrink-0 whitespace-nowrap rounded-lg px-4 py-3 text-left transition-phi md:-ml-px md:rounded-none md:border-l-2 md:border-transparent md:pl-5 md:whitespace-normal"
+          >
+            <span class="block font-sans text-[0.56rem] uppercase tracking-[0.28em] text-gold/70">
+              {levelName[c.level] || `Level ${c.level}`}
+            </span>
+            <span class="mt-1 block font-sans text-base font-medium tracking-tight text-mist/70 transition-phi group-aria-selected:text-mist">
+              {c.title}
+            </span>
+            <span class="mt-1 hidden font-sans text-[0.58rem] uppercase tracking-[0.2em] text-mist/40 md:block">
+              {c.modules.length} chapters &middot; {c.readingMinutes} min
+            </span>
+          </button>
+        ))
+      }
+    </div>
+
+    <!-- Panels -->
+    <div class="relative min-h-[24rem]">
+      {
+        courses.map((c, i) => {
+          const s = stats(c);
+          return (
+            <div
+              role="tabpanel"
+              id={`panel-${c.slug}`}
+              data-panel={c.slug}
+              aria-labelledby={`tab-${c.slug}`}
+              tabindex="0"
+              hidden={i !== 0}
+              class="course-panel focus:outline-none"
+            >
+              <p class="kicker">{levelName[c.level] || `Level ${c.level}`}</p>
+              <h2 class="mt-3 display-lg text-3xl text-mist sm:text-4xl">{c.title}</h2>
+              {c.tagline && (
+                <p class="mt-2 font-serif text-lg italic text-mist/65">{c.tagline}</p>
+              )}
+
+              <div class="mt-6 flex flex-wrap gap-2.5">
+                {[
+                  [`${c.modules.length}`, 'chapters'],
+                  [`${s.glossary}`, 'terms'],
+                  [`${s.quizzes}`, 'quizzes'],
+                  [`${c.readingMinutes}`, 'min read'],
+                ].map(([n, label]) => (
+                  <span class="glass inline-flex items-baseline gap-1.5 rounded-full px-3.5 py-1.5">
+                    <span class="font-sans text-sm font-semibold text-gold">{n}</span>
+                    <span class="font-sans text-[0.58rem] uppercase tracking-[0.22em] text-mist/55">
+                      {label}
+                    </span>
+                  </span>
+                ))}
+              </div>
+
+              {c.description && (
+                <p class="mt-phi-1 max-w-2xl font-serif text-lg leading-loose text-mist/70">
+                  {c.description}
+                </p>
+              )}
+
+              {c.outcomes.length > 0 && (
+                <div class="mt-phi-2">
+                  <p class="accent text-gold">What you will uncover</p>
+                  <ul class="mt-3 grid gap-2 sm:grid-cols-2">
+                    {c.outcomes.map((o) => (
+                      <li class="flex gap-3 font-serif text-mist/75">
+                        <span aria-hidden="true" class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold/70" />
+                        <span set:html={o} />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <div class="mt-phi-2">
+                <p class="accent text-gold">The chapters</p>
+                <ol class="mt-4 divide-y divide-white/10 border-y border-white/10">
+                  {c.modules.map((m) => (
+                    <li class="flex items-baseline gap-4 py-3">
+                      <span class="font-sans text-sm tabular-nums text-gold/60">
+                        {String(m.number).padStart(2, '0')}
+                      </span>
+                      <span class="font-serif text-lg text-mist/85">{m.title}</span>
+                      <span class="ml-auto flex shrink-0 gap-3 font-sans text-[0.55rem] uppercase tracking-[0.18em] text-mist/40">
+                        {m.glossary.length > 0 && <span>{m.glossary.length} terms</span>}
+                        {m.quiz.length > 0 && <span>quiz</span>}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+
+              <div class="mt-phi-2">
+                <a href={`/courses/${c.slug}`} class="btn-soul" data-astro-prefetch>
+                  Open the Book
+                  <span aria-hidden="true">&rarr;</span>
+                </a>
+              </div>
+            </div>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  // Deep-linkable, keyboard-accessible course tabs. Re-binds on View-Transition
+  // navigations. All panels stay in the DOM for crawlers; we only toggle hidden.
+  function initCourseTabs() {
+    const root = document.querySelector<HTMLElement>('[data-course-tabs]');
+    if (!root || root.dataset.bound === 'yes') return;
+    root.dataset.bound = 'yes';
+
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
+    if (!tabs.length) return;
+
+    const slugOf = (t: HTMLElement) => t.dataset.tab || '';
+    const reduce =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function select(slug: string, opts: { focus?: boolean; push?: boolean } = {}) {
+      const target = tabs.find((t) => slugOf(t) === slug) || tabs[0];
+      const activeSlug = slugOf(target);
+
+      tabs.forEach((t) => {
+        const on = t === target;
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.tabIndex = on ? 0 : -1;
+      });
+      panels.forEach((p) => {
+        const on = p.dataset.panel === activeSlug;
+        if (on) {
+          p.hidden = false;
+          // gentle entrance: start collapsed, then transition to rest
+          if (!reduce) {
+            p.classList.add('fx-enter');
+            void p.offsetWidth;
+            p.classList.remove('fx-enter');
+          }
+        } else {
+          p.hidden = true;
+          p.classList.remove('fx-enter');
+        }
+      });
+
+      if (opts.focus) target.focus();
+      if (opts.push) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('c', activeSlug);
+        history.pushState({ c: activeSlug }, '', url);
+      }
+    }
+
+    root.addEventListener('keydown', (e) => {
+      const i = tabs.indexOf(document.activeElement as HTMLButtonElement);
+      if (i < 0) return;
+      let j = i;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') j = (i + 1) % tabs.length;
+      else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') j = (i - 1 + tabs.length) % tabs.length;
+      else if (e.key === 'Home') j = 0;
+      else if (e.key === 'End') j = tabs.length - 1;
+      else return;
+      e.preventDefault();
+      select(slugOf(tabs[j]), { focus: true, push: true });
+    });
+
+    tabs.forEach((t) =>
+      t.addEventListener('click', () => select(slugOf(t), { push: true }))
+    );
+
+    window.addEventListener('popstate', () => {
+      const c = new URL(window.location.href).searchParams.get('c');
+      if (c) select(c);
+    });
+
+    // Initial selection from ?c=slug, else first tab.
+    const initial = new URL(window.location.href).searchParams.get('c');
+    select(initial && tabs.some((t) => slugOf(t) === initial) ? initial : slugOf(tabs[0]));
+  }
+
+  initCourseTabs();
+  document.addEventListener('astro:page-load', initCourseTabs);
+</script>

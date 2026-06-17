@@ -18,7 +18,7 @@ const markerModules = course.modules.map((m) => ({ number: m.number, title: m.ti
 const romans = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
 ---
 
-<Layout title={`${course.title} — Soul Seeking`} description={course.description} hasSearch={true}>
+<Layout title={`${course.title} — Soul Seeking`} description={course.description} hasSearch={true} fxPage="courses">
   <article data-pagefind-body>
     <!-- Title page -->
     <header class="relative flex min-h-[80vh] items-center">
@@ -26,7 +26,7 @@ const romans = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI
         <p class="kicker">
           {levelName[course.level] || `Level ${course.level}`} &middot; A Course in {course.modules.length} Modules
         </p>
-        <h1 class="mt-5 display-xl text-balance text-mist">
+        <h1 data-reveal-lines class="mt-5 display-xl text-balance text-mist">
           {course.title}
         </h1>
         {course.tagline && <p class="mt-phi-1 font-serif text-xl text-mist/70">{course.tagline}</p>}
