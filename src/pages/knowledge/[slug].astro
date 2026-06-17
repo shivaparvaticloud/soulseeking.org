@@ -4,6 +4,7 @@ import Blocks from '../../components/Blocks.astro';
 import Glossary from '../../components/Glossary.astro';
 import SunburstRays from '../../components/SunburstRays.astro';
 import MeditationFigures from '../../components/MeditationFigures.astro';
+import ThreeModes from '../../components/ThreeModes.astro';
 import { getArticles } from '../../lib/content';
 
 export function getStaticPaths() {
@@ -19,6 +20,9 @@ const next = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 const toc = article.blocks.filter(
   (b): b is Extract<typeof b, { kind: 'heading' }> => b.kind === 'heading' && b.level <= 3
 );
+
+// The three guṇas weave behind their own article.
+const showThreeModes = /three-modes|gunas|guna/i.test(article.slug);
 ---
 
 <Layout title={`${article.title} — Soul Seeking`} description={article.description} hasSearch={true}>
@@ -36,6 +40,13 @@ const toc = article.blocks.filter(
             <blockquote class="mx-auto mt-phi-2 max-w-xl text-balance text-lg italic leading-loose text-cream/80">
               &ldquo;{article.quote}&rdquo;
             </blockquote>
+          )
+        }
+        {
+          showThreeModes && (
+            <div class="mx-auto mt-phi-2 w-full max-w-lg">
+              <ThreeModes width={600} height={130} class="w-full" />
+            </div>
           )
         }
         <p class="mt-phi-2 text-[0.65rem] uppercase tracking-ultra text-cream/50">

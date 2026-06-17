@@ -1,0 +1,307 @@
+---
+// Turning Pages — a "living illustration" for soulseeking.org.
+// An open book seen slightly from above, read quietly by candlelight: single
+// pages lift from the right and turn over, one after another, in a slow loop.
+// Pure SVG + HTML + scoped CSS 3D transforms. No JS, no images, no requests.
+// Decorative only (aria-hidden) and honours prefers-reduced-motion.
+interface Props {
+  size?: number; // width in px
+  class?: string;
+}
+const { size = 200, class: className = '' } = Astro.props;
+
+// Unique prefix so multiple instances' gradient/clip ids never collide.
+const uid = `tp-${Math.random().toString(36).slice(2, 9)}`;
+
+// Book is wider than tall: a 4:3 footprint.
+const W = 400;
+const H = 300;
+
+// Palette
+const coverDark = '#604C44'; // deep earth
+const coverOx = '#692828'; // oxblood
+const pageCream = '#EEEDE3'; // parchment
+const pageDeep = '#E3DAC9'; // shaded parchment
+const gold = '#E7C68B'; // edges + spine highlight
+const ochre = '#CC914E'; // faint ruled lines
+
+// Four turning pages, staggered so one finishes as the next begins.
+const PAGES = 4;
+const CYCLE = 14; // seconds for the whole loop
+const pages = Array.from({ length: PAGES }, (_, i) => ({
+  delay: (i * CYCLE) / PAGES,
+}));
+---
+
+<div
+  class={`tp ${className}`}
+  style={`--w:${size}px;--cycle:${CYCLE}s`}
+  aria-hidden="true"
+>
+  <div class="tp-stage">
+    <!-- Resting open book (SVG): cover, two page leaves, spine, gold edges -->
+    <svg
+      class="tp-book"
+      viewBox={`0 0 ${W} ${H}`}
+      width="100%"
+      height="100%"
+      fill="none"
+      preserveAspectRatio="xMidYMid meet"
+    >
+      <defs>
+        <linearGradient id={`${uid}-cover`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color={coverOx}></stop>
+          <stop offset="100%" stop-color={coverDark}></stop>
+        </linearGradient>
+        <linearGradient id={`${uid}-left`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color={pageDeep}></stop>
+          <stop offset="78%" stop-color={pageCream}></stop>
+          <stop offset="100%" stop-color={pageDeep}></stop>
+        </linearGradient>
+        <linearGradient id={`${uid}-right`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color={pageDeep}></stop>
+          <stop offset="22%" stop-color={pageCream}></stop>
+          <stop offset="100%" stop-color={pageDeep}></stop>
+        </linearGradient>
+        <linearGradient id={`${uid}-spine`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color={gold} stop-opacity="0"></stop>
+          <stop offset="50%" stop-color={gold} stop-opacity="0.9"></stop>
+          <stop offset="100%" stop-color={gold} stop-opacity="0"></stop>
+        </linearGradient>
+      </defs>
+
+      <!-- Cover, just proud of the pages -->
+      <path
+        d="M30 70 L200 56 L370 70 L388 250 L200 268 L12 250 Z"
+        fill={`url(#${uid}-cover)`}
+      ></path>
+
+      <!-- Left page leaf (trapezoid, narrowing toward the spine, seen from above) -->
+      <path
+        d="M40 80 L200 70 L200 254 L26 244 Z"
+        fill={`url(#${uid}-left)`}
+        stroke={gold}
+        stroke-width="1"
+        stroke-opacity="0.55"
+      ></path>
+
+      <!-- Right page leaf -->
+      <path
+        d="M200 70 L360 80 L374 244 L200 254 Z"
+        fill={`url(#${uid}-right)`}
+        stroke={gold}
+        stroke-width="1"
+        stroke-opacity="0.55"
+      ></path>
+
+      <!-- Faint ruled lines on the left page (very subtle ochre) -->
+      <g stroke={ochre} stroke-width="1" stroke-opacity="0.18" stroke-linecap="round">
+        <line x1="54" y1="118" x2="190" y2="112"></line>
+        <line x1="52" y1="150" x2="190" y2="146"></line>
+        <line x1="50" y1="182" x2="190" y2="180"></line>
+        <line x1="48" y1="214" x2="190" y2="214"></line>
+      </g>
+      <!-- and a couple on the right page -->
+      <g stroke={ochre} stroke-width="1" stroke-opacity="0.16" stroke-linecap="round">
+        <line x1="210" y1="112" x2="346" y2="118"></line>
+        <line x1="210" y1="146" x2="348" y2="150"></line>
+        <line x1="210" y1="180" x2="350" y2="182"></line>
+      </g>
+
+      <!-- Spine highlight in gold -->
+      <rect x="198" y="70" width="4" height="184" fill={`url(#${uid}-spine)`}></rect>
+
+      <!-- Thin gold edge along the outer page block (depth) -->
+      <path
+        d="M26 244 L40 80"
+        stroke={gold}
+        stroke-width="1.4"
+        stroke-opacity="0.5"
+      ></path>
+      <path
+        d="M360 80 L374 244"
+        stroke={gold}
+        stroke-width="1.4"
+        stroke-opacity="0.5"
+      ></path>
+    </svg>
+
+    <!-- Turning pages: layered over the right leaf, hinged at the spine. -->
+    <div class="tp-turners">
+      {
+        pages.map((p) => (
+          <div class="tp-page" style={`--d:${p.delay}s`}>
+            <div class="tp-leaf">
+              <div class="tp-front" />
+              <div class="tp-back" />
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<style
+  define:vars={{
+    pageCream,
+    pageDeep,
+    gold,
+    ochre,
+  }}
+>
+  .tp {
+    width: var(--w);
+    /* book is wider than tall — keep the 4:3 footprint */
+    aspect-ratio: 4 / 3;
+    display: inline-block;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* The stage carries the gentle "from slightly above" perspective. */
+  .tp-stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    perspective: 900px;
+    perspective-origin: 50% 18%;
+  }
+
+  .tp-book {
+    display: block;
+    width: 100%;
+    height: 100%;
+    /* tip the whole book back a touch so we read it from above */
+    transform: rotateX(8deg);
+    transform-origin: 50% 60%;
+  }
+
+  /* Turning pages live over the right leaf; the hinge is the spine. */
+  .tp-turners {
+    position: absolute;
+    /* matches the right page region of the viewBox (200..374 of 400, 70..254 of 300) */
+    top: 23.3%;
+    left: 50%;
+    width: 43.5%;
+    height: 61.3%;
+    transform: rotateX(8deg);
+    transform-origin: 50% 60%;
+    transform-style: preserve-3d;
+  }
+
+  .tp-page {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    /* hinge at the spine (left edge of this layer) */
+    transform-origin: left center;
+    /* turn from flat-right, lift, and lay flat onto the left page */
+    animation: tp-turn var(--cycle) cubic-bezier(0.45, 0.05, 0.4, 1) infinite;
+    animation-delay: var(--d);
+    will-change: transform;
+    backface-visibility: visible;
+  }
+
+  /* The visible leaf, slightly inset so the spine seam stays crisp. */
+  .tp-leaf {
+    position: absolute;
+    inset: 2% 1% 2% 0;
+    transform-style: preserve-3d;
+  }
+
+  .tp-front,
+  .tp-back {
+    position: absolute;
+    inset: 0;
+    border-radius: 1px 5px 5px 1px;
+    backface-visibility: hidden;
+    /* a thread of gold along the outer (fore) edge */
+    box-shadow: inset -2px 0 0 -1px color-mix(in srgb, var(--gold) 60%, transparent);
+  }
+
+  /* Front face (page recto) — cream, faces us when resting on the right. */
+  .tp-front {
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0 17%,
+        color-mix(in srgb, var(--ochre) 14%, transparent) 17% calc(17% + 1px),
+        transparent calc(17% + 1px) 34%
+      ),
+      linear-gradient(
+        100deg,
+        var(--pageDeep) 0%,
+        var(--pageCream) 26%,
+        var(--pageCream) 88%,
+        var(--pageDeep) 100%
+      );
+  }
+
+  /* Back face (verso) — slightly deeper parchment, revealed mid-turn. */
+  .tp-back {
+    transform: rotateY(180deg);
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0 17%,
+        color-mix(in srgb, var(--ochre) 12%, transparent) 17% calc(17% + 1px),
+        transparent calc(17% + 1px) 34%
+      ),
+      linear-gradient(
+        80deg,
+        var(--pageDeep) 0%,
+        var(--pageCream) 30%,
+        var(--pageCream) 90%,
+        var(--pageDeep) 100%
+      );
+  }
+
+  /*
+   * The page rests flat over the right leaf (0deg), then slowly lifts and turns
+   * to the left (180deg) where it settles over the left leaf, then holds while
+   * the other pages take their turns. A travelling shadow keeps it dimensional.
+   */
+  @keyframes tp-turn {
+    0% {
+      transform: rotateY(0deg);
+      filter: brightness(1);
+    }
+    4% {
+      transform: rotateY(-4deg);
+      filter: brightness(1.02);
+    }
+    /* lift and turn through the candlelight */
+    11% {
+      filter: brightness(1.12);
+    }
+    18% {
+      transform: rotateY(-96deg);
+      filter: brightness(0.86);
+    }
+    25% {
+      filter: brightness(0.9);
+    }
+    /* lay down onto the left page */
+    30% {
+      transform: rotateY(-178deg);
+      filter: brightness(1);
+    }
+    /* settled — hold flat on the left while the next pages turn */
+    32%,
+    100% {
+      transform: rotateY(-180deg);
+      filter: brightness(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Show the open book static — no page caught mid-turn. */
+    .tp-page {
+      animation: none;
+      /* park every turner flat on the left leaf so nothing hangs in the air */
+      transform: rotateY(-180deg);
+      filter: brightness(1);
+    }
+  }
+</style>

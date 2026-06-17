@@ -45,11 +45,23 @@ const year = new Date().getFullYear();
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Pre-paint motion setting: honour a saved choice, else the OS reduced-motion
+         preference, so nothing animates before the visitor's wishes are known. -->
+    <script is:inline>
+      (function () {
+        try {
+          var pref = localStorage.getItem('ss-motion');
+          var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+          if (pref ? pref === 'off' : reduce)
+            document.documentElement.setAttribute('data-motion', 'off');
+        } catch (e) {}
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <meta
       http-equiv="Content-Security-Policy"
-            content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; img-src 'self' data:; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; connect-src 'self'; manifest-src 'self'; upgrade-insecure-requests"
+      content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; img-src 'self' data:; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; manifest-src 'self'; upgrade-insecure-requests"
     />
     <meta name="referrer" content="no-referrer" />
     <meta name="color-scheme" content="light" />
@@ -62,7 +74,6 @@ const year = new Date().getFullYear();
     <meta property="og:description" content={description} />
     <meta property="og:site_name" content="Soul Seeking" />
     <meta name="twitter:card" content="summary" />
-    {hasSearch && <link href="/pagefind/pagefind-ui.css" rel="stylesheet" />}
   </head>
   <body
     class={`font-serif min-h-screen flex flex-col ${theme === 'dark' ? 'bg-cosmos text-cream' : 'bg-cream text-earth'}`}
@@ -174,6 +185,18 @@ const year = new Date().getFullYear();
             No trackers. No cookies. No contact avenues. The path continues onward,
             independently — what you seek, you will attract.
           </p>
+          <button
+            id="motionToggle"
+            type="button"
+            aria-pressed="true"
+            class="inline-flex min-h-[2.75rem] items-center gap-2 rounded-full border border-gold/40 px-4 py-2 text-[0.6rem] uppercase tracking-extreme text-cream/70 transition-phi hover:border-gold hover:text-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M12 7v5l3 2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            <span data-motion-label>Motion: On</span>
+          </button>
           <p class="text-[0.6rem] uppercase tracking-extreme text-cream/40">
             &copy; {year} Soul Seeking
           </p>
@@ -188,6 +211,34 @@ const year = new Date().getFullYear();
         toggle.addEventListener('click', () => {
           const open = menu.classList.toggle('hidden') === false;
           toggle.setAttribute('aria-expanded', String(open));
+        });
+      }
+
+      // Persistent Motion: on/off control. Flips data-motion on <html>, saves the
+      // choice, and announces a change so the 3D island can pause/resume.
+      const root = document.documentElement;
+      const motionBtn = document.getElementById('motionToggle');
+      if (motionBtn) {
+        const label = motionBtn.querySelector('[data-motion-label]');
+        const sync = () => {
+          const off = root.getAttribute('data-motion') === 'off';
+          motionBtn.setAttribute('aria-pressed', String(!off));
+          motionBtn.setAttribute(
+            'aria-label',
+            off ? 'Motion is off. Turn gentle motion on.' : 'Motion is on. Turn gentle motion off.'
+          );
+          if (label) label.textContent = off ? 'Motion: Off' : 'Motion: On';
+        };
+        sync();
+        motionBtn.addEventListener('click', () => {
+          const off = root.getAttribute('data-motion') === 'off';
+          if (off) root.removeAttribute('data-motion');
+          else root.setAttribute('data-motion', 'off');
+          try {
+            localStorage.setItem('ss-motion', off ? 'on' : 'off');
+          } catch (e) {}
+          sync();
+          window.dispatchEvent(new CustomEvent('ss-motion-change'));
         });
       }
     </script>

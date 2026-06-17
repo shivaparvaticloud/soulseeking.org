@@ -5,6 +5,25 @@
 @layer base {
   :root {
     color-scheme: light;
+
+    /* ---- Design tokens — the whole palette and motion language in one place.
+       Five warm hues over a near-black base; everything else is a shade. ---- */
+    --ink: #15110d; /* cosmos base, near-black */
+    --ink-soft: #241b14; /* raised cosmos surface */
+    --candle: #e7c68b; /* warm candle-gold accent */
+    --ember: #cc5b3a; /* living flame / ember */
+    --ochre: #cc914e; /* amber — primary action tone */
+    --oxblood: #692828; /* deep ember-red */
+    --earth: #604c44; /* reading ink on light */
+    --cream: #eeede3; /* light reading surface */
+    --parchment: #e3dac9; /* secondary light surface */
+
+    --focus-ring: var(--candle);
+    --ease-soul: cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* Motion language — slow, breath-like by default */
+    --beat: 0.618s; /* UI transitions */
+    --breath: 6s; /* idle ambient loops */
   }
 
   html {
@@ -94,16 +113,21 @@
     font-weight: 500;
   }
 
-  /* ---- Unified button system — one high-contrast style, used everywhere ----
-     .btn-soul        = primary  (solid ochre, reads on both dark + light)
-     .btn-soul-dark   = secondary (outlined, same shape and rhythm)
-     Both share size, focus ring and motion for a consistent, distinct feel. */
+  /* ============================================================
+     Control system — one consistent vocabulary, used everywhere.
+       .btn-soul      → PRIMARY    (filled amber candle; one per view)
+       .btn-soul-dark → SECONDARY  (outlined; supporting actions)
+       .btn-link      → TERTIARY   (in-flow text link; "Read →")
+     Shared: ≥44px tap target, slow motion, distinct hover / focus-
+     visible / active / disabled states. Buttons read as buttons.
+     ============================================================ */
   .btn-soul,
   .btn-soul-dark {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.55rem;
+    min-height: 2.75rem; /* 44px accessible tap target */
     padding: 0.9rem 2.4rem;
     text-transform: uppercase;
     letter-spacing: 0.2em;
@@ -112,47 +136,92 @@
     line-height: 1;
     border-radius: 2px;
     cursor: pointer;
-    transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: color var(--beat) var(--ease-soul),
+      background-color var(--beat) var(--ease-soul),
+      border-color var(--beat) var(--ease-soul),
+      box-shadow var(--beat) var(--ease-soul),
+      transform var(--beat) var(--ease-soul);
   }
 
-  /* Primary — solid, the clearest call to action on any background */
+  /* Primary — solid amber, the single clearest call to action on any background */
   .btn-soul {
-    color: theme('colors.cream');
-    background: theme('colors.ochre');
-    border: 1px solid theme('colors.gold');
-    box-shadow: 0 2px 10px theme('colors.cosmos' / 18%);
+    color: var(--cream);
+    background: var(--ochre);
+    border: 1px solid var(--candle);
+    box-shadow: 0 2px 10px rgb(21 17 13 / 18%);
   }
-
   .btn-soul:hover {
-    color: theme('colors.gold');
-    background: theme('colors.oxblood');
-    border-color: theme('colors.gold');
+    color: var(--candle);
+    background: var(--oxblood);
+    border-color: var(--candle);
     transform: translateY(-2px);
-    box-shadow: 0 8px 22px theme('colors.cosmos' / 30%);
+    box-shadow: 0 8px 22px rgb(21 17 13 / 30%);
     opacity: 1;
   }
+  .btn-soul:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 5px rgb(21 17 13 / 28%);
+  }
 
-  /* Secondary — outlined, lower emphasis, same footprint.
-     Ochre text is the one brand tone legible on both cream and cosmos. */
+  /* Secondary — outlined; ochre is the one brand tone legible on cream and cosmos */
   .btn-soul-dark {
-    color: theme('colors.ochre');
+    color: var(--ochre);
     background: transparent;
-    border: 2px solid theme('colors.ochre');
+    border: 2px solid var(--ochre);
   }
-
   .btn-soul-dark:hover {
-    color: theme('colors.cream');
-    background: theme('colors.ochre');
-    border-color: theme('colors.ochre');
+    color: var(--cream);
+    background: var(--ochre);
+    border-color: var(--ochre);
     transform: translateY(-2px);
     opacity: 1;
   }
+  .btn-soul-dark:active {
+    transform: translateY(0);
+  }
 
-  /* Clear, visible keyboard focus for every button */
+  /* Tertiary — an honest in-flow text link, underlined on hover/focus */
+  .btn-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.75rem;
+    color: var(--oxblood);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-underline-offset: 0.3em;
+    text-decoration-color: transparent;
+    transition: color var(--beat) var(--ease-soul),
+      text-decoration-color var(--beat) var(--ease-soul);
+  }
+  .btn-link:hover {
+    color: var(--ember);
+    text-decoration: underline;
+    text-decoration-color: currentColor;
+    opacity: 1;
+  }
+
+  /* Distinct, always-visible keyboard focus for every control */
   .btn-soul:focus-visible,
-  .btn-soul-dark:focus-visible {
-    outline: 2px solid theme('colors.gold');
+  .btn-soul-dark:focus-visible,
+  .btn-link:focus-visible {
+    outline: 2px solid var(--focus-ring);
     outline-offset: 3px;
+    text-decoration: none;
+  }
+
+  /* Honest disabled state */
+  .btn-soul[disabled],
+  .btn-soul-dark[disabled],
+  .btn-soul[aria-disabled='true'],
+  .btn-soul-dark[aria-disabled='true'] {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    pointer-events: none;
   }
 }
 
@@ -232,4 +301,17 @@
     opacity: 1 !important;
     transform: none !important;
   }
+}
+
+/* ---- Global "Motion: off" gate ----
+   The persistent toggle (and reduced-motion on first load) sets
+   data-motion="off" on <html>; everything then falls still at once.
+   Coded figures stop their CSS loops; the 3D island reads the flag in JS. */
+html[data-motion='off'] *,
+html[data-motion='off'] *::before,
+html[data-motion='off'] *::after {
+  animation-play-state: paused !important;
+  animation: none !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
 }

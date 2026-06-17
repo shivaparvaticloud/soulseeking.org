@@ -1,0 +1,236 @@
+---
+// The Lamp-Keeper — a living illustration for soulseeking.org.
+// A seated, robed figure cups a small flame near the chest: "keep the lamp lit
+// and the path clear." Pure SVG + scoped CSS @keyframes, no JS, no images.
+// The flame flickers softly, a radial aura breathes behind it. Honours
+// prefers-reduced-motion (flame and aura fall still).
+interface Props {
+  size?: number;
+  class?: string;
+  tone?: 'gold' | 'ochre';
+  figure?: 'dark' | 'light';
+}
+const {
+  size = 260,
+  class: className = '',
+  tone = 'gold',
+  figure = 'dark',
+} = Astro.props;
+
+// Palette
+const gold = '#E7C68B';
+const ochre = '#CC914E';
+const ember = '#CC5B3A';
+const cream = '#EEEDE3';
+const cosmos = '#15110D';
+const cosmosSoft = '#241B14';
+const earth = '#604C44';
+
+const accent = tone === 'gold' ? gold : ochre;
+const body = figure === 'dark' ? cosmosSoft : cream;
+const bodyDeep = figure === 'dark' ? cosmos : earth;
+
+const uid = `lamp-${Math.random().toString(36).slice(2, 9)}`;
+
+const W = 200;
+const H = 200;
+---
+
+<div class={`pointer-events-none select-none ${className}`} aria-hidden="true">
+  <svg
+    viewBox={`0 0 ${W} ${H}`}
+    width={size}
+    height={size}
+    fill="none"
+    class="block"
+  >
+    <defs>
+      <!-- soft aura behind the flame -->
+      <radialGradient id={`${uid}-aura`} cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color={accent} stop-opacity="0.85"></stop>
+        <stop offset="38%" stop-color={accent} stop-opacity="0.32"></stop>
+        <stop offset="100%" stop-color={accent} stop-opacity="0"></stop>
+      </radialGradient>
+      <!-- the robe's warm dark, with a little depth toward the base -->
+      <linearGradient id={`${uid}-robe`} x1="50%" y1="0%" x2="50%" y2="100%">
+        <stop offset="0%" stop-color={body}></stop>
+        <stop offset="100%" stop-color={bodyDeep}></stop>
+      </linearGradient>
+      <!-- outer flame: ember to gold -->
+      <linearGradient id={`${uid}-flame`} x1="50%" y1="100%" x2="50%" y2="0%">
+        <stop offset="0%" stop-color={ember}></stop>
+        <stop offset="55%" stop-color={ochre}></stop>
+        <stop offset="100%" stop-color={accent}></stop>
+      </linearGradient>
+      <!-- inner core: gold to cream -->
+      <linearGradient id={`${uid}-core`} x1="50%" y1="100%" x2="50%" y2="0%">
+        <stop offset="0%" stop-color={accent}></stop>
+        <stop offset="100%" stop-color={cream}></stop>
+      </linearGradient>
+      <!-- faint warm cast lifting onto the figure -->
+      <radialGradient id={`${uid}-cast`} cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color={cream} stop-opacity="0.5"></stop>
+        <stop offset="100%" stop-color={cream} stop-opacity="0"></stop>
+      </radialGradient>
+    </defs>
+
+    <!-- breathing aura -->
+    <circle
+      class="lk-aura"
+      cx="100"
+      cy="104"
+      r="62"
+      fill={`url(#${uid}-aura)`}
+    ></circle>
+
+    <!-- the seated, robed figure -->
+    <g fill={`url(#${uid}-robe)`}>
+      <!-- folded legs / lap: a low rounded base -->
+      <path
+        d="M48 178
+           C46 150 64 138 100 138
+           C136 138 154 150 152 178
+           C152 181 149 183 146 183
+           L54 183
+           C51 183 48 181 48 178 Z"
+      ></path>
+      <!-- robed torso with rounded, bowed shoulders -->
+      <path
+        d="M100 70
+           C86 70 78 80 75 96
+           C72 112 70 128 70 142
+           C70 150 80 152 100 152
+           C120 152 130 150 130 142
+           C130 128 128 112 125 96
+           C122 80 114 70 100 70 Z"
+      ></path>
+      <!-- the two arms sweeping forward to cup the flame -->
+      <path
+        d="M78 98
+           C68 104 64 120 70 134
+           C73 140 80 138 84 130
+           C88 120 92 112 98 110
+           C96 102 88 94 78 98 Z"
+      ></path>
+      <path
+        d="M122 98
+           C132 104 136 120 130 134
+           C127 140 120 138 116 130
+           C112 120 108 112 102 110
+           C104 102 112 94 122 98 Z"
+      ></path>
+      <!-- bowed head -->
+      <ellipse cx="100" cy="60" rx="16" ry="17"></ellipse>
+      <!-- the cradle of cupped hands the flame rests in -->
+      <path
+        d="M82 116
+           C82 110 90 107 100 107
+           C110 107 118 110 118 116
+           C118 122 110 126 100 126
+           C90 126 82 122 82 116 Z"
+      ></path>
+    </g>
+
+    <!-- warm cast of the flame onto hands and chin -->
+    <ellipse cx="100" cy="108" rx="40" ry="30" fill={`url(#${uid}-cast)`}></ellipse>
+
+    <!-- the flame, cupped near the chest -->
+    <g class="lk-flame">
+      <!-- outer ember teardrop -->
+      <path
+        d="M100 70
+           C108 82 114 90 114 99
+           C114 109 108 116 100 116
+           C92 116 86 109 86 99
+           C86 90 92 82 100 70 Z"
+        fill={`url(#${uid}-flame)`}
+      ></path>
+      <!-- inner gold/cream core -->
+      <path
+        class="lk-core"
+        d="M100 82
+           C104 90 107 94 107 100
+           C107 107 104 111 100 111
+           C96 111 93 107 93 100
+           C93 94 96 90 100 82 Z"
+        fill={`url(#${uid}-core)`}
+      ></path>
+    </g>
+  </svg>
+</div>
+
+<style>
+  .block {
+    display: block;
+  }
+
+  .lk-flame {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: lk-flicker 2.4s ease-in-out infinite;
+    will-change: transform, opacity;
+  }
+  .lk-core {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: lk-shimmer 1.7s ease-in-out infinite;
+    will-change: opacity, transform;
+  }
+  .lk-aura {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: lk-breathe 5.2s ease-in-out infinite;
+    will-change: opacity, transform;
+  }
+
+  /* slow, organic flicker: subtle scale, slight sway, opacity shimmer */
+  @keyframes lk-flicker {
+    0%,
+    100% {
+      transform: translateX(0) scale(1, 1);
+      opacity: 0.96;
+    }
+    28% {
+      transform: translateX(-0.6px) scale(0.985, 1.04);
+      opacity: 1;
+    }
+    52% {
+      transform: translateX(0.5px) scale(1.015, 0.97);
+      opacity: 0.9;
+    }
+    76% {
+      transform: translateX(0.4px) scale(0.99, 1.03);
+      opacity: 1;
+    }
+  }
+  @keyframes lk-shimmer {
+    0%,
+    100% {
+      opacity: 0.85;
+      transform: scaleY(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scaleY(1.06);
+    }
+  }
+  @keyframes lk-breathe {
+    0%,
+    100% {
+      opacity: 0.7;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.08);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lk-flame,
+    .lk-core,
+    .lk-aura {
+      animation: none;
+    }
+  }
+</style>
