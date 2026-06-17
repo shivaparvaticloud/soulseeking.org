@@ -1,9 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import SunburstRays from '../components/SunburstRays.astro';
 import Nadis from '../components/Nadis.astro';
-import SoaringBird from '../components/SoaringBird.astro';
-import MeditationFigures from '../components/MeditationFigures.astro';
 
 const personality = [
   {
@@ -28,29 +25,25 @@ const values = [
 ---
 
 <Layout title="About — Soul Seeking" description="Who we are, what we value, and why this quiet quest exists.">
-  <header class="relative overflow-hidden bg-cosmos text-cream">
-    <MeditationFigures class="absolute inset-0 h-full w-full" tone="gold" opacity={0.3} />
+  <header class="relative overflow-hidden">
+    <div class="pointer-events-none absolute inset-0 aurora opacity-60"></div>
     <div class="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-6 py-phi-4 text-center">
-      <SoaringBird size={220} />
-      <h1 class="mt-phi-1 text-4xl tracking-ultra sm:text-5xl">About Soul Seeking</h1>
-      <p class="mt-phi-1 max-w-xl text-lg leading-relaxed text-cream/80">
+      <h1 class="display-xl">About Soul Seeking</h1>
+      <p class="mt-phi-1 max-w-xl font-serif text-lg leading-loose text-mist/70">
         A quiet place for the oldest questions — uncovering life, truth and Spirit, step by step.
       </p>
     </div>
-    <div class="h-12">
-      <SunburstRays width={1200} height={120} rays={72} tone="gold" />
-    </div>
   </header>
 
-  <section class="bg-cream bg-stucco">
+  <section class="border-t border-white/10">
     <div class="mx-auto max-w-reading px-6 py-phi-4">
-      <p class="lead text-xl leading-loose text-earth/90">
+      <p class="pull text-3xl leading-relaxed text-mist">
         Soul Seeking is an outreach for inward travellers: a self-contained library of
         wisdom, courses and reflections on the Self, the cosmos and the way to live. It asks
         nothing of you but sincerity. There is no membership, no fee, and no contact to make —
         only a path that continues onward, independently.
       </p>
-      <p class="mt-phi-1 text-lg leading-relaxed text-earth/90">
+      <p class="mt-phi-2 font-serif text-lg leading-loose text-mist/70">
         The teachings gathered here are old; the manner of gathering them is plain. We hold
         that for the earnest seeker there will always be success, for what you seek, you will
         attract. Our task is simply to keep the lamp lit and the path clear.
@@ -58,16 +51,16 @@ const values = [
     </div>
   </section>
 
-  <section class="bg-parchment/40">
+  <section class="border-t border-white/10">
     <div class="mx-auto max-w-5xl px-6 py-phi-4">
-      <p class="accent text-center text-ochre">Our Personality</p>
-      <h2 class="mt-2 text-center text-3xl tracking-extreme text-earth">How We Walk</h2>
+      <p class="kicker kicker--center">01 — Our Personality</p>
+      <h2 class="mt-2 text-center display-lg">How We Walk</h2>
       <div class="mt-phi-2 grid gap-6 md:grid-cols-3">
         {
           personality.map((p) => (
-            <div class="reveal rounded-sm border border-gold/40 bg-cream p-phi-2">
-              <h3 class="text-xl tracking-extreme text-oxblood">{p.name}</h3>
-              <p class="mt-3 leading-relaxed text-earth/85">{p.body}</p>
+            <div class="card-soul reveal p-phi-2">
+              <h3 class="text-2xl">{p.name}</h3>
+              <p class="mt-3 font-serif text-lg leading-loose text-mist/65">{p.body}</p>
             </div>
           ))
         }
@@ -75,17 +68,17 @@ const values = [
     </div>
   </section>
 
-  <section class="relative overflow-hidden bg-cosmos text-cream">
+  <section class="border-t border-white/10">
     <div class="mx-auto grid max-w-5xl items-center gap-phi-2 px-6 py-phi-4 md:grid-cols-[1fr_auto]">
       <div>
-        <p class="accent text-gold">Our Values</p>
-        <h2 class="mt-2 text-3xl tracking-extreme">The Threefold Measure</h2>
+        <p class="kicker">02 — Our Values</p>
+        <h2 class="mt-2 display-lg">The Threefold Measure</h2>
         <dl class="mt-phi-2 space-y-phi-1">
           {
             values.map((v) => (
-              <div class="border-l-2 border-gold/50 pl-5">
-                <dt class="text-xl tracking-extreme text-gold">{v.name}</dt>
-                <dd class="mt-1 leading-relaxed text-cream/80">{v.body}</dd>
+              <div class="border-l border-white/10 pl-5">
+                <dt class="text-2xl text-gold">{v.name}</dt>
+                <dd class="mt-1 font-serif text-lg leading-loose text-mist/65">{v.body}</dd>
               </div>
             ))
           }
@@ -97,12 +90,12 @@ const values = [
     </div>
   </section>
 
-  <section class="bg-cream">
+  <section class="border-t border-white/10">
     <div class="mx-auto max-w-reading px-6 py-phi-4 text-center">
-      <blockquote class="text-balance text-2xl italic leading-loose text-earth">
+      <blockquote class="pull text-3xl leading-relaxed text-mist">
         &ldquo;Who looks outside, dreams; who looks inside, awakes.&rdquo;
       </blockquote>
-      <p class="mt-phi-1 accent text-ochre">C.G. Jung</p>
+      <p class="mt-phi-1 accent text-gold">C.G. Jung</p>
       <div class="mt-phi-2">
         <a href="/knowledge" class="btn-soul">Begin Reading</a>
       </div>

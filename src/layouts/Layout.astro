@@ -1,13 +1,12 @@
 ---
+import '@fontsource-variable/space-grotesk';
 import '@fontsource/eb-garamond/latin-400.css';
 import '@fontsource/eb-garamond/latin-500.css';
 import '@fontsource/eb-garamond/latin-600.css';
-import '@fontsource/eb-garamond/latin-700.css';
 import '@fontsource/eb-garamond/latin-400-italic.css';
 import '@fontsource/eb-garamond/latin-500-italic.css';
 import '../styles/global.css';
 import Logo from '../components/Logo.astro';
-import MeditationFigures from '../components/MeditationFigures.astro';
 
 interface Props {
   title?: string;
@@ -18,9 +17,7 @@ interface Props {
 
 const {
   title = 'Soul Seeking — Higher Answers for Deeper Questions',
-  description = 'A quiet quest within. Explore life\u2019s bigger mysteries, spirituality and the inner Self through authentic Vedic wisdom, courses and reflections.',
-  hasSearch = false,
-  theme = 'light',
+  description = 'A quiet quest within. Explore life’s bigger mysteries, spirituality and the inner Self through authentic Vedic wisdom, courses and reflections.',
 } = Astro.props;
 
 const nav = [
@@ -64,8 +61,8 @@ const year = new Date().getFullYear();
       content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; img-src 'self' data:; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; manifest-src 'self'; upgrade-insecure-requests"
     />
     <meta name="referrer" content="no-referrer" />
-    <meta name="color-scheme" content="light" />
-    <meta name="theme-color" content="#15110D" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#08080A" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
@@ -75,42 +72,44 @@ const year = new Date().getFullYear();
     <meta property="og:site_name" content="Soul Seeking" />
     <meta name="twitter:card" content="summary" />
   </head>
-  <body
-    class={`font-serif min-h-screen flex flex-col ${theme === 'dark' ? 'bg-cosmos text-cream' : 'bg-cream text-earth'}`}
-  >
-    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-cream focus:text-earth focus:px-4 focus:py-2"
+  <body class="min-h-screen flex flex-col bg-void text-mist">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-mist focus:px-4 focus:py-2 focus:text-void"
       >Skip to content</a
     >
 
     <header
-      class="sticky top-0 z-40 border-b border-gold/30 bg-cream/90 backdrop-blur supports-[backdrop-filter]:bg-cream/75"
+      class="sticky top-0 z-40 border-b border-white/10 bg-void/70 backdrop-blur-xl supports-[backdrop-filter]:bg-void/55"
     >
       <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4">
         <a href="/" class="transition-phi hover:opacity-80" aria-label="Soul Seeking home">
           <span class="flex items-center gap-3">
-            <Logo size={40} tone="earth" />
+            <Logo size={38} tone="gold" />
             <span class="flex flex-col leading-none">
-              <span class="text-sm tracking-extreme uppercase text-earth sm:text-base">Soul Seeking</span>
-              <span class="mt-1 hidden text-[0.5rem] tracking-ultra uppercase text-ochre sm:block"
-                >Higher answers for deeper questions</span
+              <span class="font-sans text-sm font-medium tracking-[0.16em] text-mist sm:text-base"
+                >SOUL SEEKING</span
+              >
+              <span class="mt-1 hidden font-sans text-[0.5rem] tracking-[0.3em] text-gold/80 sm:block"
+                >HIGHER ANSWERS FOR DEEPER QUESTIONS</span
               >
             </span>
           </span>
         </a>
 
-        <nav class="hidden items-center gap-7 md:flex" aria-label="Primary">
+        <nav class="hidden items-center gap-8 md:flex" aria-label="Primary">
           {
             nav.map((item) => (
               <a
                 href={item.href}
-                class={`text-[0.7rem] uppercase tracking-extreme transition-phi hover:opacity-70 ${isActive(item.href) ? 'text-oxblood' : 'text-earth'}`}
+                class={`font-sans text-[0.66rem] uppercase tracking-[0.22em] transition-phi hover:text-gold ${isActive(item.href) ? 'text-gold' : 'text-mist/65'}`}
                 aria-current={isActive(item.href) ? 'page' : undefined}
               >
                 {item.label}
               </a>
             ))
           }
-          <a href="/search" class="text-earth transition-phi hover:opacity-70" aria-label="Search">
+          <a href="/search" class="text-mist/65 transition-phi hover:text-gold" aria-label="Search">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
               <circle cx="11" cy="11" r="7"></circle>
               <line x1="16.5" y1="16.5" x2="21" y2="21" stroke-linecap="round"></line>
@@ -121,7 +120,7 @@ const year = new Date().getFullYear();
         <!-- mobile menu toggle -->
         <button
           id="navToggle"
-          class="text-earth md:hidden"
+          class="text-mist md:hidden"
           aria-label="Open menu"
           aria-expanded="false"
           aria-controls="mobileNav"
@@ -136,7 +135,7 @@ const year = new Date().getFullYear();
 
       <nav
         id="mobileNav"
-        class="hidden border-t border-gold/30 bg-cream px-5 py-4 md:hidden"
+        class="hidden border-t border-white/10 bg-void px-5 py-4 md:hidden"
         aria-label="Mobile"
       >
         <ul class="flex flex-col gap-4">
@@ -145,7 +144,7 @@ const year = new Date().getFullYear();
               <li>
                 <a
                   href={item.href}
-                  class={`block text-sm uppercase tracking-extreme ${isActive(item.href) ? 'text-oxblood' : 'text-earth'}`}
+                  class={`block font-sans text-sm uppercase tracking-[0.22em] ${isActive(item.href) ? 'text-gold' : 'text-mist/70'}`}
                 >
                   {item.label}
                 </a>
@@ -153,35 +152,35 @@ const year = new Date().getFullYear();
             ))
           }
           <li>
-            <a href="/search" class="block text-sm uppercase tracking-extreme text-earth">Search</a>
+            <a href="/search" class="block font-sans text-sm uppercase tracking-[0.22em] text-mist/70">Search</a>
           </li>
         </ul>
       </nav>
     </header>
 
-    <main id="main" class="flex-1">
+    <main id="main" class="relative z-10 flex-1">
       <slot />
     </main>
 
-    <footer class="relative mt-phi-3 overflow-hidden border-t border-gold/30 bg-cosmos text-cream">
-      <MeditationFigures class="absolute inset-0 h-full w-full" tone="gold" opacity={0.22} />
+    <footer class="relative z-10 mt-phi-3 overflow-hidden border-t border-white/10 bg-abyss text-mist">
+      <div class="pointer-events-none absolute inset-0 aurora opacity-50"></div>
       <div class="relative z-10 mx-auto max-w-6xl px-5 py-phi-3">
         <div class="flex flex-col items-center gap-5 text-center">
-          <Logo size={42} tone="gold" />
+          <Logo size={40} tone="gold" />
           <p class="accent text-gold">
-            Soul Seeking &middot; Uncovering Life, Truth &amp; Spirit &middot; Step by Step
+            Uncovering Life, Truth &amp; Spirit &middot; Step by Step
           </p>
           <div class="rule-gold w-40"></div>
-          <nav class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2" aria-label="Footer">
+          <nav class="flex flex-wrap items-center justify-center gap-x-7 gap-y-2" aria-label="Footer">
             {
               nav.concat({ href: '/search', label: 'Search' }).map((item) => (
-                <a href={item.href} class="text-[0.65rem] uppercase tracking-extreme text-cream/70 hover:text-gold">
+                <a href={item.href} class="font-sans text-[0.62rem] uppercase tracking-[0.22em] text-mist/55 transition-phi hover:text-gold">
                   {item.label}
                 </a>
               ))
             }
           </nav>
-          <p class="max-w-md text-xs leading-relaxed text-cream/50">
+          <p class="max-w-md font-serif text-sm leading-relaxed text-mist/45">
             No trackers. No cookies. No contact avenues. The path continues onward,
             independently — what you seek, you will attract.
           </p>
@@ -189,7 +188,7 @@ const year = new Date().getFullYear();
             id="motionToggle"
             type="button"
             aria-pressed="true"
-            class="inline-flex min-h-[2.75rem] items-center gap-2 rounded-full border border-gold/40 px-4 py-2 text-[0.6rem] uppercase tracking-extreme text-cream/70 transition-phi hover:border-gold hover:text-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+            class="inline-flex min-h-[2.75rem] items-center gap-2 rounded-full border border-white/15 px-4 py-2 font-sans text-[0.58rem] uppercase tracking-[0.22em] text-mist/65 transition-phi hover:border-gold hover:text-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
               <circle cx="12" cy="12" r="9"></circle>
@@ -197,7 +196,7 @@ const year = new Date().getFullYear();
             </svg>
             <span data-motion-label>Motion: On</span>
           </button>
-          <p class="text-[0.6rem] uppercase tracking-extreme text-cream/40">
+          <p class="font-sans text-[0.58rem] uppercase tracking-[0.22em] text-mist/35">
             &copy; {year} Soul Seeking
           </p>
         </div>

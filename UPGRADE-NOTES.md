@@ -8,26 +8,45 @@ show off?_
 
 ---
 
-## Design tokens
+## Design language — dark, cinematic, premium
 
-All colour and motion values live as CSS custom properties in
-`src/styles/global.css` (`:root`). Five warm hues over a near-black base;
-everything else is a shade.
+The site is **dark-first**, in the register of Lusion / Oryzo / Porsche Dream
+Machine / Palantir / Anduril: a near-black canvas, big tight modern-grotesk
+display type, one restrained warm-gold accent, hairline rules, generous space,
+and slow high-craft ambient motion. The contemplative Soul Seeking content sits
+on this cosmos rather than on cream paper.
+
+### Type
+- **Display & chrome:** Space Grotesk (self-hosted variable,
+  `@fontsource-variable/space-grotesk`) — big, tight, non-uppercase headings
+  plus small tracked “kicker” micro-labels (`01 — Label`).
+- **Reading & contemplation:** EB Garamond (self-hosted) for long-form prose and
+  the italic pull-quotes — the soul of the page.
+
+### Tokens
+All colour and motion values are CSS custom properties in
+`src/styles/global.css` (`:root`), mirrored in `tailwind.config.mjs`.
 
 | Token | Value | Meaning |
 |---|---|---|
-| `--ink` / `--ink-soft` | `#15110d` / `#241b14` | cosmos base + raised surface |
-| `--candle` | `#e7c68b` | warm candle-gold accent |
-| `--ember` | `#cc5b3a` | living flame |
-| `--ochre` | `#cc914e` | amber — primary action tone |
-| `--oxblood` | `#692828` | deep ember-red |
-| `--earth` | `#604c44` | reading ink on light |
-| `--cream` / `--parchment` | `#eeede3` / `#e3dac9` | light reading surfaces |
-| `--beat` / `--breath` | `0.618s` / `6s` | UI transition vs ambient loop tempo |
+| `--void` / `--abyss` | `#08080a` / `#0b0c10` | page base + recessed band |
+| `--surface` / `--surface-2` | `#121319` / `#191b22` | raised panel + card |
+| `--text` (`mist`) | `#eceae3` | warm off-white reading colour |
+| `--text-dim` / `--text-faint` | `rgba(…,0.64)` / `0.40` | dimmed text scale |
+| `--line` / `--line-strong` | `rgba(255,255,255,.09/.16)` | hairlines |
+| `--gold` | `#e7c68b` | the one accent (used sparingly) |
+| `--ochre` / `--ember` / `--oxblood` | `#cc914e` / `#cc5b3a` / `#692828` | warm secondary tones |
+| `--beat` / `--breath` | `0.5s` / `7s` | UI transition vs ambient loop tempo |
 | `--ease-soul` | `cubic-bezier(0.16,1,0.3,1)` | the one easing curve |
 
-The Tailwind palette (`tailwind.config.mjs`) mirrors these so utility classes
-stay in sync (`ember` added alongside the existing brand colours).
+Tailwind exposes `void / abyss / surface / surface-2 / mist` alongside the warm
+brand colours; `cosmos`/`cosmos-soft` remain as aliases.
+
+### New building blocks (`global.css`)
+`.kicker` (tracked micro-label), `.display-xl` / `.display-lg` (fluid display
+headings), `.pull` (serif-italic pull-quote), `.card-soul` (hairline panel that
+lifts on hover), `.glass`, `.aurora` (warm bloom), `.bg-grid` / `.bg-weave-dark`
+(ambient texture), `.edge-fade`, plus a fixed film-grain over the canvas.
 
 ---
 
@@ -65,10 +84,18 @@ disables itself under `prefers-reduced-motion`. Drop them anywhere.
 
 | Component | Meaning | Used on |
 |---|---|---|
-| `LampKeeper.astro` | seated figure cupping a breathing flame — _keep the lamp lit_ | home “Inward Guide” |
-| `MeditationFigures.astro` | breathing yoga/meditation figures + divine aura | site-wide headers/footer |
 | `ThreeModes.astro` | three luminous strands weaving — sattva/rajas/tamas | the Three Modes article |
 | `TurningPages.astro` | an open book softly turning pages — _courses are small books_ | Courses index |
+| `Starfield.astro` | drifting canvas star-field | home hero ambient |
+| `Phyllotaxis.astro` | golden-spiral seed-head | home Gītā section |
+
+**Removed in the dark redesign:** the sun-emblem graphics
+(`SunburstRays.astro`, `SoaringBird.astro`) and the stick-figure
+`MeditationFigures.astro` were deleted, along with their site-wide usages —
+their job is now done by type, space, the ambient star-field and the flagship
+3D scene. `LampKeeper.astro` remains in the repo but is no longer placed on a
+page; drop in `<LampKeeper figure="light" />` anywhere if a focal motif is
+wanted.
 
 **Replace / re-theme:** each takes a `tone` and/or `size`/`width`/`height`
 prop and a `class`. Colours come from the token palette; change a token and the
@@ -105,8 +132,9 @@ the component (single source for both the 3D shells and the chips).
 
 ## Where assets live
 
-- **Fonts** — self-hosted via `@fontsource/eb-garamond` (bundled into
-  `/_astro`, long-cached). No Google Fonts.
+- **Fonts** — self-hosted via `@fontsource-variable/space-grotesk` (display)
+  and `@fontsource/eb-garamond` (reading), bundled into `/_astro`, long-cached.
+  No Google Fonts, no external requests.
 - **Three.js** — `node_modules/three`, bundled to `/_astro/three.module.*.js`
   at build (same-origin, content-hashed, `immutable` cached).
 - **All textures** (particle/glow sprites) are generated at runtime on a
