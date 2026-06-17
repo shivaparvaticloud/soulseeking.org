@@ -1,0 +1,55 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ArtPlate from '../components/ArtPlate.astro';
+
+// Ten hand-coded plates. Each is pure inline SVG + CSS — geometry and math only.
+const plates: { variant: string; title: string; line: string }[] = [
+  { variant: 'yantra', title: 'Śrī Yantra', line: 'Nine interlocking triangles within a lotus-ringed bhūpura.' },
+  { variant: 'mandala', title: 'Maṇḍala', line: 'Concentric carved rings of petals, dots and fine arcs.' },
+  { variant: 'kolam', title: 'Kolam', line: 'A dot lattice laced by one continuous looping line.' },
+  { variant: 'jali', title: 'Jālī', line: 'A tessellated screen of eight-point stars and crosses.' },
+  { variant: 'sahasrara', title: 'Sahasrāra', line: 'A thousand-petalled lotus radiating from the centre.' },
+  { variant: 'origins', title: 'Origins', line: 'A field of concentric circles, warm cream upon dark earth.' },
+  { variant: 'songline', title: 'Songlines', line: 'Topographic contours flowing around a hidden land.' },
+  { variant: 'tablet', title: 'The Tablet', line: 'A weathered stone slab carved with a ghostly glyph.' },
+  { variant: 'stardust', title: 'Stardust', line: 'A gold stipple flow-field of a thousand drifting points.' },
+  { variant: 'weave', title: 'The Weave', line: 'Nested squares and diamonds woven in cream and ochre.' },
+];
+---
+
+<Layout
+  title="Gallery — Soul Seeking"
+  description="The Atelier — ten original artworks, each hand-coded in pure SVG and mathematics. No photographs, no stock images, no AI image generation — only geometry blending Vedic heritage with abstract earth texture."
+  fxPage="default"
+>
+  <header class="border-b border-white/10">
+    <div class="mx-auto max-w-3xl px-6 py-phi-3 text-center">
+      <p class="kicker kicker--center">Coded Artworks</p>
+      <h1 class="mt-4 display-xl text-mist">The Atelier</h1>
+      <p class="mx-auto mt-phi-1 max-w-xl font-serif text-lg leading-loose text-mist/70">
+        Every piece here is hand-coded in pure SVG — no photographs, no stock images,
+        no AI image generation. Just geometry and math: seeded numbers, triangles and
+        petals, contours and dots, drawn by code alone.
+      </p>
+      <div class="rule-gold mx-auto mt-phi-2 w-40"></div>
+    </div>
+  </header>
+
+  <section class="mx-auto max-w-6xl px-6 py-phi-4">
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        plates.map((p) => (
+          <figure class="card-soul overflow-hidden">
+            <div class="aspect-[3/4] w-full">
+              <ArtPlate variant={p.variant} title={p.title} class="block h-full w-full" />
+            </div>
+            <figcaption class="px-5 py-4">
+              <h2 class="font-sans text-xs uppercase tracking-[0.22em] text-gold">{p.title}</h2>
+              <p class="mt-1 font-serif text-sm italic leading-relaxed text-mist/70">{p.line}</p>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </section>
+</Layout>
