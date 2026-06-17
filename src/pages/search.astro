@@ -1,7 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import SunburstRays from '../components/SunburstRays.astro';
-import MeditationFigures from '../components/MeditationFigures.astro';
 
 const suggestions = ['soul', 'self', 'kosa', 'gunas', 'cosmos', 'seeking'];
 ---
@@ -11,18 +9,15 @@ const suggestions = ['soul', 'self', 'kosa', 'gunas', 'cosmos', 'seeking'];
   description="Search every writing, course and page of Soul Seeking by keyword."
   hasSearch={true}
 >
-  <header class="relative overflow-hidden bg-cosmos text-cream">
-    <MeditationFigures class="absolute inset-0 h-full w-full" tone="gold" opacity={0.3} />
-    <div class="relative z-10 mx-auto max-w-3xl px-6 py-phi-3 text-center">
-      <p class="accent text-gold">Find Your Thread</p>
-      <h1 class="mt-2 text-4xl tracking-ultra sm:text-5xl">Search</h1>
-      <p class="mx-auto mt-phi-1 max-w-xl text-cream/80">
+  <header class="border-b border-white/10">
+    <div class="mx-auto max-w-3xl px-6 py-phi-3 text-center">
+      <p class="kicker kicker--center">03 — Find Your Thread</p>
+      <h1 class="mt-4 display-xl text-mist">Search</h1>
+      <p class="mx-auto mt-phi-1 max-w-xl font-serif text-lg leading-loose text-mist/70">
         Type any word and search across every writing, course and page. What you seek, you
         will attract.
       </p>
-    </div>
-    <div class="h-8">
-      <SunburstRays width={1200} height={90} rays={60} tone="gold" />
+      <div class="rule-gold mx-auto mt-phi-2 w-40"></div>
     </div>
   </header>
 
@@ -31,7 +26,7 @@ const suggestions = ['soul', 'self', 'kosa', 'gunas', 'cosmos', 'seeking'];
       <label for="searchInput" class="sr-only">Search the site</label>
       <div class="relative">
         <svg
-          class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-ochre"
+          class="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-mist/50"
           width="22"
           height="22"
           viewBox="0 0 24 24"
@@ -48,19 +43,19 @@ const suggestions = ['soul', 'self', 'kosa', 'gunas', 'cosmos', 'seeking'];
           type="search"
           name="q"
           placeholder="Search for a word — soul, kosa, gunas…"
-          class="w-full rounded-sm border-2 border-ochre/50 bg-cream py-4 pl-12 pr-4 text-lg text-earth shadow-sm transition-phi placeholder:text-earth/40 focus:border-ochre focus:outline-none focus:ring-2 focus:ring-ochre/30"
+          class="min-h-[3rem] w-full rounded-full border border-white/10 bg-surface py-4 pl-14 pr-5 text-lg text-mist transition-phi placeholder:text-mist/40 focus:border-gold focus:outline-none"
           aria-describedby="searchStatus"
         />
       </div>
     </form>
 
     <div class="mt-4 flex flex-wrap items-center gap-2">
-      <span class="accent text-[0.6rem] text-earth/50">Try</span>
+      <span class="font-sans text-[0.6rem] uppercase tracking-[0.3em] text-mist/50">Try</span>
       {
         suggestions.map((s) => (
           <button
             type="button"
-            class="search-chip rounded-full border border-gold/50 px-3 py-1 text-xs tracking-wide text-oxblood transition-phi hover:border-ochre hover:bg-parchment/60"
+            class="search-chip rounded-full border border-white/10 px-3 py-1 text-xs tracking-wide text-mist/70 transition-phi hover:border-gold hover:text-gold"
             data-term={s}
           >
             {s}
@@ -69,23 +64,24 @@ const suggestions = ['soul', 'self', 'kosa', 'gunas', 'cosmos', 'seeking'];
       }
     </div>
 
-    <p id="searchStatus" class="mt-phi-2 accent text-ochre" aria-live="polite">
+    <p id="searchStatus" class="mt-phi-2 font-sans text-[0.7rem] uppercase tracking-[0.22em] text-gold/80" aria-live="polite">
       Type a word to search every page of the site.
     </p>
     <ul id="searchResults" class="ss-results mt-phi-1 space-y-4"></ul>
 
     <noscript>
-      <p class="mt-phi-1 text-center text-earth/70">Search requires JavaScript to be enabled.</p>
+      <p class="mt-phi-1 text-center font-serif text-mist/70">Search requires JavaScript to be enabled.</p>
     </noscript>
   </div>
 </Layout>
 
 <style is:global>
   .ss-results mark {
-    background-color: #e7c68b;
-    color: #692828;
-    padding: 0 0.15em;
-    border-radius: 2px;
+    background-color: transparent;
+    color: #e7c68b;
+    font-weight: 600;
+    padding: 0;
+    border-radius: 0;
   }
 </style>
 
@@ -205,14 +201,14 @@ const suggestions = ['soul', 'self', 'kosa', 'gunas', 'cosmos', 'seeking'];
           return (
             '<li><a href="' +
             esc(d.url) +
-            '" class="group block rounded-sm border border-gold/40 bg-parchment/30 p-phi-1 transition-phi hover:border-ochre hover:bg-parchment/60">' +
-            '<span class="block accent text-[0.6rem] text-ochre">' +
+            '" class="card-soul group block p-phi-2">' +
+            '<span class="block font-sans text-[0.6rem] uppercase tracking-[0.3em] text-gold/70">' +
             label +
             '</span>' +
-            '<span class="mt-1 block text-xl tracking-wide text-oxblood">' +
+            '<span class="mt-2 block text-xl text-mist transition-phi group-hover:text-gold">' +
             esc(d.title) +
             '</span>' +
-            '<span class="mt-2 block leading-relaxed text-earth/80">' +
+            '<span class="mt-2 block font-serif leading-loose text-mist/65">' +
             snippet(d, ts) +
             '</span></a></li>'
           );

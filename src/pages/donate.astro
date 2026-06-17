@@ -1,8 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import SunburstRays from '../components/SunburstRays.astro';
 import Phyllotaxis from '../components/Phyllotaxis.astro';
-import MeditationFigures from '../components/MeditationFigures.astro';
 
 const steps = [
   'Help three people, freely and without expectation.',
@@ -15,25 +13,22 @@ const steps = [
   title="Give Onward — Soul Seeking"
   description="There is no fee and no donation button. Instead, help three people and ask them to help three others."
 >
-  <header class="relative overflow-hidden bg-cosmos text-cream">
-    <MeditationFigures class="absolute inset-0 h-full w-full" tone="gold" opacity={0.3} />
+  <header class="relative overflow-hidden">
+    <div class="pointer-events-none absolute inset-0 aurora opacity-60"></div>
     <div class="relative z-10 mx-auto max-w-3xl px-6 py-phi-4 text-center">
       <div class="flex justify-center">
         <Phyllotaxis size={150} points={520} tone="gold" class="opacity-85" />
       </div>
-      <h1 class="mt-phi-1 text-4xl tracking-ultra sm:text-5xl">Give Onward</h1>
-      <p class="mx-auto mt-phi-1 max-w-xl text-lg leading-relaxed text-cream/80">
+      <h1 class="mt-phi-1 display-xl">Give Onward</h1>
+      <p class="mx-auto mt-phi-1 max-w-xl font-serif text-lg leading-loose text-mist/70">
         This work is offered freely. There is nothing to buy and no button to press.
       </p>
     </div>
-    <div class="h-10">
-      <SunburstRays width={1200} height={110} rays={72} tone="gold" />
-    </div>
   </header>
 
-  <section class="bg-cream bg-stucco">
+  <section class="border-t border-white/10">
     <div class="mx-auto max-w-reading px-6 py-phi-4 text-center">
-      <blockquote class="text-balance text-2xl italic leading-loose text-oxblood sm:text-3xl">
+      <blockquote class="pull text-3xl leading-relaxed text-mist">
         &ldquo;Instead of thanking us, help three people &mdash; and tell them to help three
         others.&rdquo;
       </blockquote>
@@ -42,16 +37,16 @@ const steps = [
         {
           steps.map((s, i) => (
             <li class="reveal flex items-start gap-4">
-              <span class="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ochre text-ochre">
+              <span class="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 text-gold">
                 {i + 1}
               </span>
-              <span class="text-lg leading-relaxed text-earth/90">{s}</span>
+              <span class="font-serif text-lg leading-loose text-mist/70">{s}</span>
             </li>
           ))
         }
       </ol>
 
-      <p class="mx-auto mt-phi-3 max-w-lg leading-loose text-earth/80">
+      <p class="mx-auto mt-phi-3 max-w-lg font-serif text-lg leading-loose text-mist/65">
         This is the only donation we ask: a quiet chain of kindness with no end and no ledger.
         What you seek, you will attract; what you give, you set free. The path continues
         onward, independently.

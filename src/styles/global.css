@@ -4,33 +4,42 @@
 
 @layer base {
   :root {
-    color-scheme: light;
+    color-scheme: dark;
 
-    /* ---- Design tokens — the whole palette and motion language in one place.
-       Five warm hues over a near-black base; everything else is a shade. ---- */
-    --ink: #15110d; /* cosmos base, near-black */
-    --ink-soft: #241b14; /* raised cosmos surface */
-    --candle: #e7c68b; /* warm candle-gold accent */
-    --ember: #cc5b3a; /* living flame / ember */
-    --ochre: #cc914e; /* amber — primary action tone */
-    --oxblood: #692828; /* deep ember-red */
-    --earth: #604c44; /* reading ink on light */
-    --cream: #eeede3; /* light reading surface */
-    --parchment: #e3dac9; /* secondary light surface */
+    /* ============================================================
+       Design tokens — one dark, cinematic canvas with a single warm
+       accent. The whole palette and motion language lives here.
+       ============================================================ */
+    --void: #08080a; /* page base */
+    --abyss: #0b0c10;
+    --surface: #121319; /* raised panel */
+    --surface-2: #191b22; /* raised card */
 
-    --focus-ring: var(--candle);
+    --text: #eceae3; /* warm off-white */
+    --text-dim: rgba(236, 234, 227, 0.64);
+    --text-faint: rgba(236, 234, 227, 0.4);
+    --line: rgba(255, 255, 255, 0.09); /* hairline */
+    --line-strong: rgba(255, 255, 255, 0.16);
+
+    /* Warm soul accent — the one identity colour, used sparingly */
+    --gold: #e7c68b;
+    --ochre: #cc914e;
+    --ember: #cc5b3a;
+    --oxblood: #692828;
+
+    --focus-ring: var(--gold);
     --ease-soul: cubic-bezier(0.16, 1, 0.3, 1);
 
-    /* Motion language — slow, breath-like by default */
-    --beat: 0.618s; /* UI transitions */
-    --breath: 6s; /* idle ambient loops */
+    /* Motion language — slow, deliberate, breath-like */
+    --beat: 0.5s; /* UI transitions */
+    --breath: 7s; /* idle ambient loops */
   }
 
   html {
-    background-color: theme('colors.cream');
-    color: theme('colors.earth');
-    font-family: theme('fontFamily.serif');
-    line-height: 1.65;
+    background-color: var(--void);
+    color: var(--text);
+    font-family: theme('fontFamily.sans');
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     scroll-behavior: smooth;
@@ -44,97 +53,166 @@
   }
 
   body {
-    background-color: theme('colors.cream');
+    background-color: var(--void);
+    color: var(--text);
+    position: relative;
   }
 
+  /* Fine cinematic film-grain over the whole canvas (no image file). */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+  }
+
+  /* Display headings: big, tight, modern — no longer uppercase by default. */
   h1, h2, h3, h4, h5, h6 {
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    font-weight: 400;
-    color: theme('colors.earth');
+    font-family: theme('fontFamily.display');
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    color: var(--text);
+    text-wrap: balance;
   }
 
   a {
-    color: theme('colors.oxblood');
+    color: var(--gold);
     text-decoration: none;
-    transition: color 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-      opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-      letter-spacing 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: color var(--beat) var(--ease-soul),
+      opacity var(--beat) var(--ease-soul);
   }
-
-  a:hover {
-    opacity: 0.78;
-  }
+  a:hover { opacity: 0.82; }
 
   ::selection {
-    background: theme('colors.gold');
-    color: theme('colors.earth');
+    background: var(--gold);
+    color: var(--void);
   }
 
   :focus-visible {
-    outline: 2px solid theme('colors.ochre');
+    outline: 2px solid var(--focus-ring);
     outline-offset: 3px;
+    border-radius: 2px;
   }
 }
 
 @layer components {
-  /* Capitalised, widely-tracked display heading */
-  .display {
+  /* ---- Micro-label: the small, tracked, technical kicker (Anduril/Palantir
+     register). Often paired with a leading index, e.g. "01 — Origins". ---- */
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-family: theme('fontFamily.display');
     text-transform: uppercase;
-    letter-spacing: 0.2em;
-    font-weight: 400;
+    letter-spacing: 0.32em;
+    font-weight: 500;
+    font-size: 0.66rem;
+    color: var(--gold);
+  }
+  .kicker::before {
+    content: '';
+    width: 1.6rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.6;
+  }
+  .kicker--center { justify-content: center; }
+
+  /* Large display utilities for hero/section titles */
+  .display-xl {
+    font-family: theme('fontFamily.display');
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    line-height: 0.98;
+    font-size: clamp(2.8rem, 9vw, 6.5rem);
+  }
+  .display-lg {
+    font-family: theme('fontFamily.display');
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+    font-size: clamp(2rem, 5.5vw, 3.6rem);
+  }
+
+  /* Contemplative serif pull-quote (Garamond italic on dark reads beautifully) */
+  .pull {
+    font-family: theme('fontFamily.serif');
+    font-style: italic;
+    line-height: 1.5;
+    color: rgba(236, 234, 227, 0.9);
+    text-wrap: balance;
   }
 
   .accent {
+    font-family: theme('fontFamily.display');
     text-transform: uppercase;
-    letter-spacing: 0.34em;
-    font-weight: 600;
-    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    font-weight: 500;
+    font-size: 0.7rem;
+    color: var(--gold);
   }
 
+  .hairline {
+    height: 1px;
+    background: var(--line);
+    border: 0;
+  }
   .rule-gold {
     height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      theme('colors.gold'),
-      transparent
-    );
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0.7;
+  }
+
+  /* Glass / hairline card surface for panels and links */
+  .glass {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0));
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    backdrop-filter: blur(6px);
   }
 
   /* Editorial drop-cap on the opening paragraph of an article/brief */
   .lead::first-letter {
     float: left;
+    font-family: theme('fontFamily.serif');
     font-size: 3.4rem;
     line-height: 0.82;
     padding-right: 0.6rem;
     padding-top: 0.3rem;
-    color: theme('colors.ochre');
+    color: var(--gold);
     font-weight: 500;
   }
 
   /* ============================================================
-     Control system — one consistent vocabulary, used everywhere.
-       .btn-soul      → PRIMARY    (filled amber candle; one per view)
-       .btn-soul-dark → SECONDARY  (outlined; supporting actions)
-       .btn-link      → TERTIARY   (in-flow text link; "Read →")
-     Shared: ≥44px tap target, slow motion, distinct hover / focus-
-     visible / active / disabled states. Buttons read as buttons.
+     Control system — one vocabulary, used everywhere.
+       .btn-soul      → PRIMARY    (luminous gold; one per view)
+       .btn-soul-dark → SECONDARY  (hairline ghost; fills on hover)
+       .btn-link      → TERTIARY   (animated-underline text link)
+     Shared: ≥44px tap target, distinct hover / focus-visible /
+     active / disabled states. Buttons read as buttons.
      ============================================================ */
   .btn-soul,
   .btn-soul-dark {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.55rem;
-    min-height: 2.75rem; /* 44px accessible tap target */
-    padding: 0.9rem 2.4rem;
+    gap: 0.6rem;
+    min-height: 2.875rem; /* 46px tap target */
+    padding: 0.85rem 2.1rem;
+    font-family: theme('fontFamily.display');
     text-transform: uppercase;
-    letter-spacing: 0.2em;
-    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+    font-size: 0.74rem;
     font-weight: 600;
     line-height: 1;
-    border-radius: 2px;
+    border-radius: 999px;
     cursor: pointer;
     transition: color var(--beat) var(--ease-soul),
       background-color var(--beat) var(--ease-soul),
@@ -143,73 +221,72 @@
       transform var(--beat) var(--ease-soul);
   }
 
-  /* Primary — solid amber, the single clearest call to action on any background */
+  /* Primary — warm luminous gold; the single clearest action on any view */
   .btn-soul {
-    color: var(--cream);
-    background: var(--ochre);
-    border: 1px solid var(--candle);
-    box-shadow: 0 2px 10px rgb(21 17 13 / 18%);
+    color: #1a130b;
+    background: linear-gradient(180deg, #f3dcab, var(--gold));
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 0 0 rgba(231, 198, 139, 0), 0 6px 24px rgba(0, 0, 0, 0.45);
   }
   .btn-soul:hover {
-    color: var(--candle);
-    background: var(--oxblood);
-    border-color: var(--candle);
+    color: #140e07;
     transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgb(21 17 13 / 30%);
+    box-shadow: 0 0 28px rgba(231, 198, 139, 0.4), 0 12px 30px rgba(0, 0, 0, 0.5);
     opacity: 1;
   }
-  .btn-soul:active {
-    transform: translateY(0);
-    box-shadow: 0 1px 5px rgb(21 17 13 / 28%);
-  }
+  .btn-soul:active { transform: translateY(0); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5); }
 
-  /* Secondary — outlined; ochre is the one brand tone legible on cream and cosmos */
+  /* Secondary — hairline ghost; warms and fills on hover */
   .btn-soul-dark {
-    color: var(--ochre);
-    background: transparent;
-    border: 2px solid var(--ochre);
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--line-strong);
   }
   .btn-soul-dark:hover {
-    color: var(--cream);
-    background: var(--ochre);
-    border-color: var(--ochre);
+    color: var(--gold);
+    border-color: var(--gold);
+    background: rgba(231, 198, 139, 0.06);
     transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4);
     opacity: 1;
   }
-  .btn-soul-dark:active {
-    transform: translateY(0);
-  }
+  .btn-soul-dark:active { transform: translateY(0); }
 
-  /* Tertiary — an honest in-flow text link, underlined on hover/focus */
+  /* Tertiary — text link with an animated underline that grows from the left */
   .btn-link {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.5rem;
     min-height: 2.75rem;
-    color: var(--oxblood);
+    font-family: theme('fontFamily.display');
+    color: var(--text);
     text-transform: uppercase;
-    letter-spacing: 0.2em;
-    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    font-size: 0.7rem;
     font-weight: 600;
-    text-underline-offset: 0.3em;
-    text-decoration-color: transparent;
-    transition: color var(--beat) var(--ease-soul),
-      text-decoration-color var(--beat) var(--ease-soul);
+    transition: color var(--beat) var(--ease-soul);
   }
-  .btn-link:hover {
-    color: var(--ember);
-    text-decoration: underline;
-    text-decoration-color: currentColor;
-    opacity: 1;
+  .btn-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0.55rem;
+    height: 1px;
+    width: 100%;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--beat) var(--ease-soul);
   }
+  .btn-link:hover { color: var(--gold); opacity: 1; }
+  .btn-link:hover::after { transform: scaleX(1); }
 
-  /* Distinct, always-visible keyboard focus for every control */
   .btn-soul:focus-visible,
   .btn-soul-dark:focus-visible,
   .btn-link:focus-visible {
     outline: 2px solid var(--focus-ring);
-    outline-offset: 3px;
-    text-decoration: none;
+    outline-offset: 4px;
   }
 
   /* Honest disabled state */
@@ -217,71 +294,92 @@
   .btn-soul-dark[disabled],
   .btn-soul[aria-disabled='true'],
   .btn-soul-dark[aria-disabled='true'] {
-    opacity: 0.45;
+    opacity: 0.4;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
     pointer-events: none;
   }
+
+  /* Hairline-framed link/feature card */
+  .card-soul {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0));
+    transition: border-color var(--beat) var(--ease-soul),
+      transform var(--beat) var(--ease-soul),
+      box-shadow var(--beat) var(--ease-soul);
+  }
+  .card-soul:hover {
+    border-color: rgba(231, 198, 139, 0.45);
+    transform: translateY(-3px);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  }
 }
 
 @layer utilities {
-  /* ---- Generative paper / stucco texture (SVG fractal noise, no image file) ---- */
-  .bg-stucco {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  /* ---- Ambient cinematic backgrounds (pure CSS, no image files) ---- */
+
+  /* Soft warm aurora bloom — place behind a hero */
+  .aurora {
+    background:
+      radial-gradient(60% 50% at 50% 18%, rgba(231, 198, 139, 0.12), transparent 70%),
+      radial-gradient(45% 45% at 78% 75%, rgba(204, 91, 58, 0.1), transparent 70%),
+      radial-gradient(50% 55% at 18% 70%, rgba(204, 145, 78, 0.08), transparent 72%);
   }
 
-  /* Fine sacred-geometry weave for light backgrounds */
-  .bg-geometry {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23CC914E' stroke-width='0.5' opacity='0.16'%3E%3Ccircle cx='60' cy='60' r='20'/%3E%3Ccircle cx='60' cy='60' r='40'/%3E%3Ccircle cx='60' cy='60' r='58'/%3E%3Cline x1='60' y1='0' x2='60' y2='120'/%3E%3Cline x1='0' y1='60' x2='120' y2='60'/%3E%3Cline x1='17.6' y1='17.6' x2='102.4' y2='102.4'/%3E%3Cline x1='102.4' y1='17.6' x2='17.6' y2='102.4'/%3E%3C/g%3E%3C/svg%3E");
-    background-size: 120px 120px;
-  }
-
-  .bg-geometry-gold {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 L100 50 L50 100 L0 50 Z' fill='none' stroke='%23CC914E' stroke-width='0.4' opacity='0.14'/%3E%3Ccircle cx='50' cy='50' r='35' fill='none' stroke='%23CC914E' stroke-width='0.3' opacity='0.1'/%3E%3C/svg%3E");
-    background-size: 100px 100px;
-  }
-
-  /* Concentric weave on dark cosmos panels */
+  /* Faint concentric weave on dark panels */
   .bg-weave-dark {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='none' stroke='%23E7C68B' stroke-width='0.5' opacity='0.08'%3E%3Ccircle cx='80' cy='80' r='28'/%3E%3Ccircle cx='80' cy='80' r='52'/%3E%3Ccircle cx='80' cy='80' r='76'/%3E%3C/g%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='none' stroke='%23E7C68B' stroke-width='0.5' opacity='0.06'%3E%3Ccircle cx='80' cy='80' r='28'/%3E%3Ccircle cx='80' cy='80' r='52'/%3E%3Ccircle cx='80' cy='80' r='76'/%3E%3C/g%3E%3C/svg%3E");
     background-size: 160px 160px;
   }
 
-  /* ---- Entrance + scroll-reveal animations ---- */
-  .fade-in {
-    animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    opacity: 0;
+  /* Hairline technical grid (Palantir/Anduril) */
+  .bg-grid {
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 64px 64px;
   }
-  .fade-in-1 { animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards; opacity: 0; }
-  .fade-in-2 { animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards; opacity: 0; }
-  .fade-in-3 { animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.75s forwards; opacity: 0; }
-  .fade-in-4 { animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 1s forwards; opacity: 0; }
+
+  /* Top + bottom fade so ambient layers melt into the void */
+  .edge-fade {
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+    mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+  }
+
+  /* ---- Entrance + scroll-reveal animations ---- */
+  .fade-in { animation: fadeIn 1.2s var(--ease-soul) forwards; opacity: 0; }
+  .fade-in-1 { animation: fadeIn 1.2s var(--ease-soul) 0.18s forwards; opacity: 0; }
+  .fade-in-2 { animation: fadeIn 1.2s var(--ease-soul) 0.36s forwards; opacity: 0; }
+  .fade-in-3 { animation: fadeIn 1.2s var(--ease-soul) 0.54s forwards; opacity: 0; }
+  .fade-in-4 { animation: fadeIn 1.2s var(--ease-soul) 0.72s forwards; opacity: 0; }
 
   .reveal {
-    animation: reveal 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: reveal 1.1s var(--ease-soul) both;
     animation-timeline: view();
-    animation-range: entry 5% cover 26%;
+    animation-range: entry 4% cover 28%;
   }
   .reveal-delay {
-    animation: reveal 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+    animation: reveal 1.1s var(--ease-soul) 0.12s both;
     animation-timeline: view();
-    animation-range: entry 5% cover 30%;
+    animation-range: entry 4% cover 32%;
   }
 
-  .transition-phi {
-    transition: all 0.618s cubic-bezier(0.16, 1, 0.3, 1);
-  }
+  .transition-phi { transition: all var(--beat) var(--ease-soul); }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(14px); }
+  from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes reveal {
-  from { opacity: 0; transform: translateY(16px) scale(0.99); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* Graceful fallback where scroll-timeline is unsupported */
@@ -305,8 +403,7 @@
 
 /* ---- Global "Motion: off" gate ----
    The persistent toggle (and reduced-motion on first load) sets
-   data-motion="off" on <html>; everything then falls still at once.
-   Coded figures stop their CSS loops; the 3D island reads the flag in JS. */
+   data-motion="off" on <html>; everything then falls still at once. */
 html[data-motion='off'] *,
 html[data-motion='off'] *::before,
 html[data-motion='off'] *::after {

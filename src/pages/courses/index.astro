@@ -1,8 +1,5 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import SunburstRays from '../../components/SunburstRays.astro';
-import Phyllotaxis from '../../components/Phyllotaxis.astro';
-import MeditationFigures from '../../components/MeditationFigures.astro';
 import TurningPages from '../../components/TurningPages.astro';
 import { getCourses } from '../../lib/content';
 
@@ -15,52 +12,49 @@ const levelName = ['', 'Foundation', 'Seeker', 'Adept', 'Deepening', 'Mastery'];
   description="Guided journeys inward, each structured as a book with chapters, glossaries and quizzes."
   hasSearch={true}
 >
-  <header class="relative overflow-hidden bg-cosmos text-cream">
-    <MeditationFigures class="absolute inset-0 h-full w-full" tone="gold" opacity={0.3} />
-    <div class="relative z-10 mx-auto max-w-4xl px-6 py-phi-4 text-center">
-      <p class="accent text-gold">Guided Journeys</p>
-      <h1 class="mt-2 text-4xl tracking-ultra sm:text-5xl">Courses</h1>
+  <header class="border-b border-white/10">
+    <div class="mx-auto max-w-4xl px-6 py-phi-4 text-center">
+      <p class="kicker kicker--center">02 — Guided Journeys</p>
+      <h1 class="mt-4 display-xl text-mist">Courses</h1>
       <div class="mt-phi-1 flex justify-center">
         <TurningPages size={180} />
       </div>
-      <p class="mx-auto mt-phi-1 max-w-xl text-lg leading-relaxed text-cream/80">
+      <p class="mx-auto mt-phi-1 max-w-xl font-serif text-lg leading-loose text-mist/70">
         Each course is a small book — chapters, glossaries and quizzes — to be walked at
         your own pace, step by step.
       </p>
-    </div>
-    <div class="h-10">
-      <SunburstRays width={1200} height={110} rays={72} tone="gold" />
+      <div class="rule-gold mx-auto mt-phi-2 w-40"></div>
     </div>
   </header>
 
   <div class="mx-auto max-w-5xl px-6 py-phi-3">
-    <div class="grid gap-phi-2">
+    <div class="grid gap-6 md:grid-cols-2">
       {
         courses.map((c) => (
           <a
             href={`/courses/${c.slug}`}
-            class="reveal group grid gap-phi-1 rounded-sm border border-gold/40 bg-parchment/30 p-phi-2 transition-phi hover:border-ochre hover:bg-parchment/60 sm:grid-cols-[auto_1fr]"
+            class="card-soul reveal group flex flex-col p-phi-2"
           >
-            <div class="hidden items-center justify-center sm:flex">
-              <Phyllotaxis size={120} points={360} tone="ochre" class="opacity-80" />
-            </div>
-            <div class="flex flex-col">
-              <div class="flex flex-wrap items-center gap-3">
-                <span class="accent text-ochre">{levelName[c.level] || `Level ${c.level}`}</span>
-                <span class="text-earth/30">&middot;</span>
-                <span class="text-[0.65rem] uppercase tracking-extreme text-earth/50">
-                  {c.modules.length} modules &middot; {c.readingMinutes} min
-                </span>
-              </div>
-              <h2 class="mt-2 text-2xl tracking-wide text-oxblood sm:text-3xl">{c.title}</h2>
-              {c.tagline && (
-                <p class="mt-1 text-lg italic text-earth/80">{c.tagline}</p>
-              )}
-              <p class="mt-phi-1 leading-relaxed text-earth/85">{c.description}</p>
-              <span class="mt-phi-1 inline-block accent text-oxblood transition-phi group-hover:tracking-ultra">
-                Open the Book &rarr;
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="font-sans text-[0.6rem] uppercase tracking-[0.3em] text-gold/70">
+                {levelName[c.level] || `Level ${c.level}`}
+              </span>
+              <span class="text-mist/30">&middot;</span>
+              <span class="font-sans text-[0.6rem] uppercase tracking-[0.3em] text-mist/50">
+                {c.modules.length} modules &middot; {c.readingMinutes} min
               </span>
             </div>
+            <h2 class="mt-3 display-lg text-2xl text-mist sm:text-3xl">{c.title}</h2>
+            {c.tagline && (
+              <p class="mt-2 font-serif text-lg italic text-mist/65">{c.tagline}</p>
+            )}
+            <p class="mt-phi-1 flex-1 font-serif leading-loose text-mist/65">{c.description}</p>
+            <span class="mt-6 inline-flex items-center gap-2 font-sans text-[0.66rem] uppercase tracking-[0.22em] text-mist transition-phi group-hover:text-gold">
+              Open the Book{' '}
+              <span aria-hidden="true" class="transition-phi group-hover:translate-x-1">
+                &rarr;
+              </span>
+            </span>
           </a>
         ))
       }
@@ -68,7 +62,7 @@ const levelName = ['', 'Foundation', 'Seeker', 'Adept', 'Deepening', 'Mastery'];
 
     {
       courses.length === 0 && (
-        <p class="py-phi-3 text-center text-earth/70">
+        <p class="py-phi-3 text-center font-serif text-mist/70">
           No courses yet. Drop a <code>.txt</code> file into <code>content/courses/</code> and
           it will be bound into a book here.
         </p>

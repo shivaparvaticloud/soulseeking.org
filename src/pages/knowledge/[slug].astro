@@ -2,8 +2,6 @@
 import Layout from '../../layouts/Layout.astro';
 import Blocks from '../../components/Blocks.astro';
 import Glossary from '../../components/Glossary.astro';
-import SunburstRays from '../../components/SunburstRays.astro';
-import MeditationFigures from '../../components/MeditationFigures.astro';
 import ThreeModes from '../../components/ThreeModes.astro';
 import { getArticles } from '../../lib/content';
 
@@ -28,16 +26,15 @@ const showThreeModes = /three-modes|gunas|guna/i.test(article.slug);
 <Layout title={`${article.title} — Soul Seeking`} description={article.description} hasSearch={true}>
   <article data-pagefind-body>
     <!-- Title page -->
-    <header class="relative overflow-hidden bg-cosmos text-cream">
-      <MeditationFigures class="absolute inset-0 h-full w-full" tone="gold" opacity={0.28} />
-      <div class="relative z-10 mx-auto max-w-reading px-6 py-phi-4 text-center">
-        <p class="accent text-gold" data-pagefind-meta="category">{article.category}</p>
-        <h1 class="mt-3 text-balance text-4xl leading-tight tracking-wider sm:text-5xl">
+    <header class="relative">
+      <div class="mx-auto max-w-reading px-6 py-phi-4 text-center">
+        <p class="kicker" data-pagefind-meta="category">{article.category}</p>
+        <h1 class="mt-5 display-xl text-balance text-mist">
           {article.title}
         </h1>
         {
           article.quote && (
-            <blockquote class="mx-auto mt-phi-2 max-w-xl text-balance text-lg italic leading-loose text-cream/80">
+            <blockquote class="pull mx-auto mt-phi-2 max-w-xl text-balance text-3xl leading-relaxed text-mist">
               &ldquo;{article.quote}&rdquo;
             </blockquote>
           )
@@ -49,24 +46,22 @@ const showThreeModes = /three-modes|gunas|guna/i.test(article.slug);
             </div>
           )
         }
-        <p class="mt-phi-2 text-[0.65rem] uppercase tracking-ultra text-cream/50">
+        <p class="mt-phi-2 font-sans text-[0.62rem] uppercase tracking-[0.22em] text-mist/50">
           {article.author} &middot; {article.readingMinutes} min read
         </p>
       </div>
-      <div class="h-10">
-        <SunburstRays width={1200} height={110} rays={72} tone="gold" />
-      </div>
+      <div class="hairline mx-auto w-40"></div>
     </header>
 
     <div class="mx-auto max-w-reading px-6 py-phi-3">
       {
         toc.length >= 3 && (
-          <nav class="mb-phi-2 rounded-sm border border-gold/30 bg-parchment/40 p-phi-1" aria-label="On this page">
-            <p class="accent mb-2 text-ochre">On This Page</p>
+          <nav class="mb-phi-2 rounded-sm border border-white/10 bg-abyss p-phi-1" aria-label="On this page">
+            <p class="kicker mb-2">On This Page</p>
             <ol class="space-y-1.5">
               {toc.map((h) => (
                 <li class={h.level === 3 ? 'pl-4' : ''}>
-                  <a href={`#${h.id}`} class="text-sm text-earth/80 hover:text-oxblood">
+                  <a href={`#${h.id}`} class="text-sm text-mist/70 hover:text-gold">
                     {h.text}
                   </a>
                 </li>
@@ -76,14 +71,14 @@ const showThreeModes = /three-modes|gunas|guna/i.test(article.slug);
         )
       }
 
-      <div class="prose-soul">
-        <Blocks blocks={article.blocks} tone="light" />
+      <div class="prose prose-soul max-w-none">
+        <Blocks blocks={article.blocks} tone="dark" />
       </div>
 
       {
         article.glossary.length > 0 && (
           <div class="mt-phi-3">
-            <Glossary items={article.glossary} tone="light" />
+            <Glossary items={article.glossary} tone="dark" />
           </div>
         )
       }
@@ -96,9 +91,9 @@ const showThreeModes = /three-modes|gunas|guna/i.test(article.slug);
     >
       {
         prev ? (
-          <a href={`/knowledge/${prev.slug}`} class="group rounded-sm border border-gold/30 p-phi-1 transition-phi hover:border-ochre">
-            <span class="accent text-ochre">&larr; Previous</span>
-            <p class="mt-1 text-earth group-hover:text-oxblood">{prev.title}</p>
+          <a href={`/knowledge/${prev.slug}`} class="card-soul group p-phi-2">
+            <span class="accent text-gold">&larr; Previous</span>
+            <p class="mt-1 text-mist group-hover:text-gold">{prev.title}</p>
           </a>
         ) : (
           <span />
@@ -106,9 +101,9 @@ const showThreeModes = /three-modes|gunas|guna/i.test(article.slug);
       }
       {
         next ? (
-          <a href={`/knowledge/${next.slug}`} class="group rounded-sm border border-gold/30 p-phi-1 text-right transition-phi hover:border-ochre">
-            <span class="accent text-ochre">Next &rarr;</span>
-            <p class="mt-1 text-earth group-hover:text-oxblood">{next.title}</p>
+          <a href={`/knowledge/${next.slug}`} class="card-soul group p-phi-2 text-right">
+            <span class="accent text-gold">Next &rarr;</span>
+            <p class="mt-1 text-mist group-hover:text-gold">{next.title}</p>
           </a>
         ) : (
           <span />
@@ -117,7 +112,7 @@ const showThreeModes = /three-modes|gunas|guna/i.test(article.slug);
     </nav>
 
     <div class="pb-phi-3 text-center">
-      <a href="/knowledge" class="btn-soul-dark">All Writings</a>
+      <a href="/knowledge" class="btn-link">All Writings</a>
     </div>
   </article>
 </Layout>

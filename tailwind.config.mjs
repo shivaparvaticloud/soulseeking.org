@@ -4,7 +4,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Brand palette — Soul Seeking Project Summary (pp. 3-6)
+        // ---- Dark-first premium canvas (Lusion / Palantir / Anduril register) ----
+        void: '#08080A', // page base, near-black with a cool tint
+        abyss: '#0B0C10',
+        surface: '#121319', // raised panel
+        'surface-2': '#191B22', // raised card
+        mist: '#ECEAE3', // warm off-white text
+        // ---- Warm soul accents (the one identity colour, used sparingly) ----
         gold: '#E7C68B',
         ochre: '#CC914E',
         ember: '#CC5B3A',
@@ -12,11 +18,25 @@ export default {
         earth: '#604C44',
         cream: '#EEEDE3',
         parchment: '#E3DAC9',
-        // Dark cosmos tones for revealed/scroll sections
-        cosmos: '#15110D',
-        'cosmos-soft': '#241B14',
+        // Legacy aliases kept so existing markup still resolves
+        cosmos: '#08080A',
+        'cosmos-soft': '#121319',
       },
       fontFamily: {
+        // Modern grotesk for display + chrome
+        sans: [
+          '"Space Grotesk Variable"',
+          '"Space Grotesk"',
+          'system-ui',
+          'sans-serif',
+        ],
+        display: [
+          '"Space Grotesk Variable"',
+          '"Space Grotesk"',
+          'system-ui',
+          'sans-serif',
+        ],
+        // Garamond reserved for long-form reading + contemplative pull-quotes
         serif: [
           "'EB Garamond'",
           "'Garamond Local'",
@@ -27,6 +47,8 @@ export default {
         ],
       },
       letterSpacing: {
+        tightest: '-0.04em',
+        tighter: '-0.025em',
         wider: '0.1em',
         extreme: '0.2em',
         ultra: '0.34em',
@@ -53,22 +75,22 @@ export default {
       typography: (theme) => ({
         soul: {
           css: {
-            '--tw-prose-body': theme('colors.earth'),
-            '--tw-prose-headings': theme('colors.earth'),
-            '--tw-prose-lead': theme('colors.earth'),
-            '--tw-prose-links': theme('colors.oxblood'),
-            '--tw-prose-bold': theme('colors.earth'),
+            '--tw-prose-body': theme('colors.mist'),
+            '--tw-prose-headings': theme('colors.mist'),
+            '--tw-prose-lead': 'rgba(236,234,227,0.72)',
+            '--tw-prose-links': theme('colors.gold'),
+            '--tw-prose-bold': theme('colors.mist'),
             '--tw-prose-counters': theme('colors.ochre'),
             '--tw-prose-bullets': theme('colors.ochre'),
-            '--tw-prose-hr': theme('colors.gold'),
-            '--tw-prose-quotes': theme('colors.earth'),
+            '--tw-prose-hr': 'rgba(255,255,255,0.10)',
+            '--tw-prose-quotes': 'rgba(236,234,227,0.86)',
             '--tw-prose-quote-borders': theme('colors.ochre'),
-            '--tw-prose-captions': theme('colors.earth'),
-            '--tw-prose-code': theme('colors.oxblood'),
-            '--tw-prose-pre-code': theme('colors.cream'),
-            '--tw-prose-pre-bg': theme('colors.earth'),
-            '--tw-prose-th-borders': theme('colors.gold'),
-            '--tw-prose-td-borders': theme('colors.gold'),
+            '--tw-prose-captions': 'rgba(236,234,227,0.55)',
+            '--tw-prose-code': theme('colors.gold'),
+            '--tw-prose-pre-code': theme('colors.mist'),
+            '--tw-prose-pre-bg': theme('colors.surface'),
+            '--tw-prose-th-borders': 'rgba(255,255,255,0.12)',
+            '--tw-prose-td-borders': 'rgba(255,255,255,0.08)',
             fontFamily: theme('fontFamily.serif').join(', '),
             lineHeight: theme('lineHeight.relaxed'),
             maxWidth: 'none',

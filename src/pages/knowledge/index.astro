@@ -1,7 +1,5 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import SunburstRays from '../../components/SunburstRays.astro';
-import MeditationFigures from '../../components/MeditationFigures.astro';
 import { getArticles, getCategories } from '../../lib/content';
 
 const articles = getArticles();
@@ -13,18 +11,15 @@ const categories = getCategories();
   description="Reflections and resources on life, Spirit and the soul — read slowly, one writing at a time."
   hasSearch={true}
 >
-  <header class="relative overflow-hidden bg-cosmos text-cream">
-    <MeditationFigures class="absolute inset-0 h-full w-full" tone="gold" opacity={0.3} />
-    <div class="relative z-10 mx-auto max-w-4xl px-6 py-phi-4 text-center">
-      <p class="accent text-gold">Reflections &amp; Resources</p>
-      <h1 class="mt-2 text-4xl tracking-ultra sm:text-5xl">Knowledge Hub</h1>
-      <p class="mx-auto mt-phi-1 max-w-xl text-lg leading-relaxed text-cream/80">
+  <header class="border-b border-white/10">
+    <div class="mx-auto max-w-4xl px-6 py-phi-4 text-center">
+      <p class="kicker kicker--center">01 — Reflections &amp; Resources</p>
+      <h1 class="mt-4 display-xl text-mist">Knowledge Hub</h1>
+      <p class="mx-auto mt-phi-1 max-w-xl font-serif text-lg leading-loose text-mist/70">
         Wisdom on life, Spirit and the soul. Read slowly; let a single line work on you
         for a day.
       </p>
-    </div>
-    <div class="h-10">
-      <SunburstRays width={1200} height={110} rays={72} tone="gold" />
+      <div class="rule-gold mx-auto mt-phi-2 w-40"></div>
     </div>
   </header>
 
@@ -35,9 +30,9 @@ const categories = getCategories();
           {categories.map((c) => (
             <a
               href={`#${c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
-              class="text-[0.7rem] uppercase tracking-extreme text-ochre hover:text-oxblood"
+              class="font-sans text-[0.7rem] uppercase tracking-extreme text-mist/70 transition-phi hover:text-gold"
             >
-              {c.name} <span class="text-earth/40">({c.count})</span>
+              {c.name} <span class="text-mist/40">({c.count})</span>
             </a>
           ))}
         </nav>
@@ -50,30 +45,31 @@ const categories = getCategories();
         return (
           <section
             id={cat.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}
-            class="scroll-mt-28 py-phi-1"
+            class="scroll-mt-28 border-t border-white/10 py-phi-3 first:border-t-0"
           >
-            <div class="mb-phi-1 flex items-baseline gap-4">
-              <h2 class="text-2xl tracking-extreme uppercase text-earth">{cat.name}</h2>
-              <div class="rule-gold flex-1 opacity-60" />
+            <div class="mb-phi-2 flex items-baseline gap-4">
+              <h2 class="display-lg text-mist">{cat.name}</h2>
+              <div class="hairline flex-1" />
             </div>
-            <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {items.map((a) => (
                 <a
                   href={`/knowledge/${a.slug}`}
-                  class="reveal group flex flex-col rounded-sm border border-gold/40 bg-parchment/30 p-phi-2 transition-phi hover:border-ochre hover:bg-parchment/60"
+                  class="card-soul reveal group flex flex-col p-phi-2"
                 >
-                  <h3 class="text-xl leading-snug tracking-wide text-oxblood">{a.title}</h3>
-                  <p class="mt-2 flex-1 text-sm leading-relaxed text-earth/80">
+                  <span class="font-sans text-[0.6rem] uppercase tracking-[0.3em] text-gold/70">
+                    {a.readingMinutes} min
+                  </span>
+                  <h3 class="mt-3 display-lg text-2xl text-mist">{a.title}</h3>
+                  <p class="mt-3 flex-1 font-serif leading-loose text-mist/65">
                     {a.description}
                   </p>
-                  <div class="mt-phi-1 flex items-center justify-between">
-                    <span class="accent text-ochre transition-phi group-hover:tracking-ultra">
-                      Read &rarr;
+                  <span class="mt-6 inline-flex items-center gap-2 font-sans text-[0.66rem] uppercase tracking-[0.22em] text-mist transition-phi group-hover:text-gold">
+                    Read{' '}
+                    <span aria-hidden="true" class="transition-phi group-hover:translate-x-1">
+                      &rarr;
                     </span>
-                    <span class="text-[0.65rem] uppercase tracking-extreme text-earth/40">
-                      {a.readingMinutes} min
-                    </span>
-                  </div>
+                  </span>
                 </a>
               ))}
             </div>
@@ -84,7 +80,7 @@ const categories = getCategories();
 
     {
       articles.length === 0 && (
-        <p class="py-phi-3 text-center text-earth/70">
+        <p class="py-phi-3 text-center font-serif text-mist/70">
           No writings yet. Drop a <code>.txt</code> file into <code>content/knowledge/</code>{' '}
           and it will appear here, fully formatted.
         </p>
