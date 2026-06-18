@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import ArtPlate from '../components/ArtPlate.astro';
 
 const suggestions = ['soul', 'self', 'kosa', 'gunas', 'cosmos', 'seeking'];
 ---
@@ -18,6 +19,11 @@ const suggestions = ['soul', 'self', 'kosa', 'gunas', 'cosmos', 'seeking'];
         Type any word and search across every writing, course and page. What you seek, you
         will attract.
       </p>
+      <div class="mx-auto mt-phi-2 max-w-xs">
+        <div class="art-frame">
+          <ArtPlate variant="songline" />
+        </div>
+      </div>
       <div class="rule-gold mx-auto mt-phi-2 w-40"></div>
     </div>
   </header>

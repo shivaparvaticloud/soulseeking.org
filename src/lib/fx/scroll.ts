@@ -27,9 +27,10 @@ export async function createScroll(opts: Opts = {}): Promise<ScrollSystem> {
   gsap.registerPlugin(ScrollTrigger);
 
   const lenis = new Lenis({
-    lerp: 0.09,
-    wheelMultiplier: 0.95,
+    lerp: 0.13,
+    wheelMultiplier: 1.1,
     smoothWheel: true,
+    syncTouch: false,
   });
 
   lenis.on('scroll', () => {

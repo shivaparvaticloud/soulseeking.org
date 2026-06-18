@@ -229,6 +229,8 @@ function spiralArm(armIndex: number) {
     position: absolute; top: 0; left: 0;
     width: 1px; height: 1px; border-radius: 50%;
     background: transparent;
+    will-change: opacity;
+    transform: translateZ(0);
   }
   .stars-a { box-shadow: var(--starsA); animation: twinkleA 7s ease-in-out infinite; }
   .stars-b { box-shadow: var(--starsB); animation: twinkleB 9s ease-in-out infinite; }

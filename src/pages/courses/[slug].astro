@@ -3,7 +3,6 @@ import Layout from '../../layouts/Layout.astro';
 import Blocks from '../../components/Blocks.astro';
 import Glossary from '../../components/Glossary.astro';
 import Quiz from '../../components/Quiz.astro';
-import ArtPlate from '../../components/ArtPlate.astro';
 import ProgressFooter from '../../components/ProgressFooter.astro';
 import CourseChapterNav from '../../components/CourseChapterNav.astro';
 import { getCourses } from '../../lib/content';
@@ -60,11 +59,6 @@ const jsonld = [
           {course.title}
         </h1>
         {course.tagline && <p class="mt-phi-1 font-serif text-xl text-mist/70">{course.tagline}</p>}
-        <figure class="card-soul mx-auto mt-phi-2 max-w-[16rem] overflow-hidden">
-          <div class="aspect-[3/4] w-full overflow-hidden rounded">
-            <ArtPlate variant="sahasrara" />
-          </div>
-        </figure>
         <p class="mt-phi-2 font-sans text-[0.62rem] uppercase tracking-[0.22em] text-mist/50">
           {course.readingMinutes} min &middot; Read at your own pace
         </p>
