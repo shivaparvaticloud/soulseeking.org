@@ -1,15 +1,9 @@
 ---
-// Persistent FX surface — one WebGL canvas + the custom cursor, kept alive
+// Persistent, GPU-cheap backdrop — a single static gradient field kept alive
 // across View-Transition navigations. Purely decorative (aria-hidden); all real
-// content lives in server-rendered HTML behind it.
+// content is server-rendered HTML above it. No WebGL, no custom cursor and no
+// per-frame work: the page stays light and the scroll stays native-smooth.
 ---
 <div id="fx-root" aria-hidden="true" transition:persist>
-  <canvas id="fx-canvas"></canvas>
-  <div id="fx-cursor-ring"></div>
-  <div id="fx-cursor-dot"></div>
+  <div id="fx-canvas"></div>
 </div>
-
-<script>
-  import { boot } from '../lib/fx/boot';
-  boot();
-</script>
