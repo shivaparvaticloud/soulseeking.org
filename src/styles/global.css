@@ -58,17 +58,6 @@
     position: relative;
   }
 
-  /* Fine cinematic film-grain over the whole canvas (no image file). */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    opacity: 0.03;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-
   /* Display headings: big, tight, modern — no longer uppercase by default. */
   h1, h2, h3, h4, h5, h6 {
     font-family: theme('fontFamily.display');
@@ -496,7 +485,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .fade-in, .fade-in-1, .fade-in-2, .fade-in-3, .fade-in-4,
-  .reveal, .reveal-delay {
+  .reveal, .reveal-delay,
+  [data-reveal], [data-reveal-lines] {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
@@ -504,11 +494,11 @@
 }
 
 /* ============================================================
-   FX layer — persistent WebGL canvas + custom cursor
+   Static backdrop
    ============================================================ */
 
-/* The shared background canvas. Carries a warm CSS poster so that, without
-   WebGL (or under reduced motion), there is still light emerging from the dark. */
+/* The shared backdrop carries a warm CSS poster so light still emerges from the
+   dark — with no WebGL and nothing to animate per frame. */
 #fx-root { pointer-events: none; }
 #fx-canvas {
   position: fixed;
@@ -524,54 +514,26 @@
     var(--void);
 }
 
-/* Custom cursor — a soft gold dot with a trailing ring. */
-#fx-cursor-dot,
-#fx-cursor-ring {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 9999;
-  pointer-events: none;
-  border-radius: 999px;
-  opacity: 0;
-  will-change: transform;
-  transform: translate(-100px, -100px);
-  margin-left: -3px;
-  margin-top: -3px;
+/* ---- Scroll-reveals — native and JS-free (scroll-driven via animation-timeline).
+   Falls back to fully visible where unsupported, so content is never hidden. ---- */
+[data-reveal] {
+  animation: reveal 1s var(--ease-soul) both;
+  animation-timeline: view();
+  animation-range: entry 2% cover 26%;
 }
-#fx-cursor-dot {
-  width: 6px;
-  height: 6px;
-  background: var(--gold);
+[data-reveal-lines] {
+  animation: reveal 1.1s var(--ease-soul) both;
+  animation-timeline: view();
+  animation-range: entry 2% cover 22%;
 }
-#fx-cursor-ring {
-  width: 34px;
-  height: 34px;
-  margin-left: -17px;
-  margin-top: -17px;
-  border: 1px solid rgba(231, 198, 139, 0.55);
-  transition: width 0.3s var(--ease-soul), height 0.3s var(--ease-soul),
-    margin 0.3s var(--ease-soul), background-color 0.3s var(--ease-soul),
-    border-color 0.3s var(--ease-soul);
+@supports not (animation-timeline: view()) {
+  [data-reveal],
+  [data-reveal-lines] {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 }
-#fx-cursor-ring.is-hover {
-  width: 54px;
-  height: 54px;
-  margin-left: -27px;
-  margin-top: -27px;
-  background: rgba(231, 198, 139, 0.08);
-  border-color: var(--gold);
-}
-#fx-cursor-ring.is-down { background: rgba(231, 198, 139, 0.18); }
-
-/* The native arrow stays visible everywhere; the gold ring is a soft accent
-   that trails it. (No `cursor: none`, so the pointer is never hidden.) */
-html.has-custom-cursor #fx-cursor-ring { opacity: 1; }
-#fx-cursor-dot { display: none; }
-
-/* GSAP line-reveal scaffolding: keep content visible if scripts never run. */
-[data-reveal-lines] { will-change: transform; }
-.fx-line { display: block; overflow: hidden; }
 
 /* ---- Page transitions (View Transitions API) — a slow, warm cross-dissolve.
    The persistent canvas already carries continuity beneath. ---- */

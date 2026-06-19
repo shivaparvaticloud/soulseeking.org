@@ -1,3 +1,6 @@
+# The Gallery section was retired — send its URL to the Knowledge Hub.
+/gallery                             /knowledge     301
+
 # Send legacy icon probes to the SVG favicon so they 200 instead of 404.
 /favicon.ico                         /favicon.svg   301
 /apple-touch-icon.png                /favicon.svg   301

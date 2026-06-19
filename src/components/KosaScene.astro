@@ -1,21 +1,19 @@
 ---
 // ────────────────────────────────────────────────────────────────────────────
 // The Cosmos & The Sheaths — the home-page flagship.
-// A slow, candle-lit field of drifting particles around the five concentric
-// veils of the Self (pañca-maya-kośa). Three.js is bundled locally and loaded
-// ONLY when this scene scrolls into view; the render loop pauses off-screen,
-// when the tab is hidden, or when Motion is off. A still SVG holds the same
-// composition for no-WebGL / reduced-motion / reduced-data, and the five
-// sheaths are selectable by keyboard so the teaching is reachable without 3D.
+// The five concentric veils of the Self (pañca-maya-kośa) as a still, luminous
+// SVG composition adrift in a field of stars. Each sheath is selectable by
+// pointer or keyboard, and choosing one updates the caption — so the teaching is
+// fully reachable with no WebGL, no 3D and no per-frame work. Light and instant.
 // ────────────────────────────────────────────────────────────────────────────
 
 // Outer → inner. Colours are warm and candle-lit; the Self sits at the centre.
 const sheaths = [
-  { key: 'anna', sanskrit: 'Annamaya', name: 'The Food Sheath', line: 'The body you can touch — made of, and fed by, food.', color: '#7A5A3A', r: 2.65 },
-  { key: 'prana', sanskrit: 'Prāṇamaya', name: 'The Breath Sheath', line: 'The vital air — the life that moves and warms the body.', color: '#CC5B3A', r: 2.2 },
-  { key: 'mano', sanskrit: 'Manomaya', name: 'The Mind Sheath', line: 'Thought and feeling — the restless surface of the mind.', color: '#CC914E', r: 1.78 },
-  { key: 'vijnana', sanskrit: 'Vijñānamaya', name: 'The Wisdom Sheath', line: 'The knower that discerns — intellect and inner judgement.', color: '#E7C68B', r: 1.36 },
-  { key: 'ananda', sanskrit: 'Ānandamaya', name: 'The Bliss Sheath', line: 'The quiet of deep peace — the veil nearest the Self.', color: '#F3E6C8', r: 0.98 },
+  { key: 'anna', sanskrit: 'Annamaya', name: 'The Food Sheath', line: 'The body you can touch — made of, and fed by, food.', color: '#7A5A3A' },
+  { key: 'prana', sanskrit: 'Prāṇamaya', name: 'The Breath Sheath', line: 'The vital air — the life that moves and warms the body.', color: '#CC5B3A' },
+  { key: 'mano', sanskrit: 'Manomaya', name: 'The Mind Sheath', line: 'Thought and feeling — the restless surface of the mind.', color: '#CC914E' },
+  { key: 'vijnana', sanskrit: 'Vijñānamaya', name: 'The Wisdom Sheath', line: 'The knower that discerns — intellect and inner judgement.', color: '#E7C68B' },
+  { key: 'ananda', sanskrit: 'Ānandamaya', name: 'The Bliss Sheath', line: 'The quiet of deep peace — the veil nearest the Self.', color: '#F3E6C8' },
 ];
 const self = { sanskrit: 'Ātman', name: 'The Self', line: 'The witness the five sheaths conceal — unchanging, ever-free.' };
 ---
@@ -37,11 +35,8 @@ const self = { sanskrit: 'Ātman', name: 'The Self', line: 'The witness the five
       </p>
     </div>
 
-    <!-- Stage: the live canvas swaps in over the still fallback once ready. -->
+    <!-- Stage: a still SVG composition of the five veils around a bright centre. -->
     <div class="relative mx-auto mt-phi-2 aspect-[4/3] w-full max-w-2xl sm:aspect-[16/10]">
-      <canvas data-kosa-canvas class="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-1000"></canvas>
-
-      <!-- Still SVG composition — the graceful fallback and the pre-load view -->
       <div data-kosa-fallback class="absolute inset-0 grid place-items-center">
         <svg viewBox="0 0 400 320" class="h-full w-full" role="img" aria-label="Five concentric veils of light around a bright centre, adrift in a field of stars">
           <defs>
@@ -61,6 +56,8 @@ const self = { sanskrit: 'Ātman', name: 'The Self', line: 'The witness the five
                 stroke={sheaths[i].color}
                 stroke-width="1"
                 opacity={0.22 + i * 0.12}
+                data-kosa-ring
+                data-ring-index={i}
               />
             ))
           }
@@ -95,7 +92,7 @@ const self = { sanskrit: 'Ātman', name: 'The Self', line: 'The witness the five
       <span class="mt-1 block text-lg italic text-cream">{self.line}</span>
     </p>
 
-    <!-- Keyboard-accessible selectors: work with or without WebGL -->
+    <!-- Keyboard-accessible selectors -->
     <div class="mt-phi-1 flex flex-wrap items-center justify-center gap-2" role="group" aria-label="The five sheaths">
       {
         sheaths.map((s, i) => (
@@ -131,40 +128,26 @@ const self = { sanskrit: 'Ātman', name: 'The Self', line: 'The witness the five
   </div>
 
   <script>
-    type Sheath = { index: number; color: string; sanskrit: string; name: string; line: string; r: number };
+    type Sheath = { index: number; sanskrit: string; line: string };
 
-    // Tears down a previous instance (so the scene re-lives after a
-    // View-Transition navigation instead of showing the static fallback).
-    let kosaTeardown: (() => void) | null = null;
-
+    // Pointer/keyboard selection of the five veils — updates the caption and
+    // brightens the chosen ring. Pure DOM work; no libraries, no render loop.
     function initKosa() {
       const sectionEl = document.querySelector('[data-kosa]') as HTMLElement | null;
-      if (sectionEl && sectionEl.dataset.kosaBound === '1') return; // already live
-      if (kosaTeardown) { kosaTeardown(); kosaTeardown = null; }
-      if (!sectionEl) return;
+      if (!sectionEl || sectionEl.dataset.kosaBound === '1') return;
       sectionEl.dataset.kosaBound = '1';
-      const canvas = sectionEl.querySelector('[data-kosa-canvas]') as HTMLCanvasElement;
-      const fallback = sectionEl.querySelector('[data-kosa-fallback]') as HTMLElement;
+
       const caption = sectionEl.querySelector('[data-kosa-caption]') as HTMLElement;
       const buttons = Array.from(sectionEl.querySelectorAll('[data-kosa-btn]')) as HTMLButtonElement[];
-      const root = document.documentElement;
+      const rings = Array.from(sectionEl.querySelectorAll('[data-kosa-ring]')) as SVGCircleElement[];
+      if (!caption || !buttons.length) return;
 
-      // Radii for the five veils (outer → inner), matched to the markup order.
-      const radii = [2.65, 2.2, 1.78, 1.36, 0.98];
       const sheaths: Sheath[] = buttons.map((b, i) => ({
         index: i,
-        color: b.dataset.color || '#E7C68B',
         sanskrit: b.dataset.sanskrit || '',
-        name: b.dataset.name || '',
         line: b.dataset.line || '',
-        r: radii[i] ?? 0.6,
       }));
 
-      let selected = sheaths.length - 1; // start on the Self
-
-      const motionOff = () => root.getAttribute('data-motion') === 'off';
-
-      // ---- Selection (works with or without the 3D scene) ----
       const renderCaption = (s: Sheath) => {
         caption.innerHTML =
           '<span class="accent text-gold">' +
@@ -173,281 +156,21 @@ const self = { sanskrit: 'Ātman', name: 'The Self', line: 'The witness the five
           s.line +
           '</span>';
       };
+
       const select = (i: number) => {
-        selected = i;
         buttons.forEach((b, bi) => b.setAttribute('aria-pressed', String(bi === i)));
+        rings.forEach((ring, ri) => {
+          ring.style.opacity = ri === i ? '0.85' : '';
+          ring.style.strokeWidth = ri === i ? '1.8' : '';
+        });
         renderCaption(sheaths[i]);
-        if (api) api.highlight(i);
       };
+
       buttons.forEach((b, i) => {
         b.addEventListener('click', () => select(i));
         b.addEventListener('mouseenter', () => select(i));
         b.addEventListener('focus', () => select(i));
       });
-
-      // ---- Capability gates ----
-      const reduceData =
-        typeof window.matchMedia === 'function'
-          ? window.matchMedia('(prefers-reduced-data: reduce)').matches
-          : false;
-      const webglOK = (() => {
-        try {
-          const c = document.createElement('canvas');
-          return !!(
-            window.WebGLRenderingContext &&
-            (c.getContext('webgl') || c.getContext('experimental-webgl'))
-          );
-        } catch (e) {
-          return false;
-        }
-      })();
-
-      // The 3D scene's public handle, set once loaded.
-      let api: { highlight: (i: number) => void; play: () => void; pause: () => void; frame: () => void } | null = null;
-
-      if (webglOK && !reduceData) {
-        let started = false;
-        let inView = false;
-        // Load the heavy scene only when in view AND motion is on — so the still
-        // SVG holds for prefers-reduced-motion until/unless the visitor opts in.
-        const maybeStart = () => {
-          if (!started && inView && !motionOff()) {
-            started = true;
-            init();
-          }
-        };
-        const io = new IntersectionObserver(
-          (entries) => {
-            inView = entries.some((e) => e.isIntersecting);
-            maybeStart();
-            if (api) {
-              if (inView && !motionOff() && !document.hidden) api.play();
-              else api.pause();
-            }
-          },
-          { threshold: 0.15 }
-        );
-        io.observe(sectionEl);
-
-        // If the visitor turns motion on later, honour it.
-        const onMotion = () => {
-          if (!started) maybeStart();
-          else if (api) {
-            if (motionOff()) {
-              api.pause();
-              api.frame();
-            } else if (inView && !document.hidden) api.play();
-          }
-        };
-        window.addEventListener('ss-motion-change', onMotion);
-
-        // Base teardown — stop observing, drop the motion listener, halt the loop.
-        kosaTeardown = () => {
-          io.disconnect();
-          window.removeEventListener('ss-motion-change', onMotion);
-          if (api) api.pause();
-        };
-
-        const init = async () => {
-          const THREE = await import('three');
-
-          const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-          const mobile = window.innerWidth < 640;
-          renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 2));
-
-          const scene = new THREE.Scene();
-          const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-          camera.position.set(0, 0, 8);
-
-          const group = new THREE.Group();
-          scene.add(group);
-
-          // Five veils — luminous wireframe icosahedra, additive so they glow.
-          const shellMeshes: { mesh: any; base: number; mat: any }[] = [];
-          sheaths.slice(0, 5).forEach((s) => {
-            const geo = new THREE.IcosahedronGeometry(s.r, 1);
-            const mat = new THREE.MeshBasicMaterial({
-              color: new THREE.Color(s.color),
-              wireframe: true,
-              transparent: true,
-              opacity: 0.28,
-              blending: THREE.AdditiveBlending,
-              depthWrite: false,
-            });
-            const mesh = new THREE.Mesh(geo, mat);
-            group.add(mesh);
-            shellMeshes.push({ mesh, base: 0.28, mat });
-          });
-
-          // The Self — a small bright core with a soft sprite halo.
-          const coreMat = new THREE.MeshBasicMaterial({
-            color: new THREE.Color('#FBF6EA'),
-            transparent: true,
-            opacity: 0.95,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false,
-          });
-          const core = new THREE.Mesh(new THREE.IcosahedronGeometry(0.16, 2), coreMat);
-          group.add(core);
-
-          // A soft round sprite texture, generated in code (no image files).
-          const makeGlow = () => {
-            const c = document.createElement('canvas');
-            c.width = c.height = 64;
-            const g = c.getContext('2d')!;
-            const grd = g.createRadialGradient(32, 32, 0, 32, 32, 32);
-            grd.addColorStop(0, 'rgba(255,246,234,1)');
-            grd.addColorStop(0.35, 'rgba(231,198,139,0.55)');
-            grd.addColorStop(1, 'rgba(231,198,139,0)');
-            g.fillStyle = grd;
-            g.fillRect(0, 0, 64, 64);
-            const tex = new THREE.CanvasTexture(c);
-            return tex;
-          };
-          const glowTex = makeGlow();
-
-          const halo = new THREE.Sprite(
-            new THREE.SpriteMaterial({
-              map: glowTex,
-              transparent: true,
-              opacity: 0.9,
-              blending: THREE.AdditiveBlending,
-              depthWrite: false,
-            })
-          );
-          halo.scale.set(1.4, 1.4, 1);
-          group.add(halo);
-
-          // The cosmos — a drifting field of candle-lit particles.
-          const count = mobile ? 1200 : 2600;
-          const positions = new Float32Array(count * 3);
-          const colorArr = new Float32Array(count * 3);
-          const palette = ['#E7C68B', '#CC914E', '#CC5B3A', '#EEEDE3'].map((h) => new THREE.Color(h));
-          for (let i = 0; i < count; i++) {
-            // soft spherical shell distribution, a little flattened
-            const rad = 3.2 + Math.pow(Math.random(), 0.6) * 6.5;
-            const theta = Math.random() * Math.PI * 2;
-            const phi = Math.acos(2 * Math.random() - 1);
-            positions[i * 3] = rad * Math.sin(phi) * Math.cos(theta);
-            positions[i * 3 + 1] = rad * Math.cos(phi) * 0.7;
-            positions[i * 3 + 2] = rad * Math.sin(phi) * Math.sin(theta);
-            const col = palette[(Math.random() * palette.length) | 0];
-            colorArr[i * 3] = col.r;
-            colorArr[i * 3 + 1] = col.g;
-            colorArr[i * 3 + 2] = col.b;
-          }
-          const pGeo = new THREE.BufferGeometry();
-          pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-          pGeo.setAttribute('color', new THREE.BufferAttribute(colorArr, 3));
-          const pMat = new THREE.PointsMaterial({
-            size: mobile ? 0.06 : 0.05,
-            map: glowTex,
-            vertexColors: true,
-            transparent: true,
-            opacity: 0.85,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false,
-            sizeAttenuation: true,
-          });
-          const points = new THREE.Points(pGeo, pMat);
-          scene.add(points);
-
-          // ---- sizing ----
-          const resize = () => {
-            const w = canvas.clientWidth || 1;
-            const h = canvas.clientHeight || 1;
-            renderer.setSize(w, h, false);
-            camera.aspect = w / h;
-            camera.updateProjectionMatrix();
-          };
-          resize();
-          let resizeT: number | undefined;
-          window.addEventListener('resize', () => {
-            window.clearTimeout(resizeT);
-            resizeT = window.setTimeout(resize, 180);
-          });
-
-          // ---- gentle pointer parallax ----
-          const target = { x: 0, y: 0 };
-          const cur = { x: 0, y: 0 };
-          sectionEl.addEventListener('pointermove', (ev) => {
-            const rect = sectionEl.getBoundingClientRect();
-            target.x = ((ev.clientX - rect.left) / rect.width - 0.5) * 0.6;
-            target.y = ((ev.clientY - rect.top) / rect.height - 0.5) * 0.4;
-          });
-          sectionEl.addEventListener('pointerleave', () => {
-            target.x = 0;
-            target.y = 0;
-          });
-
-          // ---- highlight a chosen veil ----
-          const highlight = (i: number) => {
-            shellMeshes.forEach((s, si) => {
-              s.mat.opacity = si === i ? 0.7 : 0.2;
-            });
-            // i === 5 is the Self: brighten the core instead
-            coreMat.opacity = i >= 5 ? 1 : 0.85;
-          };
-          highlight(selected);
-
-          // ---- loop ----
-          let raf = 0;
-          let running = false;
-          const clock = new THREE.Clock();
-          const tick = () => {
-            const dt = clock.getDelta();
-            cur.x += (target.x - cur.x) * 0.05;
-            cur.y += (target.y - cur.y) * 0.05;
-            group.rotation.y += dt * 0.06;
-            group.rotation.x = cur.y;
-            group.rotation.z = cur.x * 0.3;
-            points.rotation.y -= dt * 0.015;
-            const t = clock.elapsedTime;
-            halo.scale.setScalar(1.35 + Math.sin(t * 0.8) * 0.12);
-            renderer.render(scene, camera);
-            if (running) raf = requestAnimationFrame(tick);
-          };
-          const frame = () => {
-            resize();
-            renderer.render(scene, camera);
-          };
-          const play = () => {
-            if (running) return;
-            running = true;
-            clock.getDelta();
-            raf = requestAnimationFrame(tick);
-          };
-          const pause = () => {
-            running = false;
-            if (raf) cancelAnimationFrame(raf);
-            raf = 0;
-          };
-
-          // reveal canvas, retire the still fallback
-          canvas.style.opacity = '1';
-          fallback.style.opacity = '0';
-          fallback.setAttribute('aria-hidden', 'true');
-
-          api = { highlight, play, pause, frame };
-
-          if (!motionOff()) play();
-          else frame(); // a single still frame when motion is off
-
-          const onVis = () => {
-            if (document.hidden) pause();
-            else if (!motionOff() && inView) play();
-          };
-          document.addEventListener('visibilitychange', onVis);
-
-          // Extend teardown to fully release the GL scene on navigation.
-          const base = kosaTeardown;
-          kosaTeardown = () => {
-            if (base) base();
-            document.removeEventListener('visibilitychange', onVis);
-            try { renderer.dispose(); } catch (e) {}
-          };
-        };
-      }
     }
 
     initKosa();
