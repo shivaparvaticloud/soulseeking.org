@@ -1,20 +1,74 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Soul Seeking">
-  <rect width="100" height="100" rx="14" fill="#15110D"/>
-  <g stroke="#E7C68B" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.95">
-    <!-- radiating dawn rays from a low centre -->
-    <g transform="translate(50 64)">
-      <line x1="0" y1="0" x2="0" y2="-34"/>
-      <line x1="0" y1="0" x2="11" y2="-32"/>
-      <line x1="0" y1="0" x2="21" y2="-27"/>
-      <line x1="0" y1="0" x2="29" y2="-18"/>
-      <line x1="0" y1="0" x2="34" y2="-7"/>
-      <line x1="0" y1="0" x2="-11" y2="-32"/>
-      <line x1="0" y1="0" x2="-21" y2="-27"/>
-      <line x1="0" y1="0" x2="-29" y2="-18"/>
-      <line x1="0" y1="0" x2="-34" y2="-7"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Soul Seeking Golden Bird Logo">
+  <defs>
+    <filter id="organic-texture" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise" />
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="noise" result="coloredNoise"/>
+      <feComposite operator="id" in="SourceGraphic" in2="coloredNoise" operator="in" />
+      <feBlend mode="multiply" in="SourceGraphic" in2="coloredNoise" />
+    </filter>
+
+    <g id="wing">
+      <path d="M 100,68 
+               C 112,60 135,46 168,26
+               C 171,24 173,22 175,25
+               C 176,27 174,30 171,33
+               L 173,36 C 171,40 166,43 162,45
+               L 164,49 C 158,52 150,56 145,59
+               C 133,68 120,77 107,88 
+               Z" 
+            fill="#E2BA73" />
+      
+      <path d="M 168,26 L 175,25 M 171,33 L 178,31 M 162,45 L 171,42 M 154,53 L 162,49" 
+            stroke="#281A08" stroke-width="0.8" stroke-linecap="round" />
+
+      <path d="M 112,60 C 122,54 138,46 152,38" stroke="#281A08" stroke-width="1.2" fill="none" opacity="0.8" />
+      <path d="M 120,67 C 128,61 140,54 150,48" stroke="#281A08" stroke-width="0.9" fill="none" opacity="0.7" />
+      
+      <path d="M 145,59 C 147,63 144,68 140,70" stroke="#281A08" stroke-width="1" fill="none" />
+      <path d="M 133,68 C 135,72 131,77 126,78" stroke="#281A08" stroke-width="1" fill="none" />
+      <path d="M 120,77 C 121,81 117,86 112,86" stroke="#281A08" stroke-width="1" fill="none" />
     </g>
+  </defs>
+
+  <rect width="100%" height="100%" fill="#111111"/>
+
+  <g filter="url(#organic-texture)">
+    
+    <g stroke="#281A08" stroke-width="0.6">
+      <path d="M 93,108 L 107,108 L 122,150 L 116,156 L 111,150 L 105,157 L 100,151 L 95,157 L 89,150 L 84,156 L 78,150 Z" fill="#E2BA73" />
+      <line x1="100" y1="108" x2="100" y2="151" stroke="#281A08" stroke-width="1.2" />
+      <line x1="100" y1="108" x2="95" y2="151" />
+      <line x1="100" y1="108" x2="105" y2="151" />
+      <line x1="100" y1="108" x2="89" y2="148" />
+      <line x1="100" y1="108" x2="111" y2="148" />
+      <line x1="100" y1="108" x2="84" y2="144" />
+      <line x1="100" y1="108" x2="116" y2="144" />
+      <line x1="100" y1="108" x2="79" y2="138" />
+      <line x1="100" y1="108" x2="121" y2="138" />
+    </g>
+
+    <use href="#wing" transform="translate(200, 0) scale(-1, 1)" />
+
+    <use href="#wing" />
+
+    <path d="M 93,65 
+             C 93,61 107,61 107,65 
+             L 106,108 
+             C 106,111 94,111 94,108 
+             Z" 
+          fill="#E2BA73" stroke="#281A08" stroke-width="1" />
+          
+    <line x1="100" y1="65" x2="100" y2="108" stroke="#281A08" stroke-width="0.8" stroke-dasharray="1 3" />
+
+    <path d="M 96,62 
+             C 93,59 93,52 98,49 
+             C 103,47 106,52 105,58 
+             C 105,61 102,63 100,63 Z" 
+          fill="#E2BA73" />
+          
+    <path d="M 95,52 L 88,54 L 95,57 Z" fill="#E2BA73" stroke="#281A08" stroke-width="0.6" stroke-linejoin="round" />
+    
+    <circle cx="95.5" cy="53.5" r="0.9" fill="#111111" />
+
   </g>
-  <!-- sun disc -->
-  <circle cx="50" cy="40" r="10" fill="#CC914E"/>
-  <circle cx="50" cy="40" r="10" fill="none" stroke="#E7C68B" stroke-width="1.4"/>
 </svg>
